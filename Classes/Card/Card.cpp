@@ -15,3 +15,7 @@ bool Card::init() {
 void Card::didBeHit(int hitValue) {
     log("card~~~~~~~");
 }
+
+void Card::runAnimation() {
+    printf("run Animation error");
+}

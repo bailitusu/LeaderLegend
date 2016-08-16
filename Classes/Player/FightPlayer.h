@@ -12,18 +12,24 @@
 #include "cocos2d.h"
 #include "FightMap.h"
 #include "Card.h"
-#include "FightLayer.h"
+class FightLayer;
 USING_NS_CC;
 class FightPlayer : public Ref {
     
 public:
     FightMap* fMap;
+
     Vector<Card*> cardArray;
     CREATE_FUNC(FightPlayer);
     virtual bool init();
-    void initMap(std::string imageName,std::string direction);
+
     FightLayer* fightLayer;
     FightPlayer* enemy;
+    int xiangong;
+    void initMap(std::string imageName,std::string direction);
+    
+    void setCardsPositon(Card *card, int index, int zPoint);
+    void initCardStandArray();
 };
 
 #endif /* FightPlayer_h */

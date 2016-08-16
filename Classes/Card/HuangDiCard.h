@@ -17,6 +17,11 @@ public:
     CREATE_FUNC(HuangDiCard);
     virtual bool init();
     void didBeHit(int hitValue);
+    virtual void runAnimation();
+    void getMsg(Ref* sender);
+    void initCardSprite(std::string imageName);
+    void actionBlock();
+    
 };
 
 #endif /* HuangDiCard_hpp */

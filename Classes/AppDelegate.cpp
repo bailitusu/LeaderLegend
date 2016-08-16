@@ -80,8 +80,8 @@ bool AppDelegate::applicationDidFinishLaunching() {
     register_all_packages();
 
     // create a scene. it's an autorelease object
-    auto scene = FightLayer::createScene();
-
+    Scene* scene = FightLayer::createScene();
+    
     // run
     director->runWithScene(scene);
 

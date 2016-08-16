@@ -16,11 +16,13 @@ USING_NS_CC;
 class Card: public Ref, public StandMapCellInterface  {
 
 public:
+    std::string playerName;
     Sprite* cardSprite;
     Vec2 cardPosition;
     CREATE_FUNC(Card);
     virtual bool init();
     void didBeHit(int hitValue);
+    virtual void runAnimation();
 };
 
 #endif /* Card_h */
