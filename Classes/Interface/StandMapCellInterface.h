@@ -15,8 +15,8 @@ class StandMapCellInterface {
     
     
 public:
-    int HP;
-    virtual void didBeHit(int hitValue) = 0;
+    //int HP;
+    virtual void didBeHit(float hitValue) = 0;
 };
 
 #endif /* StandMapCellInterface_hpp */

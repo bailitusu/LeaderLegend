@@ -11,17 +11,19 @@
 
 #include "cocos2d.h"
 #include "Card.h"
+class FightPlayer;
 class HuangDiCard: public Card {
     
 public:
     CREATE_FUNC(HuangDiCard);
     virtual bool init();
-    void didBeHit(int hitValue);
-    virtual void runAnimation();
+    virtual void didBeHit(float hitValue);
+    virtual void runAnimation(FightPlayer* playerTemp);
+    virtual void ultimateSkill();
+    virtual void cardDead();
     void getMsg(Ref* sender);
     void initCardSprite(std::string imageName);
     void actionBlock();
-    
 };
 
 #endif /* HuangDiCard_hpp */

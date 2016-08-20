@@ -27,16 +27,17 @@ void FightPlayer::initMap(std::string imageName,std::string direction) {
 }
 
 void FightPlayer::setCardsPositon(Card *card, int index, int zPoint) {
-    card->cardSprite->setPosition(((MapCell*)fMap->mapCellArray->objectAtIndex(index))->position);
-    ((MapCell*)fMap->mapCellArray->objectAtIndex(index))->obj = card;
+    card->cardSprite->setPosition((fMap->mapCellArray.at(index))->position);
+    (fMap->mapCellArray.at(index))->obj = card;
+    card->cellIndex = index;
     fMap->addChild(card->cardSprite,zPoint);
     
 }
 
 void FightPlayer::initCardStandArray() {
-    for (int i = 0; i < fMap->mapCellArray->count(); i++) {
-        if (((MapCell*)fMap->mapCellArray->objectAtIndex(i))->obj != NULL) {
-            this->cardArray.pushBack((Card*)(((MapCell*)fMap->mapCellArray->objectAtIndex(i))->obj));
+    for (int i = 0; i < fMap->mapCellArray.size(); i++) {
+        if ((fMap->mapCellArray.at(i))->obj != NULL) {
+            this->cardArray.pushBack((Card*)(((MapCell*)fMap->mapCellArray.at(i))->obj));
         }
     }
 }

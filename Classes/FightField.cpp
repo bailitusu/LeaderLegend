@@ -28,10 +28,10 @@ void FightField::playerNextRun() {
         return;
     }
     Card* tempCard = player->cardArray.at(playerIndex++);
-    if (tempCard->HP < 0) {
+    if (tempCard->HP <= 0) {
         this->playerNextRun();
     }else {
-        tempCard->runAnimation();
+        tempCard->runAnimation(enemyPlayer);
     }
 }
 
@@ -42,20 +42,29 @@ void FightField::enemyPlayerNextRun() {
         return;
     }
     Card* tempCard = enemyPlayer->cardArray.at(enemyIndex++);
-    if (tempCard->HP < 0) {
+    if (tempCard->HP <= 0) {
         this->enemyPlayerNextRun();
     }else {
-        tempCard->runAnimation();
+        tempCard->runAnimation(player);
     }
 }
 
 void FightField::startFight() {
     if (player->xiangong > enemyPlayer->xiangong) {
-        this->player->cardArray.at(0)->runAnimation();
-        playerIndex++;
+        if (this->player->cardArray.at(0)->HP > 0) {
+            this->player->cardArray.at(0)->runAnimation(this->enemyPlayer);
+            playerIndex++;
+        }else {
+            this->playerNextRun();
+        }
+
     }else {
-        this->enemyPlayer->cardArray.at(0)->runAnimation();
-        enemyIndex++;
+        if (this->enemyPlayer->cardArray.at(0)->HP > 0) {
+            this->enemyPlayer->cardArray.at(0)->runAnimation(this->player);
+            enemyIndex++;
+        }else {
+            this->enemyPlayerNextRun();
+        }
     }
 }
 

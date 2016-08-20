@@ -14,7 +14,7 @@ void FightMap::init(std::string imageName,std::string direction) {
     map = Sprite::create(imageName);
     map->setLocalZOrder(0);
     map->setAnchorPoint(Vec2(0, 0));
-    mapCellArray = CCArray::create();
+   // mapCellArray = CCArray::create();
     
     this->addChild(map);
    // CommonFunc::setSpriteSize(map, Director::getInstance()->getVisibleSize().width*0.405);
@@ -132,8 +132,8 @@ void FightMap::initMapCell(int id, float orginY, int lineNum, std::string direct
         default:
             break;
     }
-    
-    mapCellArray->addObject(cell);
+    this->addChild(cell);
+    mapCellArray.pushBack(cell);
 }
 
 

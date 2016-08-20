@@ -7,15 +7,23 @@
 //
 
 #include "Card.h"
-
+#include "FightPlayer.h"
 bool Card::init() {
     return true;
 }
 
-void Card::didBeHit(int hitValue) {
+void Card::didBeHit(float hitValue) {
     log("card~~~~~~~");
 }
 
-void Card::runAnimation() {
+void Card::runAnimation(FightPlayer* playerTemp) {
     printf("run Animation error");
+}
+
+void Card::ultimateSkill() {
+    printf("card ultimateSkill ");
+}
+
+void Card::cardDead() {
+    
 }

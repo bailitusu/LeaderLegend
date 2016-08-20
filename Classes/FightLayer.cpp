@@ -13,6 +13,7 @@
 #include "Setting.h"
 #include "HuangDiCard.h"
 #include "FightField.h"
+#include "FightProgress.h"
 Scene* FightLayer::createScene() {
     
     Scene* scene = Scene::create();
@@ -64,10 +65,31 @@ void FightLayer::initFightLayer() {
     for (int i = 0; i < 8; i ++) {
         
         auto playerHuangdi = HuangDiCard::create();
-        playerHuangdi->initCardSprite("taotieLeft.png");
+        playerHuangdi->initCardSprite("longLeft.png");
         playerHuangdi->playerName = "player";
-        
+       
         this->player->setCardsPositon(playerHuangdi, i,10+i);
+        playerHuangdi->forPlayer = this->player;
+        playerHuangdi->fPro = FightProgress::create();
+        playerHuangdi->fPro->hpProBg->setPosition(playerHuangdi->cardSprite->getPosition().x,playerHuangdi->cardSprite->getPosition().y+playerHuangdi->cardSprite->getBoundingBox().size.height+10);
+        this->player->fMap->addChild(playerHuangdi->fPro->hpProBg,10+i+10);
+        
+        playerHuangdi->fPro->hpPro->setPosition(playerHuangdi->fPro->hpProBg->getPosition());
+        this->player->fMap->addChild(playerHuangdi->fPro->hpPro,10+i+20);
+
+        
+        playerHuangdi->fPro->initNuQiPro(0);
+        playerHuangdi->fPro->nuqiProBg->setPosition(playerHuangdi->cardSprite->getPosition().x,playerHuangdi->cardSprite->getPosition().y+playerHuangdi->cardSprite->getBoundingBox().size.height+5);
+        this->player->fMap->addChild(playerHuangdi->fPro->nuqiProBg, 10+i+10);
+        
+        playerHuangdi->fPro->nuqiPro->setPosition(playerHuangdi->fPro->nuqiProBg->getPosition());
+        this->player->fMap->addChild(playerHuangdi->fPro->nuqiPro,10+i+20);
+        playerHuangdi->fPro->retain();
+        playerHuangdi->retain();
+//        playerHuangdi->fPro->hpPro->setPosition(0, 0);
+//        playerHuangdi->fPro->hpProBg->addChild( playerHuangdi->fPro->hpPro,51);
+//        
+        
        // playerHuangdi->retain();
         //        Vec2 position = Vec2(((MapCell*)(player->fMap->mapCellArray->objectAtIndex(i)))->position.x, ((MapCell*)(player->fMap->mapCellArray->objectAtIndex(i)))->position.y);
         //        ((MapCell*)(player->fMap->mapCellArray->objectAtIndex(i)))->obj = playerHuangdi;
@@ -80,8 +102,26 @@ void FightLayer::initFightLayer() {
         
         auto enemyHuangdi = HuangDiCard::create();
         enemyHuangdi->playerName = "enemyPlayer";
-        enemyHuangdi->initCardSprite("taotieRight.png");
+        enemyHuangdi->initCardSprite("longRight.png");
         this->enemyPlay->setCardsPositon(enemyHuangdi, i, 10+i);
+        enemyHuangdi->forPlayer = this->enemyPlay;
+        
+        enemyHuangdi->fPro = FightProgress::create();
+        enemyHuangdi->fPro->hpProBg->setPosition(enemyHuangdi->cardSprite->getPosition().x,enemyHuangdi->cardSprite->getPosition().y+enemyHuangdi->cardSprite->getBoundingBox().size.height+10);
+        this->enemyPlay->fMap->addChild(enemyHuangdi->fPro->hpProBg,10+i+10);
+        
+        enemyHuangdi->fPro->hpPro->setPosition(enemyHuangdi->fPro->hpProBg->getPosition());
+        this->enemyPlay->fMap->addChild(enemyHuangdi->fPro->hpPro,10+i+20);
+        
+        enemyHuangdi->fPro->initNuQiPro(0);
+        enemyHuangdi->fPro->nuqiProBg->setPosition(enemyHuangdi->cardSprite->getPosition().x,enemyHuangdi->cardSprite->getPosition().y+enemyHuangdi->cardSprite->getBoundingBox().size.height+5);
+        this->enemyPlay->fMap->addChild(enemyHuangdi->fPro->nuqiProBg, 10+i+10);
+        
+        enemyHuangdi->fPro->nuqiPro->setPosition(enemyHuangdi->fPro->nuqiProBg->getPosition());
+        this->enemyPlay->fMap->addChild(enemyHuangdi->fPro->nuqiPro,10+i+20);
+        
+        enemyHuangdi->fPro->retain();
+        enemyHuangdi->retain();
        // enemyHuangdi->retain();
         //        Vec2 position = Vec2(((MapCell*)(enemy->fMap->mapCellArray->objectAtIndex(i)))->position.x, ((MapCell*)(enemy->fMap->mapCellArray->objectAtIndex(i)))->position.y);
         //
@@ -92,6 +132,11 @@ void FightLayer::initFightLayer() {
     }
     this->enemyPlay->initCardStandArray();
     
+//    Sprite* ttt = Sprite::create("taotieLeft.png");
+//    ttt->setAnchorPoint(Vec2(0.5, 0));
+//    ttt->setPosition(238, 177);
+//    CommonFunc::setSpriteSize(ttt, 100);
+//    this->addChild(ttt, 100);
     background = Sprite::create("begin.jpg");
     CommonFunc::setSpriteSize(background, screenSize.width);
     background->setPosition(Vec2(screenSize.width/2+origin.x, screenSize.height/2+origin.y));
@@ -99,10 +144,24 @@ void FightLayer::initFightLayer() {
     this->addChild(background);
 }
 
+void shifang() {
+   // enemyHuangdi->fPro->retain();
+    //playerHuangdi->fPro->retain();
+    //    this->player->retain();
+    //this->enemyPlay->retain();
+    //playerHuangdi->retain();
+    //field->retain();
+}
+
 bool FightLayer::onTouchBegan(cocos2d::Touch *touch, cocos2d::Event *unused_event) {
     auto touchLocation = touch->getLocationInView();
     touchLocation = Director::getInstance()->convertToGL(touchLocation);
     
+//    Card* aaa = this->player->cardArray.at(0);
+   // aaa->fPro->nuqiPro->setPercentage(33);
+    //aaa->fPro->hpPro->setPercentage(aaa->fPro->hpPro->getPercentage()+20);
+//    ProgressFromTo* ac = ProgressFromTo::create(1.0, 0, 100);
+//    aaa->fPro->hpPro->runAction(ac);
     auto field = FightField::create();
     field->player = this->player;
     field->enemyPlayer = this->enemyPlay;

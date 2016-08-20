@@ -10,6 +10,7 @@
 #define FightMap_h
 
 #include "cocos2d.h"
+#include "MapCell.h"
 USING_NS_CC;
 
 class FightMap : public Layer{
@@ -20,7 +21,7 @@ public:
     void initMapCell(int id, float orginY, int lineNum,std::string direction);
     
     void creatMap(std::string direction);
-    CCArray* mapCellArray;
+    Vector<MapCell*> mapCellArray;
     
     Sprite* map;
     CREATE_FUNC(FightMap);
