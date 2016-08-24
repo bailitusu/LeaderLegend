@@ -19,24 +19,26 @@ bool HuangDiCard::init() {
     cellIndex = 0;
     HP = 20;
     this->cardName = "huangdi";
+    this->hitValue = 2;
+    this->MaxHP = 20;
     return true;
 }
 
-void HuangDiCard::initCardSprite(std::string imageName) {
-    cardSprite = Sprite::create(imageName);
-    cardSprite->setAnchorPoint(Vec2(0.5, 0));
-    // player->setFlippedX(true);
-    CommonFunc::setSpriteSize(cardSprite, screenSize.width*0.075);
-}
+//void HuangDiCard::initCardSprite(std::string imageName) {
+//    cardSprite = Sprite::create(imageName);
+//    cardSprite->setAnchorPoint(Vec2(0.5, 0));
+//    // player->setFlippedX(true);
+//    CommonFunc::setSpriteSize(cardSprite, screenSize.width*0.075);
+//}
 
-void HuangDiCard::didBeHit(float hitValue) {
+void HuangDiCard::didBeHit(Card* fromCard) {
   //  log("huangdi hart %d",hitValue);
 
-    float percent = (1 - (HP-hitValue)/20) * 100;
+    float percent = (1 - (HP-fromCard->hitValue)/this->MaxHP) * 100;
   //  float aaa = this->fPro->hpPro->getPercentage();
     ProgressFromTo* ac = ProgressFromTo::create(1.0, this->fPro->hpPro->getPercentage(), percent);
     this->fPro->hpPro->runAction(ac);
-    HP = HP - hitValue;
+    HP = HP - fromCard->hitValue;
     if (HP <= 0) {
         this->cardDead();
         return;
@@ -116,7 +118,9 @@ void HuangDiCard::actionBlock() {
     this->fPro->nuqiProBg->setVisible(true);
     
     int cellNum = AttackRule::Rule(this->cellIndex, 1, this->forEnemy->fMap);
-    ((Card*)(this->forEnemy->fMap->mapCellArray.at(cellNum))->obj)->didBeHit(10);
+    ((Card*)(this->forEnemy->fMap->mapCellArray.at(cellNum))->obj)->didBeHit(this);
+    
+    
     
     auto dispatcher = Director::getInstance()->getEventDispatcher();
     if (playerName.compare("player") == 0) {

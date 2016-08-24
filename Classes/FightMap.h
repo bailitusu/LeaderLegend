@@ -22,7 +22,7 @@ public:
     
     void creatMap(std::string direction);
     Vector<MapCell*> mapCellArray;
-    
+    Vector<MapCell*> hitNineCell(int hitCellIndex);
     Sprite* map;
     CREATE_FUNC(FightMap);
     virtual bool init();

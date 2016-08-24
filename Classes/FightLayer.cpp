@@ -11,9 +11,15 @@
 #include "CommonFunc.h"
 #include "MapCell.h"
 #include "Setting.h"
-#include "HuangDiCard.h"
+
 #include "FightField.h"
 #include "FightProgress.h"
+
+#include "HuangDiCard.h"
+#include "HouYiCard.h"
+#include "ChangECard.h"
+#include "TaoTieCard.h"
+#include "XingTianCard.h"
 Scene* FightLayer::createScene() {
     
     Scene* scene = Scene::create();
@@ -56,80 +62,96 @@ void FightLayer::initFightLayer() {
     this->player->enemy = this->enemyPlay;
     this->enemyPlay->enemy = this->player;
     this->player->xiangong = 10;
-    this->enemyPlay->xiangong = 5;
+    this->enemyPlay->xiangong = 15;
     
     this->player->retain();
     this->enemyPlay->retain();
     
-    
-    for (int i = 0; i < 8; i ++) {
-        
-        auto playerHuangdi = HuangDiCard::create();
-        playerHuangdi->initCardSprite("longLeft.png");
-        playerHuangdi->playerName = "player";
-       
-        this->player->setCardsPositon(playerHuangdi, i,10+i);
-        playerHuangdi->forPlayer = this->player;
-        playerHuangdi->fPro = FightProgress::create();
-        playerHuangdi->fPro->hpProBg->setPosition(playerHuangdi->cardSprite->getPosition().x,playerHuangdi->cardSprite->getPosition().y+playerHuangdi->cardSprite->getBoundingBox().size.height+10);
-        this->player->fMap->addChild(playerHuangdi->fPro->hpProBg,10+i+10);
-        
-        playerHuangdi->fPro->hpPro->setPosition(playerHuangdi->fPro->hpProBg->getPosition());
-        this->player->fMap->addChild(playerHuangdi->fPro->hpPro,10+i+20);
-
-        
-        playerHuangdi->fPro->initNuQiPro(0);
-        playerHuangdi->fPro->nuqiProBg->setPosition(playerHuangdi->cardSprite->getPosition().x,playerHuangdi->cardSprite->getPosition().y+playerHuangdi->cardSprite->getBoundingBox().size.height+5);
-        this->player->fMap->addChild(playerHuangdi->fPro->nuqiProBg, 10+i+10);
-        
-        playerHuangdi->fPro->nuqiPro->setPosition(playerHuangdi->fPro->nuqiProBg->getPosition());
-        this->player->fMap->addChild(playerHuangdi->fPro->nuqiPro,10+i+20);
-        playerHuangdi->fPro->retain();
-        playerHuangdi->retain();
-//        playerHuangdi->fPro->hpPro->setPosition(0, 0);
-//        playerHuangdi->fPro->hpProBg->addChild( playerHuangdi->fPro->hpPro,51);
+    this->player->initTackCard(HouYiCard::create(), "xuanwu_left1.png", 0, "player");
+    this->player->initTackCard(HouYiCard::create(), "xingtian_left1.png", 3, "player");
+    this->player->initTackCard(HouYiCard::create(), "change_left1.png", 5, "player");
+    this->player->initTackCard(HouYiCard::create(), "fengbo_left1.png", 6, "player");
+    this->player->initTackCard(HouYiCard::create(), "fenghou_left1.png", 9, "player");
+    this->player->initTackCard(HouYiCard::create(), "suanyu_left1.png", 10, "player");
+    this->player->initTackCard(HouYiCard::create(), "taotie_left1.png", 12, "player");
+    this->player->initTackCard(HouYiCard::create(), "houyi_left1.png", 15, "player");
+//    for (int i = 0; i < 8; i ++) {
 //        
-        
-       // playerHuangdi->retain();
-        //        Vec2 position = Vec2(((MapCell*)(player->fMap->mapCellArray->objectAtIndex(i)))->position.x, ((MapCell*)(player->fMap->mapCellArray->objectAtIndex(i)))->position.y);
-        //        ((MapCell*)(player->fMap->mapCellArray->objectAtIndex(i)))->obj = playerHuangdi;
-        //        playerHuangdi->cardSprite->setPosition(position.x, position.y);
-        
-    }
+//        auto playerHuangdi = HouYiCard::create();
+//        playerHuangdi->initCardSprite("longLeft.png");
+//        playerHuangdi->playerName = "player";
+//       
+//        this->player->setCardsPositon(playerHuangdi, i,10+i);
+//        playerHuangdi->forPlayer = this->player;
+//        playerHuangdi->fPro = FightProgress::create();
+//        playerHuangdi->fPro->hpProBg->setPosition(playerHuangdi->cardSprite->getPosition().x,playerHuangdi->cardSprite->getPosition().y+playerHuangdi->cardSprite->getBoundingBox().size.height+10);
+//        this->player->fMap->addChild(playerHuangdi->fPro->hpProBg,10+i+10);
+//        
+//        playerHuangdi->fPro->hpPro->setPosition(playerHuangdi->fPro->hpProBg->getPosition());
+//        this->player->fMap->addChild(playerHuangdi->fPro->hpPro,10+i+20);
+//
+//        
+//        playerHuangdi->fPro->initNuQiPro(0);
+//        playerHuangdi->fPro->nuqiProBg->setPosition(playerHuangdi->cardSprite->getPosition().x,playerHuangdi->cardSprite->getPosition().y+playerHuangdi->cardSprite->getBoundingBox().size.height+5);
+//        this->player->fMap->addChild(playerHuangdi->fPro->nuqiProBg, 10+i+10);
+//        
+//        playerHuangdi->fPro->nuqiPro->setPosition(playerHuangdi->fPro->nuqiProBg->getPosition());
+//        this->player->fMap->addChild(playerHuangdi->fPro->nuqiPro,10+i+20);
+//        playerHuangdi->initFightShuXing();
+//        playerHuangdi->fPro->retain();
+//        playerHuangdi->retain();
+////        playerHuangdi->fPro->hpPro->setPosition(0, 0);
+////        playerHuangdi->fPro->hpProBg->addChild( playerHuangdi->fPro->hpPro,51);
+////        
+//        
+//       // playerHuangdi->retain();
+//        //        Vec2 position = Vec2(((MapCell*)(player->fMap->mapCellArray->objectAtIndex(i)))->position.x, ((MapCell*)(player->fMap->mapCellArray->objectAtIndex(i)))->position.y);
+//        //        ((MapCell*)(player->fMap->mapCellArray->objectAtIndex(i)))->obj = playerHuangdi;
+//        //        playerHuangdi->cardSprite->setPosition(position.x, position.y);
+//        
+//    }
     this->player->initCardStandArray();
     //   ((MapCell*)(player->fMap->mapCellArray->objectAtIndex(0)))->obj->didBeHit(100);
-    for (int i = 0; i < 8; i ++) {
-        
-        auto enemyHuangdi = HuangDiCard::create();
-        enemyHuangdi->playerName = "enemyPlayer";
-        enemyHuangdi->initCardSprite("longRight.png");
-        this->enemyPlay->setCardsPositon(enemyHuangdi, i, 10+i);
-        enemyHuangdi->forPlayer = this->enemyPlay;
-        
-        enemyHuangdi->fPro = FightProgress::create();
-        enemyHuangdi->fPro->hpProBg->setPosition(enemyHuangdi->cardSprite->getPosition().x,enemyHuangdi->cardSprite->getPosition().y+enemyHuangdi->cardSprite->getBoundingBox().size.height+10);
-        this->enemyPlay->fMap->addChild(enemyHuangdi->fPro->hpProBg,10+i+10);
-        
-        enemyHuangdi->fPro->hpPro->setPosition(enemyHuangdi->fPro->hpProBg->getPosition());
-        this->enemyPlay->fMap->addChild(enemyHuangdi->fPro->hpPro,10+i+20);
-        
-        enemyHuangdi->fPro->initNuQiPro(0);
-        enemyHuangdi->fPro->nuqiProBg->setPosition(enemyHuangdi->cardSprite->getPosition().x,enemyHuangdi->cardSprite->getPosition().y+enemyHuangdi->cardSprite->getBoundingBox().size.height+5);
-        this->enemyPlay->fMap->addChild(enemyHuangdi->fPro->nuqiProBg, 10+i+10);
-        
-        enemyHuangdi->fPro->nuqiPro->setPosition(enemyHuangdi->fPro->nuqiProBg->getPosition());
-        this->enemyPlay->fMap->addChild(enemyHuangdi->fPro->nuqiPro,10+i+20);
-        
-        enemyHuangdi->fPro->retain();
-        enemyHuangdi->retain();
-       // enemyHuangdi->retain();
-        //        Vec2 position = Vec2(((MapCell*)(enemy->fMap->mapCellArray->objectAtIndex(i)))->position.x, ((MapCell*)(enemy->fMap->mapCellArray->objectAtIndex(i)))->position.y);
-        //
-        //        enemyHuangdi->cardSprite->setPosition(position.x, position.y);
-        
-        //   enemy->fMap->addChild(enemyHuangdi->cardSprite,10);
-        
-    }
+//    for (int i = 0; i < 8; i ++) {
+//        
+//        auto enemyHuangdi = ChangECard::create();
+//        enemyHuangdi->playerName = "enemyPlayer";
+//        enemyHuangdi->initCardSprite("longRight.png");
+//        this->enemyPlay->setCardsPositon(enemyHuangdi, i, 10+i);
+//        enemyHuangdi->forPlayer = this->enemyPlay;
+//        
+//        enemyHuangdi->fPro = FightProgress::create();
+//        enemyHuangdi->fPro->hpProBg->setPosition(enemyHuangdi->cardSprite->getPosition().x,enemyHuangdi->cardSprite->getPosition().y+enemyHuangdi->cardSprite->getBoundingBox().size.height+10);
+//        this->enemyPlay->fMap->addChild(enemyHuangdi->fPro->hpProBg,10+i+10);
+//        
+//        enemyHuangdi->fPro->hpPro->setPosition(enemyHuangdi->fPro->hpProBg->getPosition());
+//        this->enemyPlay->fMap->addChild(enemyHuangdi->fPro->hpPro,10+i+20);
+//        
+//        enemyHuangdi->fPro->initNuQiPro(0);
+//        enemyHuangdi->fPro->nuqiProBg->setPosition(enemyHuangdi->cardSprite->getPosition().x,enemyHuangdi->cardSprite->getPosition().y+enemyHuangdi->cardSprite->getBoundingBox().size.height+5);
+//        this->enemyPlay->fMap->addChild(enemyHuangdi->fPro->nuqiProBg, 10+i+10);
+//        
+//        enemyHuangdi->fPro->nuqiPro->setPosition(enemyHuangdi->fPro->nuqiProBg->getPosition());
+//        this->enemyPlay->fMap->addChild(enemyHuangdi->fPro->nuqiPro,10+i+20);
+//        
+//        enemyHuangdi->fPro->retain();
+//        enemyHuangdi->retain();
+//       // enemyHuangdi->retain();
+//        //        Vec2 position = Vec2(((MapCell*)(enemy->fMap->mapCellArray->objectAtIndex(i)))->position.x, ((MapCell*)(enemy->fMap->mapCellArray->objectAtIndex(i)))->position.y);
+//        //
+//        //        enemyHuangdi->cardSprite->setPosition(position.x, position.y);
+//        
+//        //   enemy->fMap->addChild(enemyHuangdi->cardSprite,10);
+//        
+//    }
+    this->enemyPlay->initTackCard(HouYiCard::create(), "xuanwu_right1.png", 0, "enemyPlayer");
+    this->enemyPlay->initTackCard(HouYiCard::create(), "xingtian_right1.png", 3, "enemyPlayer");
+    this->enemyPlay->initTackCard(HouYiCard::create(), "change_right1.png", 5, "enemyPlayer");
+    this->enemyPlay->initTackCard(HouYiCard::create(), "fengbo_right1.png", 6, "enemyPlayer");
+    this->enemyPlay->initTackCard(HouYiCard::create(), "fenghou_right1.png", 9, "enemyPlayer");
+    this->enemyPlay->initTackCard(HouYiCard::create(), "suanyu_right1.png", 10, "enemyPlayer");
+    this->enemyPlay->initTackCard(HouYiCard::create(), "taotie_right1.png", 12, "enemyPlayer");
+    this->enemyPlay->initTackCard(HouYiCard::create(), "houyi_right1.png", 15, "enemyPlayer");
     this->enemyPlay->initCardStandArray();
     
 //    Sprite* ttt = Sprite::create("taotieLeft.png");

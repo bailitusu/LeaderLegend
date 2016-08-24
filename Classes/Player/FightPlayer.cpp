@@ -42,6 +42,30 @@ void FightPlayer::initCardStandArray() {
     }
 }
 
+void FightPlayer::initTackCard(Card* card, std::string imageName, int standIndex, std::string playerName) {
+    card->initCardSprite(imageName);
+    card->playerName = playerName;
+    
+    this->setCardsPositon(card, standIndex,standIndex*10);
+    card->forPlayer = this;
+    card->fPro = FightProgress::create();
+    card->fPro->hpProBg->setPosition(card->cardSprite->getPosition().x,card->cardSprite->getPosition().y+card->cardSprite->getBoundingBox().size.height+10);
+    this->fMap->addChild(card->fPro->hpProBg,standIndex*10+10);
+    
+    card->fPro->hpPro->setPosition(card->fPro->hpProBg->getPosition());
+    this->fMap->addChild(card->fPro->hpPro,standIndex*10+20);
+    
+    
+    card->fPro->initNuQiPro(0);
+    card->fPro->nuqiProBg->setPosition(card->cardSprite->getPosition().x,card->cardSprite->getPosition().y+card->cardSprite->getBoundingBox().size.height+5);
+    this->fMap->addChild(card->fPro->nuqiProBg, standIndex*10+10);
+    
+    card->fPro->nuqiPro->setPosition(card->fPro->nuqiProBg->getPosition());
+    this->fMap->addChild(card->fPro->nuqiPro,standIndex*10+20);
+    card->initFightShuXing();
+    card->fPro->retain();
+    card->retain();
 
+}
 
 

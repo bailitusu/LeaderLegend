@@ -136,9 +136,43 @@ void FightMap::initMapCell(int id, float orginY, int lineNum, std::string direct
     mapCellArray.pushBack(cell);
 }
 
+Vector<MapCell*> FightMap::hitNineCell(int hitCellIndex) {
+    Vector<MapCell*> tempVector;
+    int paiNum = hitCellIndex/4;
+    int hitCellIndexArray[9] = {hitCellIndex-4-1,hitCellIndex-4,hitCellIndex-4+1,hitCellIndex-1,hitCellIndex,hitCellIndex+1,hitCellIndex+4-1,hitCellIndex+4,hitCellIndex+4+1};
+   // for (int i = 0; i < mapCellArray.size(); i++) {
+        for (int j = 0; j < 9; j++) {
+            if(hitCellIndexArray[j] >= 0 && hitCellIndexArray[j] <= 15) {
+                if (j < 3) {
+                    if(hitCellIndexArray[j]/4 == paiNum-1) {
+                        if(mapCellArray.at(hitCellIndexArray[j])->obj != NULL) {
+                            tempVector.pushBack(mapCellArray.at(hitCellIndexArray[j]));
+                        }
+                    }
+                }
+                if(j >= 3 && j < 6) {
+                    if(hitCellIndexArray[j]/4 == paiNum) {
+                        if(mapCellArray.at(hitCellIndexArray[j])->obj != NULL) {
+                            tempVector.pushBack(mapCellArray.at(hitCellIndexArray[j]));
+                        }
+                    }
+                }else {
+                    if(hitCellIndexArray[j]/4 == paiNum+1) {
+                        if(mapCellArray.at(hitCellIndexArray[j])->obj != NULL) {
+                            tempVector.pushBack(mapCellArray.at(hitCellIndexArray[j]));
+                        }
+                    }
+                }
+            }
+        }
+   // }
+    return tempVector;
+}
 
-
-
+int jiSuanPaiNum(int cellIndex) {
+    
+    return cellIndex/4;
+}
 
 
 

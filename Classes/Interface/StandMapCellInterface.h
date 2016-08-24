@@ -10,13 +10,13 @@
 #define StandMapCellInterface_h
 
 #include "cocos2d.h"
-
+class Card;
 class StandMapCellInterface {
     
     
 public:
     //int HP;
-    virtual void didBeHit(float hitValue) = 0;
+    virtual void didBeHit(Card* fromCard) = 0;
 };
 
 #endif /* StandMapCellInterface_hpp */

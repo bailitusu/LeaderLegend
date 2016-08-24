@@ -30,6 +30,7 @@ public:
     
     void setCardsPositon(Card *card, int index, int zPoint);
     void initCardStandArray();
+    void initTackCard(Card* card, std::string imageName, int standIndex, std::string playerName);
 };
 
 #endif /* FightPlayer_h */

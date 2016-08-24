@@ -21,13 +21,15 @@ public:
     FightPlayer* enemyPlayer;
     int playerIndex;
     int enemyIndex;
-    
+    int roundNum;
     CREATE_FUNC(FightField);
     virtual bool init();
     void playerNextRun();
     void enemyPlayerNextRun();
     void startFight();
     void netxRound();
+    
+    bool isHasCard(FightPlayer* tempPlayer);
 };
 
 #endif /* FightField_h */

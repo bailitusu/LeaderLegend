@@ -8,7 +8,7 @@
 
 #ifndef AttackRule_h
 #define AttackRule_h
-
+#define AttackError 100;
 #include "cocos2d.h"
 #include "FightMap.h"
 USING_NS_CC;
