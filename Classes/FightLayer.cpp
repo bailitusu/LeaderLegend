@@ -20,6 +20,8 @@
 #include "ChangECard.h"
 #include "TaoTieCard.h"
 #include "XingTianCard.h"
+#include "XuanWuCard.h"
+#include "FengBoCard.h"
 Scene* FightLayer::createScene() {
     
     Scene* scene = Scene::create();
@@ -61,20 +63,20 @@ void FightLayer::initFightLayer() {
     
     this->player->enemy = this->enemyPlay;
     this->enemyPlay->enemy = this->player;
-    this->player->xiangong = 10;
+    this->player->xiangong = 20;
     this->enemyPlay->xiangong = 15;
     
     this->player->retain();
     this->enemyPlay->retain();
     
-    this->player->initTackCard(HouYiCard::create(), "xuanwu_left1.png", 0, "player");
-    this->player->initTackCard(HouYiCard::create(), "xingtian_left1.png", 3, "player");
-    this->player->initTackCard(HouYiCard::create(), "change_left1.png", 5, "player");
-    this->player->initTackCard(HouYiCard::create(), "fengbo_left1.png", 6, "player");
-    this->player->initTackCard(HouYiCard::create(), "fenghou_left1.png", 9, "player");
-    this->player->initTackCard(HouYiCard::create(), "suanyu_left1.png", 10, "player");
-    this->player->initTackCard(HouYiCard::create(), "taotie_left1.png", 12, "player");
-    this->player->initTackCard(HouYiCard::create(), "houyi_left1.png", 15, "player");
+    this->player->initTackCard(XuanWuCard::create(), "xuanwu_left1.png", 0, "player");
+    this->player->initTackCard(XuanWuCard::create(), "xingtian_left1.png", 3, "player");
+    this->player->initTackCard(FengBoCard::create(), "change_left1.png", 5, "player");
+    this->player->initTackCard(XuanWuCard::create(), "fengbo_left1.png", 6, "player");
+    this->player->initTackCard(XuanWuCard::create(), "fenghou_left1.png", 9, "player");
+    this->player->initTackCard(XuanWuCard::create(), "suanyu_left1.png", 10, "player");
+    this->player->initTackCard(XuanWuCard::create(), "taotie_left1.png", 12, "player");
+    this->player->initTackCard(XuanWuCard::create(), "houyi_left1.png", 15, "player");
 //    for (int i = 0; i < 8; i ++) {
 //        
 //        auto playerHuangdi = HouYiCard::create();
@@ -144,14 +146,14 @@ void FightLayer::initFightLayer() {
 //        //   enemy->fMap->addChild(enemyHuangdi->cardSprite,10);
 //        
 //    }
-    this->enemyPlay->initTackCard(HouYiCard::create(), "xuanwu_right1.png", 0, "enemyPlayer");
-    this->enemyPlay->initTackCard(HouYiCard::create(), "xingtian_right1.png", 3, "enemyPlayer");
+    this->enemyPlay->initTackCard(XuanWuCard::create(), "xuanwu_right1.png", 0, "enemyPlayer");
+    this->enemyPlay->initTackCard(XuanWuCard::create(), "xingtian_right1.png", 3, "enemyPlayer");
     this->enemyPlay->initTackCard(HouYiCard::create(), "change_right1.png", 5, "enemyPlayer");
-    this->enemyPlay->initTackCard(HouYiCard::create(), "fengbo_right1.png", 6, "enemyPlayer");
-    this->enemyPlay->initTackCard(HouYiCard::create(), "fenghou_right1.png", 9, "enemyPlayer");
-    this->enemyPlay->initTackCard(HouYiCard::create(), "suanyu_right1.png", 10, "enemyPlayer");
-    this->enemyPlay->initTackCard(HouYiCard::create(), "taotie_right1.png", 12, "enemyPlayer");
-    this->enemyPlay->initTackCard(HouYiCard::create(), "houyi_right1.png", 15, "enemyPlayer");
+    this->enemyPlay->initTackCard(XuanWuCard::create(), "fengbo_right1.png", 6, "enemyPlayer");
+    this->enemyPlay->initTackCard(XuanWuCard::create(), "fenghou_right1.png", 9, "enemyPlayer");
+    this->enemyPlay->initTackCard(XuanWuCard::create(), "suanyu_right1.png", 10, "enemyPlayer");
+    this->enemyPlay->initTackCard(XuanWuCard::create(), "taotie_right1.png", 12, "enemyPlayer");
+    this->enemyPlay->initTackCard(XuanWuCard::create(), "houyi_right1.png", 15, "enemyPlayer");
     this->enemyPlay->initCardStandArray();
     
 //    Sprite* ttt = Sprite::create("taotieLeft.png");

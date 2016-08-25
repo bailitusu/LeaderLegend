@@ -100,33 +100,33 @@ void FightMap::initMapCell(int id, float orginY, int lineNum, std::string direct
     switch (lineNum) {
         case 3:
             if (direction.compare("left") == 0) {
-                cell->initCell(Vec2(MapOneLineFun(orginY), orginY-10), id);
+                cell->initCell(Vec2(MapOneLineFun(orginY), orginY-15), id);
             }else if (direction.compare("right") == 0) {
-                cell->initCell(Vec2(this->getBoundingBox().size.width-MapOneLineFun(orginY), orginY-10), id);
+                cell->initCell(Vec2(this->getBoundingBox().size.width-MapOneLineFun(orginY), orginY-15), id);
             }
             
             break;
         case 2:
             if (direction.compare("left") == 0) {
-                cell->initCell(Vec2(MapTwoLineFun(orginY), orginY-10), id);
+                cell->initCell(Vec2(MapTwoLineFun(orginY), orginY-15), id);
             }else if (direction.compare("right") == 0) {
-                cell->initCell(Vec2(this->getBoundingBox().size.width-MapTwoLineFun(orginY), orginY-10), id);
+                cell->initCell(Vec2(this->getBoundingBox().size.width-MapTwoLineFun(orginY), orginY-15), id);
             }
             //cell->initCell(Vec2(MapTwoLineFun(orginY), orginY-10), id);
             break;
         case 1:
             if (direction.compare("left") == 0) {
-                cell->initCell(Vec2(MapThirdLineFun(orginY), orginY-10), id);
+                cell->initCell(Vec2(MapThirdLineFun(orginY), orginY-15), id);
             }else if (direction.compare("right") == 0) {
-                cell->initCell(Vec2(this->getBoundingBox().size.width-MapThirdLineFun(orginY), orginY-10), id);
+                cell->initCell(Vec2(this->getBoundingBox().size.width-MapThirdLineFun(orginY), orginY-15), id);
             }
            // cell->initCell(Vec2(MapThirdLineFun(orginY), orginY-10), id);
             break;
         case 0:
             if (direction.compare("left") == 0) {
-                cell->initCell(Vec2(MapFourLineFun(orginY), orginY-10), id);
+                cell->initCell(Vec2(MapFourLineFun(orginY), orginY-15), id);
             }else if (direction.compare("right") == 0) {
-                cell->initCell(Vec2(this->getBoundingBox().size.width-MapFourLineFun(orginY), orginY-10), id);
+                cell->initCell(Vec2(this->getBoundingBox().size.width-MapFourLineFun(orginY), orginY-15), id);
             }
            // cell->initCell(Vec2(MapFourLineFun(orginY), orginY-10), id);
         default:
@@ -166,6 +166,27 @@ Vector<MapCell*> FightMap::hitNineCell(int hitCellIndex) {
             }
         }
    // }
+    return tempVector;
+}
+
+Vector<MapCell*> FightMap::hitHengPaiCell(int hitCellIndex) {
+    Vector<MapCell*> tempVector;
+    int paiNum = hitCellIndex / 4;
+    for (int i = paiNum*4; i < paiNum*4+4; i++) {
+        if (this->mapCellArray.at(i)->obj != NULL) {
+            tempVector.pushBack(this->mapCellArray.at(i));
+        }
+    }
+    return tempVector;
+}
+
+Vector<MapCell*> FightMap::hitAllCell() {
+    Vector<MapCell*> tempVector;
+    for (int i = 0; i < this->mapCellArray.size(); i++) {
+        if (this->mapCellArray.at(i)->obj != NULL) {
+            tempVector.pushBack(this->mapCellArray.at(i));
+        }
+    }
     return tempVector;
 }
 

@@ -1,25 +1,25 @@
 //
-//  GeDangBuff.hpp
+//  BaoJiBuff.hpp
 //  OctLegend
 //
-//  Created by zc on 16/8/22.
+//  Created by zc on 16/8/24.
 //
 //
 
-#ifndef GeDangBuff_h
-#define GeDangBuff_h
+#ifndef BaoJiBuff_h
+#define BaoJiBuff_h
 
 #include "cocos2d.h"
 #include "Buff.h"
 
 class Card;
-class GeDangBuff : public Buff {
+class BaojiBuff : public Buff {
     
 public:
-    CREATE_FUNC(GeDangBuff);
+    CREATE_FUNC(BaojiBuff);
     virtual bool init();
-   
     virtual void addBuff(Card* card);
     virtual void decreaseBuff(Card* card);
 };
-#endif /* GeDangBuff_h */
+
+#endif /* BaoJiBuff_hpp */

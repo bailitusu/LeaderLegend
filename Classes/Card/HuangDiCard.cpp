@@ -31,7 +31,7 @@ bool HuangDiCard::init() {
 //    CommonFunc::setSpriteSize(cardSprite, screenSize.width*0.075);
 //}
 
-void HuangDiCard::didBeHit(Card* fromCard) {
+void HuangDiCard::didBeHit(Card* fromCard, std::string hitKinds) {
   //  log("huangdi hart %d",hitValue);
 
     float percent = (1 - (HP-fromCard->hitValue)/this->MaxHP) * 100;
@@ -118,7 +118,7 @@ void HuangDiCard::actionBlock() {
     this->fPro->nuqiProBg->setVisible(true);
     
     int cellNum = AttackRule::Rule(this->cellIndex, 1, this->forEnemy->fMap);
-    ((Card*)(this->forEnemy->fMap->mapCellArray.at(cellNum))->obj)->didBeHit(this);
+    ((Card*)(this->forEnemy->fMap->mapCellArray.at(cellNum))->obj)->didBeHit(this,"wuli");
     
     
     

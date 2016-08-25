@@ -23,6 +23,8 @@ public:
     void creatMap(std::string direction);
     Vector<MapCell*> mapCellArray;
     Vector<MapCell*> hitNineCell(int hitCellIndex);
+    Vector<MapCell*> hitHengPaiCell(int hitCellIndex);
+    Vector<MapCell*> hitAllCell();
     Sprite* map;
     CREATE_FUNC(FightMap);
     virtual bool init();

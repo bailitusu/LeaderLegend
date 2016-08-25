@@ -14,11 +14,11 @@ bool Buff::init() {
     return true;
 }
 
-void Buff::add(Card *card) {
+void Buff::addBuff(Card *card) {
 
 }
 
-void Buff::decrease(Card *card) {
+void Buff::decreaseBuff(Card *card) {
     
 }
 

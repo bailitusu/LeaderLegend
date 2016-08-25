@@ -8,27 +8,32 @@
 
 #include "XingTianCard.h"
 
-
 #include "FightPlayer.h"
 #include "AttackRule.h"
 #include "Setting.h"
 #include "ActionWait.h"
 #include "Card.h"
 #include "GeDangBuff.h"
+#include "CommonFunc.h"
+#include "Setting.h"
 bool XingTianCard::init() {
     this->cellIndex = 0;
-    this->HP = 20;
-    this->MaxHP = 20;
-    this->hitRuleNum = 1;
+    this->HP = 20000;
+    
+    this->hitRuleNum = hitRuleType.jinZhan;
     this->cardName = "xingtian";
     
-    this->wuLi = 20;
-    this->tongShuai = 10;
-    this->zhiLi = 10;
-    this->mingJie = 20;
-    this->yunQi = 20;
+    this->wuLi = 90;
+    this->tongShuai = 88;
+    this->zhiLi = 66;
+    this->mingJie = 85;
+    this->yunQi = 65;
+    this->gongJi = 17000;
+
+    this->faLi = 17000;
+    this->fangYu = 20000;
     
-    this->wuliHart = 10;
+    this->wuliHart =1;
     this->wuliMianShang = 10;
     this->fashuHart = 10;
     this->fashuMianShang = 10;
@@ -37,15 +42,20 @@ bool XingTianCard::init() {
     this->baoJi = 10;
     this->mianBao = 10;
     this->lianJi = 1;
-    this->cardType = bingType.jinZhan;
+    this->bingKinds = bingZhongType.fangYu;
     this->hitValue = 2;
-    this->geDang = 10;
+    this->hitLevel = 0.8;
+    //this->geDang = 0.15;
+    this->cardLevel = 60;
     return true;
 }
 
-void XingTianCard::didBeHit(Card* fromCard) {
+void XingTianCard::didBeHit(Card* fromCard, std::string hitKinds) {
     float hartValue = fromCard->hitValue;
-    if (fromCard->cardType == bingType.gongJian) {
+    if (CommonFunc::isInPercent(this->geDang)) {
+        hartValue = hartValue*0.4;
+    }
+    if (fromCard->bingKinds == bingZhongType.yuanCheng) {
         hartValue = hartValue*0.2;
     }
    // printf("%d xingtian %f\n",this->cellIndex,this->geDang);
@@ -61,6 +71,10 @@ void XingTianCard::didBeHit(Card* fromCard) {
         return;
     }
 
+}
+
+void XingTianCard::initCharacter() {
+    this->geDang = 0.15;
 }
 
 void XingTianCard::running(FightPlayer *enemyTemp) {
@@ -107,7 +121,7 @@ void XingTianCard::nuQiManage() {
 void XingTianCard::hitAction() {
     int cellNum = AttackRule::Rule(this->cellIndex, this->hitRuleNum, this->forEnemy->fMap);
     if (((Card*)(this->forEnemy->fMap->mapCellArray.at(cellNum))->obj) != NULL) {
-        ((Card*)(this->forEnemy->fMap->mapCellArray.at(cellNum))->obj)->didBeHit(this);
+        ((Card*)(this->forEnemy->fMap->mapCellArray.at(cellNum))->obj)->didBeHit(this,"wuli");
 //        if (((Card*)(this->forEnemy->fMap->mapCellArray.at(cellNum))->obj) != NULL) {
 //            if (((Card*)(this->forEnemy->fMap->mapCellArray.at(cellNum))->obj)->fPro->nuqiPro->getPercentage() < 100) {
 //                ((Card*)(this->forEnemy->fMap->mapCellArray.at(cellNum))->obj)->fPro->setNuQiProPrecent(34+((Card*)(this->forEnemy->fMap->mapCellArray.at(cellNum))->obj)->fPro->nuqiPro->getPercentage());
@@ -122,27 +136,6 @@ void XingTianCard::hitAction() {
     
 }
 
-//void XingTianCard::actionBlock() {
-//    
-//    
-//    this->fPro->hpPro->setVisible(true);
-//    this->fPro->hpProBg->setVisible(true);
-//    this->fPro->nuqiPro->setVisible(true);
-//    this->fPro->nuqiProBg->setVisible(true);
-//    
-//    
-//    
-//    auto dispatcher = Director::getInstance()->getEventDispatcher();
-//    if (playerName.compare("player") == 0) {
-//        EventCustom event = EventCustom("enemyPlayerNextRun");
-//        //event.setUserData((void*)123);
-//        dispatcher->dispatchEvent(&event);
-//    }else if (playerName.compare("enemyPlayer") == 0) {
-//        EventCustom event = EventCustom("playerNextRun");
-//        //event.setUserData((void*)123);
-//        dispatcher->dispatchEvent(&event);
-//    }
-//}
 
 void XingTianCard::ultimateSkill() {
 //    int cellNum = AttackRule::Rule(this->cellIndex, this->hitRuleNum, this->forEnemy->fMap);
@@ -155,9 +148,9 @@ void XingTianCard::ultimateSkill() {
 //        ((Card*)(temp.at(i))->obj)->didBeHit(this);
 //    }
     auto geDangBuff = GeDangBuff::create();
-    geDangBuff->add(this);
+    geDangBuff->addBuff(this);
   //  geDangBuff->retain();
 //    this->buffArray
 //    this->geDang = this->geDang*0.15 + this->geDang;
-    this->fPro->setNuQiProPrecent(0);
+    this->decreaseNuQi(this, 3,true);
 }

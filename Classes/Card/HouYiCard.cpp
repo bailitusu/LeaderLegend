@@ -14,7 +14,7 @@ bool HouYiCard::init() {
     this->cellIndex = 0;
     this->HP = 20;
     this->MaxHP = 20;
-    this->hitRuleNum = 2;
+    this->hitRuleNum = hitRuleType.gongJian;
     this->cardName = "houyi";
     
     this->wuLi = 20;
@@ -32,7 +32,7 @@ bool HouYiCard::init() {
     this->baoJi = 10;
     this->mianBao = 10;
     this->lianJi = 1;
-    this->cardType = bingType.gongJian;
+    this->bingKinds = bingZhongType.yuanCheng;
     this->hitValue = 2;
     return true;
 }
@@ -58,7 +58,7 @@ bool HouYiCard::init() {
 void HouYiCard::running(FightPlayer *enemyTemp) {
     this->forEnemy = enemyTemp;
     
-    
+  //  printf("%dhouyi%f\n",this->cellIndex,this->mingZhong);
     auto defaultPosition = this->cardSprite->getPosition();
     int cellNum = AttackRule::Rule(this->cellIndex, this->hitRuleNum, this->forEnemy->fMap);
     
@@ -111,7 +111,7 @@ void HouYiCard::hitAction() {
     int cellNum = AttackRule::Rule(this->cellIndex, this->hitRuleNum, this->forEnemy->fMap);
     if (cellNum != 100) {
         if ((Card*)(this->forEnemy->fMap->mapCellArray.at(cellNum))->obj != NULL) {
-            ((Card*)(this->forEnemy->fMap->mapCellArray.at(cellNum))->obj)->didBeHit(this);
+            ((Card*)(this->forEnemy->fMap->mapCellArray.at(cellNum))->obj)->didBeHit(this,"wuli");
             //        if ((Card*)(this->forEnemy->fMap->mapCellArray.at(cellNum)->obj) != NULL) {
             //            if (((Card*)(this->forEnemy->fMap->mapCellArray.at(cellNum))->obj)->fPro->nuqiPro->getPercentage() < 100) {
             //                ((Card*)(this->forEnemy->fMap->mapCellArray.at(cellNum))->obj)->fPro->setNuQiProPrecent(34+((Card*)(this->forEnemy->fMap->mapCellArray.at(cellNum))->obj)->fPro->nuqiPro->getPercentage());
@@ -133,8 +133,8 @@ void HouYiCard::ultimateSkill() {
 //        if (((Card*)(temp.at(i))->obj)->fPro->nuqiPro->getPercentage() < 100) {
 //            ((Card*)(temp.at(i))->obj)->fPro->setNuQiProPrecent(100/3+((Card*)(temp.at(i))->obj)->fPro->nuqiPro->getPercentage());
 //        }
-        ((Card*)(temp.at(i))->obj)->didBeHit(this);
+        ((Card*)(temp.at(i))->obj)->didBeHit(this,"wuli");
     }
-    this->decreaseNuQi(this, 3);
+    this->decreaseNuQi(this, 3,true);
     //this->fPro->setNuQiProPrecent(0);
 }

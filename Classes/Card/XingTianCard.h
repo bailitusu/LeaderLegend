@@ -19,9 +19,9 @@ public:
     CREATE_FUNC(XingTianCard);
     virtual bool init();
     virtual void running(FightPlayer* enemyTemp);
-    virtual void didBeHit(Card* fromCard);
+    virtual void didBeHit(Card* fromCard, std::string hitKinds);
     virtual void ultimateSkill();
-
+    virtual void initCharacter();
     void nuQiManage();
     void hitAction();
    // void actionBlock();

@@ -14,7 +14,7 @@ bool TaoTieCard::init() {
     this->cellIndex = 0;
     this->HP = 20;
     this->MaxHP = 20;
-    this->hitRuleNum = 1;
+    this->hitRuleNum = hitRuleType.jinZhan;
     this->cardName = "taotie";
     
     this->wuLi = 20;
@@ -34,7 +34,7 @@ bool TaoTieCard::init() {
     this->lianJi = 1;
     this->hitValue = 2;
     this->xiXue = 2;
-    this->cardType = bingType.jinZhan;
+    this->bingKinds = bingZhongType.jinZhan;
     return true;
 }
 
@@ -113,7 +113,7 @@ void TaoTieCard::hitAction() {
     int cellNum = AttackRule::Rule(this->cellIndex, this->hitRuleNum, this->forEnemy->fMap);
     if (cellNum != 100) {
         if ((Card*)(this->forEnemy->fMap->mapCellArray.at(cellNum))->obj != NULL) {
-            ((Card*)(this->forEnemy->fMap->mapCellArray.at(cellNum))->obj)->didBeHit(this);
+            ((Card*)(this->forEnemy->fMap->mapCellArray.at(cellNum))->obj)->didBeHit(this,"wuli");
 //            if (((Card*)(this->forEnemy->fMap->mapCellArray.at(cellNum))->obj)->fPro->nuqiPro->getPercentage() < 100) {
 //                ((Card*)(this->forEnemy->fMap->mapCellArray.at(cellNum))->obj)->fPro->setNuQiProPrecent(((Card*)(this->forEnemy->fMap->mapCellArray.at(cellNum))->obj)->fPro->nuqiPro->getPercentage()-34);
 //            }
@@ -122,7 +122,7 @@ void TaoTieCard::hitAction() {
 //                this->HP = this->MaxHP;
 //            }
 //            this->fPro->hpPro->setPercentage((1-(float)this->HP/this->MaxHP)*100);
-            this->decreaseNuQi((Card*)(this->forEnemy->fMap->mapCellArray.at(cellNum)->obj), 1);
+            this->decreaseNuQi((Card*)(this->forEnemy->fMap->mapCellArray.at(cellNum)->obj), 1,false);
             this->suckBlood();
             
         }
@@ -139,13 +139,13 @@ void TaoTieCard::ultimateSkill() {
     int cellNum = AttackRule::Rule(this->cellIndex, 2, this->forEnemy->fMap);
     Vector<MapCell*> temp = this->forEnemy->fMap->hitNineCell(cellNum);
     for (int i = 0; i < temp.size(); i++) {
-        this->decreaseNuQi((Card*)(temp.at(i))->obj, 1);
+        this->decreaseNuQi((Card*)(temp.at(i))->obj, 1,false);
 //        if (((Card*)(temp.at(i))->obj)->fPro->nuqiPro->getPercentage() < 100) {
 //            ((Card*)(temp.at(i))->obj)->fPro->setNuQiProPrecent(((Card*)(temp.at(i))->obj)->fPro->nuqiPro->getPercentage()- 100/3);
 //        }
         
-        ((Card*)(temp.at(i))->obj)->didBeHit(this);
+        ((Card*)(temp.at(i))->obj)->didBeHit(this,"fashu");
     }
-    this->decreaseNuQi(this, 3);
+    this->decreaseNuQi(this, 3,true);
    // this->fPro->setNuQiProPrecent(0);
 }

@@ -16,7 +16,7 @@ class StandMapCellInterface {
     
 public:
     //int HP;
-    virtual void didBeHit(Card* fromCard) = 0;
+    virtual void didBeHit(Card* fromCard, std::string hitKinds) = 0;
 };
 
 #endif /* StandMapCellInterface_hpp */

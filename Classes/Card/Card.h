@@ -28,7 +28,7 @@ public:
     int HP;
     int MaxHP;
     virtual bool init();
-    virtual void didBeHit(Card* fromCard);
+    virtual void didBeHit(Card* fromCard, std::string hitKinds);
     virtual void runAnimation(FightPlayer* playerTemp);
     virtual void ultimateSkill();
     virtual void cardDead();
@@ -38,7 +38,7 @@ public:
     virtual void addHP(Card* card,float hpValue);
     virtual void decreaseHP(Card* card,float hpValue);
     virtual void addNuQi(Card* card,int num);
-    virtual void decreaseNuQi(Card* card,int num);
+    virtual void decreaseNuQi(Card* card,int num, bool isDaZhao);
     
     virtual void willRun(FightPlayer* enemyTemp);
     virtual void running(FightPlayer* enemyTemp);
@@ -56,14 +56,17 @@ public:
     Buff* isHaveThisBuff(std::string buffName);
     int hitRuleNum;
     
-    int cardType;
+    int bingKinds;
     int huiHe;
     float wuLi;
     float tongShuai;
     float zhiLi;
     float mingJie;
     float yunQi;
-    
+    float gongJi;
+    float faLi;
+    float fangYu;
+
     
     float wuliHart;
     float wuliMianShang;
@@ -82,7 +85,8 @@ public:
     
     float zhiLiao;
     float xiXue;
-    
+    float hitLevel;
+    int cardLevel;
     float hitValue;
 };
 

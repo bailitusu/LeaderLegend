@@ -62,7 +62,7 @@ void FightPlayer::initTackCard(Card* card, std::string imageName, int standIndex
     
     card->fPro->nuqiPro->setPosition(card->fPro->nuqiProBg->getPosition());
     this->fMap->addChild(card->fPro->nuqiPro,standIndex*10+20);
-    card->initFightShuXing();
+   // card->initFightShuXing();
     card->fPro->retain();
     card->retain();
 

@@ -17,10 +17,11 @@ class Buff : public Ref {
 public:
     CREATE_FUNC(Buff);
     virtual bool init();
-    virtual void add(Card* card);
-    virtual void decrease(Card* card);
+    virtual void addBuff(Card* card);
+    virtual void decreaseBuff(Card* card);
     virtual bool thisBuffisEffect();
     int huiHeNum;
+    float defaultValue;
     std::string buffName;
 };
 

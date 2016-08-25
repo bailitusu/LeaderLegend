@@ -10,10 +10,16 @@
 #define CommonFunc_h
 
 #include "cocos2d.h"
-
+class Card;
 class CommonFunc {
     
 public:
     static void setSpriteSize(cocos2d::Sprite* sp, float width);
+    static bool isInPercent(float percent);
+    static float reckonHitValue(Card* gongJiCard, Card* fangShouCard, std::string hitType);
+    static float reckonShanBiPercent(Card* gongJiCard, Card* fangShouCard, std::string hitType);
+    static float reckonBaoJiPercent(Card* gongJiCard, Card* fangShouCard);
+    static float reckonZhiLiaoValue(Card* zhiLiaoCard, Card* beZhiLiaoCard);
+    //static void setSpriteSizeHeight(cocos2d::Sprite* sp, float width);
 };
 #endif /* CommonFunc_h */

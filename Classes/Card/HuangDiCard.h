@@ -17,7 +17,7 @@ class HuangDiCard: public Card {
 public:
     CREATE_FUNC(HuangDiCard);
     virtual bool init();
-    virtual void didBeHit(Card* fromCard);
+    virtual void didBeHit(Card* fromCard, std::string hitKinds);
     virtual void runAnimation(FightPlayer* playerTemp);
     virtual void ultimateSkill();
     virtual void cardDead();

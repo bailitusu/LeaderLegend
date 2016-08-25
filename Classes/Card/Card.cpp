@@ -15,7 +15,7 @@ bool Card::init() {
     return true;
 }
 
-void Card::didBeHit(Card* fromCard) {
+void Card::didBeHit(Card* fromCard, std::string hitKinds) {
     
     this->decreaseHP(this,fromCard->hitValue);
     if (this->HP <= 0) {
@@ -37,11 +37,13 @@ void Card::addHP(Card* card,float hpValue) {
 
 void Card::decreaseHP(Card* card,float hpValue) {
     if (card != NULL) {
-        float percent = (1 - (card->HP-hpValue)/card->MaxHP) * 100;
+        //float percent = (1 - (card->HP-hpValue)/card->MaxHP) * 100;
         //  float aaa = this->fPro->hpPro->getPercentage();
-        ProgressFromTo* ac = ProgressFromTo::create(1.0, card->fPro->hpPro->getPercentage(), percent);
-        card->fPro->hpPro->runAction(ac);
+//        ProgressFromTo* ac = ProgressFromTo::create(1.0, card->fPro->hpPro->getPercentage(), percent);
+//        card->fPro->hpPro->runAction(ac);
+        
         card->HP = card->HP - hpValue;
+        card->fPro->hpPro->setPercentage((1-(float)card->HP/card->MaxHP)*100);
     }
 
 }
@@ -68,21 +70,29 @@ void Card::addNuQi(Card* card,int num) {
 
 }
 
-void Card::decreaseNuQi(Card* card,int num) {
+void Card::decreaseNuQi(Card* card,int num, bool isDaZhao) {
     if (card != NULL) {
         if (card->fPro->nuqiPro->getPercentage() > 0) {
-            switch (num) {
-                case 1:
-                    card->fPro->setNuQiProPrecent(card->fPro->nuqiPro->getPercentage()-34);
-                    break;
-                case 2:
-                    card->fPro->setNuQiProPrecent(card->fPro->nuqiPro->getPercentage()-66);
-                    break;
-                case 3:
-                    card->fPro->setNuQiProPrecent(card->fPro->nuqiPro->getPercentage()-100);
-                    break;
-                default:
-                    break;
+            bool hasZhenfen = false;
+            for (int i = 0; i < card->buffArray.size(); i++) {
+                if (card->buffArray.at(i)->buffName.compare("zhenfen") == 0) {
+                    hasZhenfen = true;
+                }
+            }
+            if (hasZhenfen == false || isDaZhao == true) {
+                switch (num) {
+                    case 1:
+                        card->fPro->setNuQiProPrecent(card->fPro->nuqiPro->getPercentage()-34);
+                        break;
+                    case 2:
+                        card->fPro->setNuQiProPrecent(card->fPro->nuqiPro->getPercentage()-66);
+                        break;
+                    case 3:
+                        card->fPro->setNuQiProPrecent(card->fPro->nuqiPro->getPercentage()-100);
+                        break;
+                    default:
+                        break;
+                }
             }
             
         }
@@ -92,8 +102,8 @@ void Card::decreaseNuQi(Card* card,int num) {
 void Card::willRun(FightPlayer* enemyTemp) {
     if (this->isHaveThisBuff("gedang")) {
         if(this->isHaveThisBuff("gedang")->thisBuffisEffect() == false) {
-            
-            this->isHaveThisBuff("gedang")->decrease(this);
+            this->geDang = this->isHaveThisBuff("gedang")->defaultValue;
+            this->buffArray.eraseObject(this->isHaveThisBuff("gedang"));
             
         }
     }
@@ -104,7 +114,29 @@ void Card::running(FightPlayer* enemyTemp) {
 }
 
 void Card::endRun(FightPlayer* enemyTemp) {
+    if (this->isHaveThisBuff("mingzhong")) {
+        if(this->isHaveThisBuff("mingzhong")->thisBuffisEffect() == false) {
+            this->mingZhong = this->isHaveThisBuff("mingzhong")->defaultValue;
+            this->buffArray.eraseObject(this->isHaveThisBuff("mingzhong"));
+            
+        }
+    }
     
+    if (this->isHaveThisBuff("shanbi")) {
+        if(this->isHaveThisBuff("shanbi")->thisBuffisEffect() == false) {
+            this->shanBi = this->isHaveThisBuff("shanbi")->defaultValue;
+            this->buffArray.eraseObject(this->isHaveThisBuff("shanbi"));
+            
+        }
+    }
+    
+    if (this->isHaveThisBuff("mianbao")) {
+        if(this->isHaveThisBuff("mianbao")->thisBuffisEffect() == false) {
+            this->shanBi = this->isHaveThisBuff("mianbao")->defaultValue;
+            this->buffArray.eraseObject(this->isHaveThisBuff("mianbao"));
+            
+        }
+    }
 }
 
 void Card::runAnimation(FightPlayer* playerTemp) {
@@ -147,19 +179,22 @@ void Card::cardDead() {
     this->fPro->hpProBg->setVisible(false);
     this->fPro->nuqiPro->setVisible(false);
     this->fPro->nuqiProBg->setVisible(false);
+    this->buffArray.clear();
     this->cardSprite->removeFromParent();
 }
+
 void Card::initFightShuXing() {
-    this->wuliHart = this->wuliHart*0.0075*this->wuLi+this->wuliHart;
-    this->wuliMianShang = this->wuLi*0.0025*this->wuliMianShang + this->tongShuai*0.005*this->wuliMianShang + this->wuliMianShang;
-    this->fashuHart = this->fashuHart*0.075*this->zhiLi+this->fashuHart;
-    this->fashuMianShang = this->zhiLi*0.0025*this->wuliMianShang + this->tongShuai*0.005*this->wuliMianShang + this->fashuMianShang;
-    this->mingZhong = this->mingZhong*0.0025*this->mingJie + this->mingZhong;
-    this->baoJi = this->baoJi*0.005625*this->mingJie+this->baoJi;
-    this->shanBi = this->shanBi*0.001875*this->yunQi + this->shanBi;
-    this->mianBao = this->mianBao*0.00625*this->yunQi + this->mianBao;
+    this->wuliHart = this->wuLi*0.0075;
+    this->wuliMianShang = this->wuLi*0.0025 + this->tongShuai*0.005;
+    this->fashuHart = this->zhiLi*0.075;
+    this->fashuMianShang = this->zhiLi*0.0025 + this->tongShuai*0.005;
+    this->mingZhong = this->mingJie*0.0025;
+    this->baoJi = this->mingJie*0.003125;
+    this->shanBi = this->yunQi*0.001875;
+    this->mianBao = this->yunQi*0.003125;
     this->xianGong = this->mingJie*0.75+this->yunQi*0.25;
-    
+    this->MaxHP = this->HP;
+    this->initCharacter();
 }
 
 void Card::initCharacter() {
@@ -168,7 +203,7 @@ void Card::initCharacter() {
 
 Buff* Card::isHaveThisBuff(std::string buffName) {
     for (int i = 0; i < this->buffArray.size(); i++) {
-        if (this->buffArray.at(i)->buffName.compare("gedang") == 0) {
+        if (this->buffArray.at(i)->buffName.compare(buffName) == 0) {
             return this->buffArray.at(i);
         }
     }

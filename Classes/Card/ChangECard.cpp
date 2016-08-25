@@ -9,11 +9,12 @@
 #include "ChangECard.h"
 #include "FightPlayer.h"
 #include "AttackRule.h"
+#include "Setting.h"
 bool ChangECard::init() {
     this->cellIndex = 0;
     this->HP = 20;
     this->MaxHP = 20;
-    this->hitRuleNum = 2;
+    this->hitRuleNum = hitRuleType.faShi;
     this->cardName = "change";
     
     this->wuLi = 20;
@@ -32,6 +33,7 @@ bool ChangECard::init() {
     this->mianBao = 10;
     this->lianJi = 1;
     this->hitValue = 0;
+    this->bingKinds = bingZhongType.guWu;
     return true;
 }
 
@@ -119,6 +121,6 @@ void ChangECard::ultimateSkill() {
         }
     }
     
-    this->decreaseNuQi(this, 3);
+    this->decreaseNuQi(this, 3,true);
 //    this->fPro->setNuQiProPrecent(0);
 }

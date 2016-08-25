@@ -15,21 +15,30 @@ bool GeDangBuff::init() {
     return true;
 }
 
-void GeDangBuff::add(Card *card) {
+void GeDangBuff::addBuff(Card *card) {
     if (card->isHaveThisBuff("gedang")) {
       //  printf("-------------%d--------------",card->isHaveThisBuff("gedang")->huiHeNum);
         card->isHaveThisBuff("gedang")->huiHeNum = 1;
         return;
     }
-    this->defaultGeDang = card->geDang;
-    card->geDang = card->geDang*0.5+card->geDang;
+    this->defaultValue = card->geDang;
+    card->geDang = card->geDang+0.5;
     card->buffArray.pushBack(this);
 }
 
-void GeDangBuff::decrease(Card *card) {
+void GeDangBuff::decreaseBuff(Card *card) {
+    
+    if (card->isHaveThisBuff("gedang")) {
+        //  printf("-------------%d--------------",card->isHaveThisBuff("gedang")->huiHeNum);
+        card->isHaveThisBuff("gedang")->huiHeNum = 1;
+        return;
+    }
+    this->defaultValue = card->geDang;
+    card->geDang = card->geDang-0.5;
+    card->buffArray.pushBack(this);
  
-    card->geDang = this->defaultGeDang;
-    card->buffArray.eraseObject(this);
+//    card->geDang = this->defaultGeDang;
+//    card->buffArray.eraseObject(this);
   //  this->release();
   //  printf("%d---------%f/n",card->cellIndex,card->geDang);
 }

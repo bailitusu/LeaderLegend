@@ -1,25 +1,24 @@
 //
-//  GeDangBuff.hpp
+//  ZhenFenBuff.hpp
 //  OctLegend
 //
-//  Created by zc on 16/8/22.
+//  Created by zc on 16/8/24.
 //
 //
 
-#ifndef GeDangBuff_h
-#define GeDangBuff_h
+#ifndef ZhenFenBuff_h
+#define ZhenFenBuff_h
 
 #include "cocos2d.h"
 #include "Buff.h"
 
 class Card;
-class GeDangBuff : public Buff {
+class ZhenFenBuff : public Buff {
     
 public:
-    CREATE_FUNC(GeDangBuff);
+    CREATE_FUNC(ZhenFenBuff);
     virtual bool init();
-   
     virtual void addBuff(Card* card);
     virtual void decreaseBuff(Card* card);
 };
-#endif /* GeDangBuff_h */
+#endif /* ZhenFenBuff_h */
