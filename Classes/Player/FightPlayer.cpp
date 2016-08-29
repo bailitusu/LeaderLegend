@@ -24,6 +24,7 @@ void FightPlayer::initMap(std::string imageName,std::string direction) {
     fMap->init(imageName, direction);
     fMap->map->setPosition(0,0);
     fightLayer->addChild(fMap);
+
 }
 
 void FightPlayer::setCardsPositon(Card *card, int index, int zPoint) {
@@ -55,6 +56,7 @@ void FightPlayer::initTackCard(Card* card, std::string imageName, int standIndex
     card->fPro->hpPro->setPosition(card->fPro->hpProBg->getPosition());
     this->fMap->addChild(card->fPro->hpPro,standIndex*10+20);
     
+
     
     card->fPro->initNuQiPro(0);
     card->fPro->nuqiProBg->setPosition(card->cardSprite->getPosition().x,card->cardSprite->getPosition().y+card->cardSprite->getBoundingBox().size.height+5);
@@ -62,7 +64,7 @@ void FightPlayer::initTackCard(Card* card, std::string imageName, int standIndex
     
     card->fPro->nuqiPro->setPosition(card->fPro->nuqiProBg->getPosition());
     this->fMap->addChild(card->fPro->nuqiPro,standIndex*10+20);
-   // card->initFightShuXing();
+    card->initFightShuXing();
     card->fPro->retain();
     card->retain();
 

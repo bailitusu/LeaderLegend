@@ -9,6 +9,7 @@
 #include "FightMap.h"
 #include "CommonFunc.h"
 #include "MapCell.h"
+#include "Card/Card.h"
 void FightMap::init(std::string imageName,std::string direction) {
 
     map = Sprite::create(imageName);
@@ -190,9 +191,17 @@ Vector<MapCell*> FightMap::hitAllCell() {
     return tempVector;
 }
 
-int jiSuanPaiNum(int cellIndex) {
-    
-    return cellIndex/4;
+Vector<MapCell*> FightMap::hitNuQiMax() {
+    Vector<MapCell*> tempVector;
+    for (int i = 0; i < this->mapCellArray.size(); i++) {
+        if (this->mapCellArray.at(i)->obj != NULL) {
+            
+            if (((Card*)this->mapCellArray.at(i)->obj)->fPro->nuqiPro->getPercentage() >= 100) {
+                tempVector.pushBack(this->mapCellArray.at(i));
+            }
+        }
+    }
+    return tempVector;
 }
 
 

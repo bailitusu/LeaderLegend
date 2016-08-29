@@ -28,22 +28,23 @@ bool XingTianCard::init() {
     this->zhiLi = 66;
     this->mingJie = 85;
     this->yunQi = 65;
+    
     this->gongJi = 17000;
 
     this->faLi = 17000;
     this->fangYu = 20000;
     
-    this->wuliHart =1;
-    this->wuliMianShang = 10;
-    this->fashuHart = 10;
-    this->fashuMianShang = 10;
-    this->shanBi = 20;
-    this->mingZhong = 10;
-    this->baoJi = 10;
-    this->mianBao = 10;
-    this->lianJi = 1;
+//    this->wuliHart =1;
+//    this->wuliMianShang = 10;
+//    this->fashuHart = 10;
+//    this->fashuMianShang = 10;
+//    this->shanBi = 20;
+//    this->mingZhong = 10;
+//    this->baoJi = 10;
+//    this->mianBao = 10;
+//    this->lianJi = 1;
     this->bingKinds = bingZhongType.fangYu;
-    this->hitValue = 2;
+   // this->hitValue = 2;
     this->hitLevel = 0.8;
     //this->geDang = 0.15;
     this->cardLevel = 60;
@@ -51,26 +52,34 @@ bool XingTianCard::init() {
 }
 
 void XingTianCard::didBeHit(Card* fromCard, std::string hitKinds) {
-    float hartValue = fromCard->hitValue;
+    
+    float hartValue = CommonFunc::reckonHitValue(fromCard, this, hitKinds);
+    if (CommonFunc::isInPercent(CommonFunc::reckonBaoJiPercent(fromCard, this))) {
+        if (hitKinds == "wuli") {
+            hartValue = hartValue*1.5;
+        }else if(hitKinds == "fashu") {
+            hartValue = hartValue*1.75;
+        }
+    }
     if (CommonFunc::isInPercent(this->geDang)) {
         hartValue = hartValue*0.4;
     }
     if (fromCard->bingKinds == bingZhongType.yuanCheng) {
         hartValue = hartValue*0.2;
     }
-   // printf("%d xingtian %f\n",this->cellIndex,this->geDang);
-    this->decreaseHP(this, hartValue);
-//    float percent = (1 - (this->HP-hartValue)/this->MaxHP) * 100;
-//    //  float aaa = this->fPro->hpPro->getPercentage();
-////    ProgressFromTo* ac = ProgressFromTo::create(1.0, this->fPro->hpPro->getPercentage(), percent);
-////    this->fPro->hpPro->runAction(ac);
-//    this->fPro->hpPro->setPercentage(percent);
-//    this->HP = this->HP - hartValue;
-    if (this->HP <= 0) {
-        this->cardDead();
-        return;
+    if (CommonFunc::isInPercent(CommonFunc::reckonShanBiPercent(fromCard, this, hitKinds)) != false) {
+        // printf("%d xingtian %f\n",this->cellIndex,this->geDang);
+        this->decreaseHP(this, hartValue);
+        
+        fromCard->xiXue = hartValue;
+        if (this->HP <= 0) {
+            this->cardDead();
+            return;
+        }
+    }else {
+        this->textLabel->setTextColor(Color4B(0, 0, 240, 255));
+        this->showLabelText(this->textLabel, 0, "ShanBi");
     }
-
 }
 
 void XingTianCard::initCharacter() {
@@ -83,16 +92,16 @@ void XingTianCard::running(FightPlayer *enemyTemp) {
     
     
     auto defaultPosition = this->cardSprite->getPosition();
-    int cellNum = AttackRule::Rule(this->cellIndex, this->hitRuleNum, this->forEnemy->fMap);
+    this->targetNum = AttackRule::Rule(this->cellIndex, this->hitRuleNum, this->forEnemy->fMap);
     
-    float tagetX = this->forEnemy->fMap->getPosition().x-this->forEnemy->enemy->fMap->getPosition().x+this->forEnemy->fMap->mapCellArray.at(cellNum)->position.x;
-    Vec2 target = Vec2(tagetX, this->forEnemy->fMap->mapCellArray.at(cellNum)->position.y); //this->playerTemp->fMap->mapCellArray.at(cellNum)->position;
+    float tagetX = this->forEnemy->fMap->getPosition().x-this->forEnemy->enemy->fMap->getPosition().x+this->forEnemy->fMap->mapCellArray.at(this->targetNum)->position.x;
+    Vec2 target = Vec2(tagetX, this->forEnemy->fMap->mapCellArray.at(this->targetNum)->position.y); //this->playerTemp->fMap->mapCellArray.at(cellNum)->position;
     
     auto moveTo = MoveTo::create(1.0, target);
     auto movaFanhui = MoveTo::create(1.0, defaultPosition);
     
     auto hit = CallFunc::create(CC_CALLBACK_0(XingTianCard::hitAction,this));
-    auto wait = ActionWait::create(0.1);
+    auto wait = ActionWait::create(1.0);
     auto maxHit = CallFunc::create(CC_CALLBACK_0(XingTianCard::ultimateSkill, this));
     auto addNuqi = CallFunc::create(CC_CALLBACK_0(XingTianCard::nuQiManage, this));
     auto block = CallFunc::create(CC_CALLBACK_0(XingTianCard::actionBlock,this));
@@ -119,15 +128,15 @@ void XingTianCard::nuQiManage() {
 }
 
 void XingTianCard::hitAction() {
-    int cellNum = AttackRule::Rule(this->cellIndex, this->hitRuleNum, this->forEnemy->fMap);
-    if (((Card*)(this->forEnemy->fMap->mapCellArray.at(cellNum))->obj) != NULL) {
-        ((Card*)(this->forEnemy->fMap->mapCellArray.at(cellNum))->obj)->didBeHit(this,"wuli");
+  //  int cellNum = AttackRule::Rule(this->cellIndex, this->hitRuleNum, this->forEnemy->fMap);
+    if (((Card*)(this->forEnemy->fMap->mapCellArray.at(this->targetNum))->obj) != NULL) {
+        ((Card*)(this->forEnemy->fMap->mapCellArray.at(this->targetNum))->obj)->didBeHit(this,"wuli");
 //        if (((Card*)(this->forEnemy->fMap->mapCellArray.at(cellNum))->obj) != NULL) {
 //            if (((Card*)(this->forEnemy->fMap->mapCellArray.at(cellNum))->obj)->fPro->nuqiPro->getPercentage() < 100) {
 //                ((Card*)(this->forEnemy->fMap->mapCellArray.at(cellNum))->obj)->fPro->setNuQiProPrecent(34+((Card*)(this->forEnemy->fMap->mapCellArray.at(cellNum))->obj)->fPro->nuqiPro->getPercentage());
 //            }
 //        }
-        this->addNuQi((Card*)(this->forEnemy->fMap->mapCellArray.at(cellNum)->obj), 1);
+        this->addNuQi((Card*)(this->forEnemy->fMap->mapCellArray.at(this->targetNum)->obj), 1);
 
     }
     
@@ -138,15 +147,7 @@ void XingTianCard::hitAction() {
 
 
 void XingTianCard::ultimateSkill() {
-//    int cellNum = AttackRule::Rule(this->cellIndex, this->hitRuleNum, this->forEnemy->fMap);
-//    Vector<MapCell*> temp = this->forEnemy->fMap->hitNineCell(cellNum);
-//    for (int i = 0; i < temp.size(); i++) {
-//        
-//        if (((Card*)(temp.at(i))->obj)->fPro->nuqiPro->getPercentage() < 100) {
-//            ((Card*)(temp.at(i))->obj)->fPro->setNuQiProPrecent(100/3+((Card*)(temp.at(i))->obj)->fPro->nuqiPro->getPercentage());
-//        }
-//        ((Card*)(temp.at(i))->obj)->didBeHit(this);
-//    }
+
     auto geDangBuff = GeDangBuff::create();
     geDangBuff->addBuff(this);
   //  geDangBuff->retain();

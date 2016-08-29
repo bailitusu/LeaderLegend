@@ -17,29 +17,34 @@
 #include "MianBaoBuff.h"
 bool FengBoCard::init() {
     this->cellIndex = 0;
-    this->HP = 20;
-    this->MaxHP = 20;
+    this->HP = 17000;
+//    this->MaxHP = 20;
     this->hitRuleNum = hitRuleType.faShi;
     this->cardName = "fengbo";
     
-    this->wuLi = 20;
-    this->tongShuai = 10;
-    this->zhiLi = 10;
-    this->mingJie = 20;
-    this->yunQi = 20;
+    this->wuLi = 71;
+    this->tongShuai = 84;
+    this->zhiLi = 92;
+    this->mingJie = 98;
+    this->yunQi = 72;
     
-    this->wuliHart = 10;
-    this->wuliMianShang = 10;
-    this->fashuHart = 10;
-    this->fashuMianShang = 10;
-    this->shanBi = 20;
-    this->mingZhong = 10;
-    this->baoJi = 10;
-    this->mianBao = 10;
-    this->lianJi = 1;
+    this->gongJi = 17000;
+    this->faLi = 21000;
+    this->fangYu = 17000;
+//    this->wuliHart = 10;
+//    this->wuliMianShang = 10;
+//    this->fashuHart = 10;
+//    this->fashuMianShang = 10;
+//    this->shanBi = 20;
+//    this->mingZhong = 10;
+//    this->baoJi = 10;
+//    this->mianBao = 10;
+//    this->lianJi = 1;
     this->bingKinds = bingZhongType.faShi;
-    this->hitValue = 2;
-    this->geDang = 0;
+//    this->hitValue = 2;
+    this->hitLevel = 1.05;
+    this->cardLevel = 60;
+
     return true;
 }
 
@@ -50,10 +55,10 @@ void FengBoCard::running(FightPlayer *enemyTemp) {
     
     
     auto defaultPosition = this->cardSprite->getPosition();
-    int cellNum = AttackRule::Rule(this->cellIndex, this->hitRuleNum, this->forEnemy->fMap);
+    this->targetNum = AttackRule::Rule(this->cellIndex, this->hitRuleNum, this->forEnemy->fMap);
     
-    float tagetX = this->forEnemy->fMap->getPosition().x-this->forEnemy->enemy->fMap->getPosition().x+this->forEnemy->fMap->mapCellArray.at(cellNum)->position.x;
-    Vec2 target = Vec2(tagetX, this->forEnemy->fMap->mapCellArray.at(cellNum)->position.y); //this->playerTemp->fMap->mapCellArray.at(cellNum)->position;
+    float tagetX = this->forEnemy->fMap->getPosition().x-this->forEnemy->enemy->fMap->getPosition().x+this->forEnemy->fMap->mapCellArray.at(this->targetNum)->position.x;
+    Vec2 target = Vec2(tagetX, this->forEnemy->fMap->mapCellArray.at(this->targetNum)->position.y); //this->playerTemp->fMap->mapCellArray.at(cellNum)->position;
     
     auto moveTo = MoveTo::create(1.0, target);
     auto movaFanhui = MoveTo::create(1.0, defaultPosition);
@@ -86,8 +91,8 @@ void FengBoCard::nuQiManage() {
 }
 
 void FengBoCard::hitAction() {
-    int cellNum = AttackRule::Rule(this->cellIndex, this->hitRuleNum, this->forEnemy->fMap);
-    Vector<MapCell*> temp = this->forEnemy->fMap->hitHengPaiCell(cellNum);
+//    int cellNum = AttackRule::Rule(this->cellIndex, this->hitRuleNum, this->forEnemy->fMap);
+    Vector<MapCell*> temp = this->forEnemy->fMap->hitHengPaiCell(this->targetNum);
     for (int i = 0; i < temp.size(); i++) {
         
  

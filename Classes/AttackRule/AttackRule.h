@@ -23,6 +23,7 @@ public:
     static int ruleThirdArray[64];
     
     static int Rule(int standIndex, int ruleNum, FightMap* map);
+    static Vector<MapCell*> NuQiMaxRule(int standIndex, int ruleNum, FightMap* map);
 };
 
 #endif /* AttackRule_h */

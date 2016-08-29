@@ -15,30 +15,33 @@
 #include "Setting.h"
 bool XuanWuCard::init() {
     this->cellIndex = 0;
-    this->HP = 20;
-    this->MaxHP = 20;
+    this->HP = 22000;
+//    this->MaxHP = 20;
     this->hitRuleNum = hitRuleType.jinZhan;
     this->cardName = "xuanwu";
     
-    this->wuLi = 20;
-    this->tongShuai = 10;
-    this->zhiLi = 10;
-    this->mingJie = 20;
-    this->yunQi = 20;
+    this->wuLi = 72;
+    this->tongShuai = 97;
+    this->zhiLi = 85;
+    this->mingJie = 25;
+    this->yunQi = 100;
     
-    this->wuliHart = 10;
-    this->wuliMianShang = 10;
-    this->fashuHart = 10;
-    this->fashuMianShang = 10;
-    this->shanBi = 20;
-    this->mingZhong = 10;
-    this->baoJi = 10;
-    this->mianBao = 10;
-    this->lianJi = 1;
+    this->gongJi = 15000;
+    this->faLi = 19000;
+    this->fangYu = 22000;
+//    this->wuliHart = 10;
+//    this->wuliMianShang = 10;
+//    this->fashuHart = 10;
+//    this->fashuMianShang = 10;
+//    this->shanBi = 20;
+//    this->mingZhong = 10;
+//    this->baoJi = 10;
+//    this->mianBao = 10;
+//    this->lianJi = 1;
     this->bingKinds = bingZhongType.fangYu;
-    this->hitValue = 2;
-    this->zhiLiao = 4;
-    this->geDang = 10;
+//    this->hitValue = 2;
+    this->hitLevel = 1.05;
+    this->cardLevel = 60;
     return true;
 }
 
@@ -64,7 +67,8 @@ bool XuanWuCard::init() {
 //}
 
 void XuanWuCard::initCharacter() {
-    this->geDang = this->geDang*1.2;
+    this->zhiLiao = this->MaxHP*0.15;
+    this->geDang = 0.2;
 }
 
 void XuanWuCard::running(FightPlayer *enemyTemp) {
@@ -72,10 +76,10 @@ void XuanWuCard::running(FightPlayer *enemyTemp) {
 
     
     auto defaultPosition = this->cardSprite->getPosition();
-    int cellNum = AttackRule::Rule(this->cellIndex, this->hitRuleNum, this->forEnemy->fMap);
+    this->targetNum = AttackRule::Rule(this->cellIndex, this->hitRuleNum, this->forEnemy->fMap);
     
-    float tagetX = this->forEnemy->fMap->getPosition().x-this->forEnemy->enemy->fMap->getPosition().x+this->forEnemy->fMap->mapCellArray.at(cellNum)->position.x;
-    Vec2 target = Vec2(tagetX, this->forEnemy->fMap->mapCellArray.at(cellNum)->position.y); //this->playerTemp->fMap->mapCellArray.at(cellNum)->position;
+    float tagetX = this->forEnemy->fMap->getPosition().x-this->forEnemy->enemy->fMap->getPosition().x+this->forEnemy->fMap->mapCellArray.at(this->targetNum)->position.x;
+    Vec2 target = Vec2(tagetX, this->forEnemy->fMap->mapCellArray.at(this->targetNum)->position.y); //this->playerTemp->fMap->mapCellArray.at(cellNum)->position;
     auto zaiSheng = CallFunc::create(CC_CALLBACK_0(XuanWuCard::zaiShengAction,this));
     auto moveTo = MoveTo::create(1.0, target);
     auto movaFanhui = MoveTo::create(1.0, defaultPosition);
@@ -114,11 +118,11 @@ void XuanWuCard::nuQiManage() {
 }
 
 void XuanWuCard::hitAction() {
-    int cellNum = AttackRule::Rule(this->cellIndex, this->hitRuleNum, this->forEnemy->fMap);
-    if ((Card*)(this->forEnemy->fMap->mapCellArray.at(cellNum))->obj != NULL) {
-        ((Card*)(this->forEnemy->fMap->mapCellArray.at(cellNum))->obj)->didBeHit(this,"wuli");
+   // int cellNum = AttackRule::Rule(this->cellIndex, this->hitRuleNum, this->forEnemy->fMap);
+    if ((Card*)(this->forEnemy->fMap->mapCellArray.at(this->targetNum))->obj != NULL) {
+        ((Card*)(this->forEnemy->fMap->mapCellArray.at(this->targetNum))->obj)->didBeHit(this,"wuli");
         
-        this->addNuQi((Card*)(this->forEnemy->fMap->mapCellArray.at(cellNum)->obj), 1);
+        this->addNuQi((Card*)(this->forEnemy->fMap->mapCellArray.at(this->targetNum)->obj), 1);
 //        if (((Card*)(this->forEnemy->fMap->mapCellArray.at(cellNum))->obj)->fPro->nuqiPro->getPercentage() < 100) {
 //            ((Card*)(this->forEnemy->fMap->mapCellArray.at(cellNum))->obj)->fPro->setNuQiProPrecent(34+((Card*)(this->forEnemy->fMap->mapCellArray.at(cellNum))->obj)->fPro->nuqiPro->getPercentage());
 //        }

@@ -17,29 +17,34 @@
 #include "BaoJiBuff.h"
 bool FengHouCard::init() {
     this->cellIndex = 0;
-    this->HP = 20;
-    this->MaxHP = 20;
+    this->HP = 19000;
+//    this->MaxHP = 20;
     this->hitRuleNum = hitRuleType.jinZhan;
     this->cardName = "fenghou";
     
-    this->wuLi = 20;
-    this->tongShuai = 10;
-    this->zhiLi = 10;
-    this->mingJie = 20;
-    this->yunQi = 20;
+    this->wuLi = 72;
+    this->tongShuai = 92;
+    this->zhiLi = 88;
+    this->mingJie = 82;
+    this->yunQi = 92;
     
-    this->wuliHart = 10;
-    this->wuliMianShang = 10;
-    this->fashuHart = 10;
-    this->fashuMianShang = 10;
-    this->shanBi = 20;
-    this->mingZhong = 10;
-    this->baoJi = 10;
-    this->mianBao = 10;
-    this->lianJi = 1;
+    this->gongJi = 18000;
+    this->faLi = 18000;
+    this->fangYu = 20000;
+//    this->wuliHart = 10;
+//    this->wuliMianShang = 10;
+//    this->fashuHart = 10;
+//    this->fashuMianShang = 10;
+//    this->shanBi = 20;
+//    this->mingZhong = 10;
+//    this->baoJi = 10;
+//    this->mianBao = 10;
+//    this->lianJi = 1;
     this->bingKinds = bingZhongType.guWu;
-    this->hitValue = 2;
-    this->geDang = 0;
+//    this->hitValue = 2;
+//    this->geDang = 0;
+    this->hitLevel = 1.05;
+    this->cardLevel = 60;
     return true;
 }
 
@@ -52,10 +57,10 @@ void FengHouCard::running(FightPlayer *enemyTemp) {
     
     
     auto defaultPosition = this->cardSprite->getPosition();
-    int cellNum = AttackRule::Rule(this->cellIndex, this->hitRuleNum, this->forEnemy->fMap);
+    this->targetNum = AttackRule::Rule(this->cellIndex, this->hitRuleNum, this->forEnemy->fMap);
     
-    float tagetX = this->forEnemy->fMap->getPosition().x-this->forEnemy->enemy->fMap->getPosition().x+this->forEnemy->fMap->mapCellArray.at(cellNum)->position.x;
-    Vec2 target = Vec2(tagetX, this->forEnemy->fMap->mapCellArray.at(cellNum)->position.y); //this->playerTemp->fMap->mapCellArray.at(cellNum)->position;
+    float tagetX = this->forEnemy->fMap->getPosition().x-this->forEnemy->enemy->fMap->getPosition().x+this->forEnemy->fMap->mapCellArray.at(this->targetNum)->position.x;
+    Vec2 target = Vec2(tagetX, this->forEnemy->fMap->mapCellArray.at(this->targetNum)->position.y); //this->playerTemp->fMap->mapCellArray.at(cellNum)->position;
     
     auto moveTo = MoveTo::create(1.0, target);
     auto movaFanhui = MoveTo::create(1.0, defaultPosition);
@@ -94,11 +99,11 @@ void FengHouCard::nuQiManage() {
 }
 
 void FengHouCard::hitAction() {
-    int cellNum = AttackRule::Rule(this->cellIndex, this->hitRuleNum, this->forEnemy->fMap);
-    if (((Card*)(this->forEnemy->fMap->mapCellArray.at(cellNum))->obj) != NULL) {
-        ((Card*)(this->forEnemy->fMap->mapCellArray.at(cellNum))->obj)->didBeHit(this,"wuli");
+//    int cellNum = AttackRule::Rule(this->cellIndex, this->hitRuleNum, this->forEnemy->fMap);
+    if (((Card*)(this->forEnemy->fMap->mapCellArray.at(this->targetNum))->obj) != NULL) {
+        ((Card*)(this->forEnemy->fMap->mapCellArray.at(this->targetNum))->obj)->didBeHit(this,"wuli");
 
-        this->addNuQi((Card*)(this->forEnemy->fMap->mapCellArray.at(cellNum)->obj), 1);
+        this->addNuQi((Card*)(this->forEnemy->fMap->mapCellArray.at(this->targetNum)->obj), 1);
         
     }
 }
@@ -106,11 +111,11 @@ void FengHouCard::hitAction() {
 
 
 void FengHouCard::ultimateSkill() {
-    int cellNum = AttackRule::Rule(this->cellIndex, this->hitRuleNum, this->forEnemy->fMap);
-    if (((Card*)(this->forEnemy->fMap->mapCellArray.at(cellNum))->obj) != NULL) {
-        ((Card*)(this->forEnemy->fMap->mapCellArray.at(cellNum))->obj)->didBeHit(this,"wuli");
+//    int cellNum = AttackRule::Rule(this->cellIndex, this->hitRuleNum, this->forEnemy->fMap);
+    if (((Card*)(this->forEnemy->fMap->mapCellArray.at(this->targetNum))->obj) != NULL) {
+        ((Card*)(this->forEnemy->fMap->mapCellArray.at(this->targetNum))->obj)->didBeHit(this,"wuli");
         
-        this->addNuQi((Card*)(this->forEnemy->fMap->mapCellArray.at(cellNum)->obj), 1);
+        this->addNuQi((Card*)(this->forEnemy->fMap->mapCellArray.at(this->targetNum)->obj), 1);
         
     }
     

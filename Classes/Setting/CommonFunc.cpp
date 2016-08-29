@@ -10,6 +10,7 @@
 #include <stdlib.h>
 #include "Card.h"
 #include "Setting.h"
+#include <sstream>
 USING_NS_CC;
 
 void CommonFunc::setSpriteSize(cocos2d::Sprite *sp, float width) {
@@ -123,7 +124,10 @@ float CommonFunc::reckonZhiLiaoValue(Card *zhiLiaoCard, Card *beZhiLiaoCard) {
     return zhiLiaoValue;
 }
 
-
+//void CommonFunc::showHitValue(Label* textLabel,int hitValue, std::string text) {
+//
+//
+//}
 
 
 

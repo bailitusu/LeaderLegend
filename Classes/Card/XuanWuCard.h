@@ -17,9 +17,7 @@ class XuanWuCard : public Card {
 public:
     CREATE_FUNC(XuanWuCard);
     virtual bool init();
-    
-  //  virtual void didBeHit(Card* fromCard);
-  //  virtual void runAnimation(FightPlayer* playerTemp);
+
     virtual void running(FightPlayer* enemyTemp);
     virtual void initCharacter();
     virtual void ultimateSkill();

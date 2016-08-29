@@ -22,6 +22,8 @@
 #include "XingTianCard.h"
 #include "XuanWuCard.h"
 #include "FengBoCard.h"
+#include "FengHouCard.h"
+#include "SuanYuCard.h"
 Scene* FightLayer::createScene() {
     
     Scene* scene = Scene::create();
@@ -69,14 +71,14 @@ void FightLayer::initFightLayer() {
     this->player->retain();
     this->enemyPlay->retain();
     
-    this->player->initTackCard(XuanWuCard::create(), "xuanwu_left1.png", 0, "player");
+    this->player->initTackCard(XingTianCard::create(), "xuanwu_left1.png", 0, "player");
     this->player->initTackCard(XuanWuCard::create(), "xingtian_left1.png", 3, "player");
-    this->player->initTackCard(FengBoCard::create(), "change_left1.png", 5, "player");
-    this->player->initTackCard(XuanWuCard::create(), "fengbo_left1.png", 6, "player");
-    this->player->initTackCard(XuanWuCard::create(), "fenghou_left1.png", 9, "player");
-    this->player->initTackCard(XuanWuCard::create(), "suanyu_left1.png", 10, "player");
-    this->player->initTackCard(XuanWuCard::create(), "taotie_left1.png", 12, "player");
-    this->player->initTackCard(XuanWuCard::create(), "houyi_left1.png", 15, "player");
+    this->player->initTackCard(XingTianCard::create(), "change_left1.png", 5, "player");
+    this->player->initTackCard(ChangECard::create(), "fengbo_left1.png", 6, "player");
+    this->player->initTackCard(SuanYuCard::create(), "fenghou_left1.png", 9, "player");
+    this->player->initTackCard(ChangECard::create(), "suanyu_left1.png", 10, "player");
+    this->player->initTackCard(ChangECard::create(), "taotie_left1.png", 12, "player");
+    this->player->initTackCard(ChangECard::create(), "houyi_left1.png", 15, "player");
 //    for (int i = 0; i < 8; i ++) {
 //        
 //        auto playerHuangdi = HouYiCard::create();
@@ -146,14 +148,14 @@ void FightLayer::initFightLayer() {
 //        //   enemy->fMap->addChild(enemyHuangdi->cardSprite,10);
 //        
 //    }
-    this->enemyPlay->initTackCard(XuanWuCard::create(), "xuanwu_right1.png", 0, "enemyPlayer");
+    this->enemyPlay->initTackCard(XingTianCard::create(), "xuanwu_right1.png", 0, "enemyPlayer");
     this->enemyPlay->initTackCard(XuanWuCard::create(), "xingtian_right1.png", 3, "enemyPlayer");
-    this->enemyPlay->initTackCard(HouYiCard::create(), "change_right1.png", 5, "enemyPlayer");
-    this->enemyPlay->initTackCard(XuanWuCard::create(), "fengbo_right1.png", 6, "enemyPlayer");
-    this->enemyPlay->initTackCard(XuanWuCard::create(), "fenghou_right1.png", 9, "enemyPlayer");
-    this->enemyPlay->initTackCard(XuanWuCard::create(), "suanyu_right1.png", 10, "enemyPlayer");
-    this->enemyPlay->initTackCard(XuanWuCard::create(), "taotie_right1.png", 12, "enemyPlayer");
-    this->enemyPlay->initTackCard(XuanWuCard::create(), "houyi_right1.png", 15, "enemyPlayer");
+    this->enemyPlay->initTackCard(XingTianCard::create(), "change_right1.png", 5, "enemyPlayer");
+    this->enemyPlay->initTackCard(XingTianCard::create(), "fengbo_right1.png", 6, "enemyPlayer");
+    this->enemyPlay->initTackCard(ChangECard::create(), "fenghou_right1.png", 9, "enemyPlayer");
+    this->enemyPlay->initTackCard(ChangECard::create(), "suanyu_right1.png", 10, "enemyPlayer");
+    this->enemyPlay->initTackCard(ChangECard::create(), "taotie_right1.png", 12, "enemyPlayer");
+    this->enemyPlay->initTackCard(ChangECard::create(), "houyi_right1.png", 15, "enemyPlayer");
     this->enemyPlay->initCardStandArray();
     
 //    Sprite* ttt = Sprite::create("taotieLeft.png");
@@ -165,6 +167,20 @@ void FightLayer::initFightLayer() {
     CommonFunc::setSpriteSize(background, screenSize.width);
     background->setPosition(Vec2(screenSize.width/2+origin.x, screenSize.height/2+origin.y));
     background->setLocalZOrder(-100);
+    
+//    auto bbbb= Sprite::create("longRight.png");
+//    bbbb->setPosition(screenSize.width/2+origin.x,screenSize.height/2+origin.y);
+//    CommonFunc::setSpriteSize(bbbb, 50);
+//    this->addChild(bbbb);
+//    auto aaa = Label::createWithTTF("1111111", "fonts/Marker Felt.ttf", 16);
+////    aaa->setOpacity(255);
+//    aaa->setString("eeeeeee");
+//    aaa->setTextColor(Color4B(0, 0, 240, 255));
+//    aaa->setPosition(screenSize.width/2+origin.x,screenSize.height/2+origin.y);
+//    this->addChild(aaa,100);
+    
+
+    
     this->addChild(background);
 }
 

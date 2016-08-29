@@ -12,29 +12,34 @@
 #include "Setting.h"
 bool TaoTieCard::init() {
     this->cellIndex = 0;
-    this->HP = 20;
-    this->MaxHP = 20;
+    this->HP = 20000;
+//    this->MaxHP = 20;
     this->hitRuleNum = hitRuleType.jinZhan;
     this->cardName = "taotie";
     
-    this->wuLi = 20;
-    this->tongShuai = 10;
-    this->zhiLi = 10;
-    this->mingJie = 20;
-    this->yunQi = 20;
+    this->wuLi = 87;
+    this->tongShuai = 81;
+    this->zhiLi = 62;
+    this->mingJie = 58;
+    this->yunQi = 90;
     
-    this->wuliHart = 10;
-    this->wuliMianShang = 10;
-    this->fashuHart = 10;
-    this->fashuMianShang = 10;
-    this->shanBi = 20;
-    this->mingZhong = 10;
-    this->baoJi = 10;
-    this->mianBao = 10;
-    this->lianJi = 1;
-    this->hitValue = 2;
-    this->xiXue = 2;
+    this->gongJi = 17000;
+    this->faLi = 17000;
+    this->fangYu = 20000;
+//    this->wuliHart = 10;
+//    this->wuliMianShang = 10;
+//    this->fashuHart = 10;
+//    this->fashuMianShang = 10;
+//    this->shanBi = 20;
+//    this->mingZhong = 10;
+//    this->baoJi = 10;
+//    this->mianBao = 10;
+//    this->lianJi = 1;
+//    this->hitValue = 2;
+//    this->xiXue = 2;
     this->bingKinds = bingZhongType.jinZhan;
+    this->hitLevel = 1.05;
+    this->cardLevel = 60;
     return true;
 }
 
@@ -73,10 +78,15 @@ void TaoTieCard::running(FightPlayer *enemyTemp) {
     
     
     auto defaultPosition = this->cardSprite->getPosition();
-    int cellNum = AttackRule::Rule(this->cellIndex, this->hitRuleNum, this->forEnemy->fMap);
+    if (this->fPro->nuqiPro->getPercentage() >= 100) {
+        this->targetNum = AttackRule::Rule(this->cellIndex, 2, this->forEnemy->fMap);
+    }else {
+       this->targetNum = AttackRule::Rule(this->cellIndex, this->hitRuleNum, this->forEnemy->fMap); 
+    }
     
-    float tagetX = this->forEnemy->fMap->getPosition().x-this->forEnemy->enemy->fMap->getPosition().x+this->forEnemy->fMap->mapCellArray.at(cellNum)->position.x;
-    Vec2 target = Vec2(tagetX, this->forEnemy->fMap->mapCellArray.at(cellNum)->position.y); //this->playerTemp->fMap->mapCellArray.at(cellNum)->position;
+    
+    float tagetX = this->forEnemy->fMap->getPosition().x-this->forEnemy->enemy->fMap->getPosition().x+this->forEnemy->fMap->mapCellArray.at(this->targetNum)->position.x;
+    Vec2 target = Vec2(tagetX, this->forEnemy->fMap->mapCellArray.at(this->targetNum)->position.y); //this->playerTemp->fMap->mapCellArray.at(cellNum)->position;
     
     auto moveTo = MoveTo::create(1.0, target);
     auto movaFanhui = MoveTo::create(1.0, defaultPosition);
@@ -110,10 +120,10 @@ void TaoTieCard::nuQiManage() {
 }
 
 void TaoTieCard::hitAction() {
-    int cellNum = AttackRule::Rule(this->cellIndex, this->hitRuleNum, this->forEnemy->fMap);
-    if (cellNum != 100) {
-        if ((Card*)(this->forEnemy->fMap->mapCellArray.at(cellNum))->obj != NULL) {
-            ((Card*)(this->forEnemy->fMap->mapCellArray.at(cellNum))->obj)->didBeHit(this,"wuli");
+//    int cellNum = AttackRule::Rule(this->cellIndex, this->hitRuleNum, this->forEnemy->fMap);
+//    if (cellNum != 100) {
+    if ((Card*)(this->forEnemy->fMap->mapCellArray.at(this->targetNum))->obj != NULL) {
+        ((Card*)(this->forEnemy->fMap->mapCellArray.at(this->targetNum))->obj)->didBeHit(this,"wuli");
 //            if (((Card*)(this->forEnemy->fMap->mapCellArray.at(cellNum))->obj)->fPro->nuqiPro->getPercentage() < 100) {
 //                ((Card*)(this->forEnemy->fMap->mapCellArray.at(cellNum))->obj)->fPro->setNuQiProPrecent(((Card*)(this->forEnemy->fMap->mapCellArray.at(cellNum))->obj)->fPro->nuqiPro->getPercentage()-34);
 //            }
@@ -122,11 +132,11 @@ void TaoTieCard::hitAction() {
 //                this->HP = this->MaxHP;
 //            }
 //            this->fPro->hpPro->setPercentage((1-(float)this->HP/this->MaxHP)*100);
-            this->decreaseNuQi((Card*)(this->forEnemy->fMap->mapCellArray.at(cellNum)->obj), 1,false);
-            this->suckBlood();
-            
-        }
+        this->decreaseNuQi((Card*)(this->forEnemy->fMap->mapCellArray.at(this->targetNum)->obj), 1,false);
+        this->suckBlood((Card*)(this->forEnemy->fMap->mapCellArray.at(this->targetNum)->obj));
+        
     }
+  //  }
 
     
     

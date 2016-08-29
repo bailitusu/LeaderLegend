@@ -10,27 +10,66 @@
 #include "FightPlayer.h"
 #include "CommonFunc.h"
 #include "Setting.h"
-
+#include "CommonFunc.h"
 bool Card::init() {
     return true;
 }
 
 void Card::didBeHit(Card* fromCard, std::string hitKinds) {
-    
-    this->decreaseHP(this,fromCard->hitValue);
-    if (this->HP <= 0) {
-        this->cardDead();
-        return;
+    float hartValue = CommonFunc::reckonHitValue(fromCard, this, hitKinds);
+    if (CommonFunc::isInPercent(CommonFunc::reckonBaoJiPercent(fromCard, this))) {
+        if (hitKinds == "wuli") {
+            hartValue = hartValue*1.5;
+        }else if(hitKinds == "fashu") {
+            hartValue = hartValue*1.75;
+        }
     }
+    if (CommonFunc::isInPercent(this->geDang)) {
+        hartValue = hartValue*0.4;
+    }
+    if (CommonFunc::isInPercent(CommonFunc::reckonShanBiPercent(fromCard, this, hitKinds)) != false) {
+        this->decreaseHP(this,hartValue);
+        
+        fromCard->xiXue = hartValue;
+        
+
+        if (this->HP <= 0) {
+            this->cardDead();
+            return;
+        }
+    }else {
+        this->textLabel->setTextColor(Color4B(0, 0, 240, 255));
+        this->showLabelText(this->textLabel, 0, "ShanBi");
+    }
+
 }
+
+void Card::initHpLabel() {
+    this->textLabel = Label::createWithTTF("0", "fonts/Marker Felt.ttf", 16);
+    this->textLabel->setTextColor(Color4B(240, 0, 0, 255));
+    this->textLabel->setOpacity(0);
+    this->textLabel->setPosition(this->cardSprite->getPosition().x,this->cardSprite->getPosition().y+this->cardSprite->getBoundingBox().size.height+20);
+    this->cardSprite->getParent()->addChild(this->textLabel,200);
+}
+
 
 void Card::addHP(Card* card,float hpValue) {
     if (card != NULL) {
+        card->textLabel->setTextColor(Color4B(0, 240, 0, 255));
+       // CommonFunc::showHitValue(card->hpLabel, (int)hpValue);
+        card->showLabelText(card->textLabel, (int)hpValue, "");
+//        auto appear = FadeTo::create(0.5, 255);
+//        auto disappear = FadeTo::create(0.5, 0);
+//        auto block = CallFunc::create(CC_CALLBACK_0(Card::textLabelDisappearBlock,this));
+//        card->textLabel->runAction(Sequence::create(appear,disappear,block, NULL));
+        
         card->HP = card->HP+hpValue;
         if (card->HP > card->MaxHP) {
             card->HP = card->MaxHP;
         }
         card->fPro->hpPro->setPercentage((1-(float)card->HP/card->MaxHP)*100);
+        
+        
     }
 
 }
@@ -41,11 +80,40 @@ void Card::decreaseHP(Card* card,float hpValue) {
         //  float aaa = this->fPro->hpPro->getPercentage();
 //        ProgressFromTo* ac = ProgressFromTo::create(1.0, card->fPro->hpPro->getPercentage(), percent);
 //        card->fPro->hpPro->runAction(ac);
-        
+        card->textLabel->setTextColor(Color4B(240, 0, 0, 255));
+      //  CommonFunc::showHitValue(card->textLabel, (int)hpValue);
+        card->showLabelText(card->textLabel, (int)hpValue, "");
+//        auto appear = FadeTo::create(0.5, 255);
+//        auto disappear = FadeTo::create(0.5, 0);
+//        //auto block = CallFunc::create(CC_CALLBACK_0(Card::hpFontDisappearBlock,this));
+//        this->hpLabel->runAction(Sequence::create(appear,disappear, NULL));
         card->HP = card->HP - hpValue;
         card->fPro->hpPro->setPercentage((1-(float)card->HP/card->MaxHP)*100);
     }
 
+}
+
+void Card::showLabelText(cocos2d::Label *label, int hpValue, std::string text) {
+    
+    if (text.compare("") != 0) {
+        //printf("%s",text.c_str());
+        label->setString(text.c_str());
+    }else {
+        std::stringstream ss;
+        ss << hpValue;
+        label->setString(ss.str());
+    }
+
+    
+    auto appear = FadeTo::create(0.5, 255);
+    auto disappear = FadeTo::create(0.5, 0);
+    auto block = CallFunc::create(CC_CALLBACK_0(Card::textLabelDisappearBlock,this));
+    label->runAction(Sequence::create(appear,disappear,block, NULL));
+}
+
+void Card::textLabelDisappearBlock() {
+    //this->hpLabel->removeFromParent();
+    this->textLabel->setTextColor(Color4B(240, 0, 0, 255));
 }
 
 void Card::addNuQi(Card* card,int num) {
@@ -53,18 +121,24 @@ void Card::addNuQi(Card* card,int num) {
         if (card->fPro->nuqiPro->getPercentage() < 100) {
             switch (num) {
                 case 1:
+                    
                     card->fPro->setNuQiProPrecent(34+card->fPro->nuqiPro->getPercentage());
                     break;
                 case 2:
+                   
                     card->fPro->setNuQiProPrecent(66+card->fPro->nuqiPro->getPercentage());
                     break;
                 case 3:
+                    
                     card->fPro->setNuQiProPrecent(100+card->fPro->nuqiPro->getPercentage());
                     break;
                 default:
                     break;
             }
-            
+            card->nuQiNum = card->nuQiNum+num;
+            if (card->nuQiNum >= card->nuQiNumMax) {
+                card->nuQiNum = card->nuQiNumMax;
+            }
         }
     }
 
@@ -92,6 +166,10 @@ void Card::decreaseNuQi(Card* card,int num, bool isDaZhao) {
                         break;
                     default:
                         break;
+                }
+                card->nuQiNum = card->nuQiNum-num;
+                if (card->nuQiNum <= 0) {
+                    card->nuQiNum = 0;
                 }
             }
             
@@ -142,7 +220,21 @@ void Card::endRun(FightPlayer* enemyTemp) {
 void Card::runAnimation(FightPlayer* playerTemp) {
     
     this->willRun(playerTemp);
-    this->running(playerTemp);
+    
+    if (this->isHaveThisBuff("xuanyun")) {
+        if(this->isHaveThisBuff("xuanyun")->thisBuffisEffect() == false) {
+   
+            this->buffArray.eraseObject(this->isHaveThisBuff("xuanyun"));
+            this->running(playerTemp);
+        }else {
+            this->forEnemy = playerTemp;
+            this->actionBlock();
+        }
+    }else {
+        this->running(playerTemp);
+    }
+    
+    
 
 //    printf("run Animation error");
 }
@@ -184,9 +276,11 @@ void Card::cardDead() {
 }
 
 void Card::initFightShuXing() {
+    this->nuQiNum = 0;
+    this->nuQiNumMax = 3;
     this->wuliHart = this->wuLi*0.0075;
     this->wuliMianShang = this->wuLi*0.0025 + this->tongShuai*0.005;
-    this->fashuHart = this->zhiLi*0.075;
+    this->fashuHart = this->zhiLi*0.0075;
     this->fashuMianShang = this->zhiLi*0.0025 + this->tongShuai*0.005;
     this->mingZhong = this->mingJie*0.0025;
     this->baoJi = this->mingJie*0.003125;
@@ -195,6 +289,8 @@ void Card::initFightShuXing() {
     this->xianGong = this->mingJie*0.75+this->yunQi*0.25;
     this->MaxHP = this->HP;
     this->initCharacter();
+    this->initHpLabel();
+
 }
 
 void Card::initCharacter() {
@@ -203,6 +299,7 @@ void Card::initCharacter() {
 
 Buff* Card::isHaveThisBuff(std::string buffName) {
     for (int i = 0; i < this->buffArray.size(); i++) {
+        //printf("%s\n",buffName.c_str());
         if (this->buffArray.at(i)->buffName.compare(buffName) == 0) {
             return this->buffArray.at(i);
         }
@@ -210,8 +307,8 @@ Buff* Card::isHaveThisBuff(std::string buffName) {
     return NULL;
 }
 
-void Card::suckBlood() {
-    this->addHP(this, this->xiXue);
+void Card::suckBlood(Card* fangYuCard) {
+    this->addHP(this, this->xiXue*0.5);
 }
 
 void Card::zaiShengBlood() {

@@ -27,6 +27,8 @@ public:
     CREATE_FUNC(Card);
     int HP;
     int MaxHP;
+    
+    Label *textLabel;
     virtual bool init();
     virtual void didBeHit(Card* fromCard, std::string hitKinds);
     virtual void runAnimation(FightPlayer* playerTemp);
@@ -45,11 +47,16 @@ public:
     virtual void endRun(FightPlayer* enemyTemp);
     
     virtual void initCharacter();
-    virtual void suckBlood();
+    virtual void suckBlood(Card* fangYuCard);
     virtual void zaiShengBlood();
     virtual void actionBlock();
+    virtual void textLabelDisappearBlock();
+    virtual void initHpLabel();
+    virtual void showLabelText(Label* label, int hpValue, std::string text);
     Buff* fBuff;
     FightProgress* fPro;
+    int nuQiNum;
+    int nuQiNumMax;
     FightPlayer* forEnemy;
     FightPlayer* forPlayer;
     Vector<Buff*> buffArray;
@@ -88,6 +95,7 @@ public:
     float hitLevel;
     int cardLevel;
     float hitValue;
+    int targetNum;
 };
 
 #endif /* Card_h */

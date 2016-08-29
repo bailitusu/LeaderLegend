@@ -25,6 +25,7 @@ public:
     Vector<MapCell*> hitNineCell(int hitCellIndex);
     Vector<MapCell*> hitHengPaiCell(int hitCellIndex);
     Vector<MapCell*> hitAllCell();
+    Vector<MapCell*> hitNuQiMax();
     Sprite* map;
     CREATE_FUNC(FightMap);
     virtual bool init();

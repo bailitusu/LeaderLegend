@@ -10,30 +10,38 @@
 #include "FightPlayer.h"
 #include "AttackRule.h"
 #include "Setting.h"
+#include "CommonFunc.h"
+#include "ActionWait.h"
 bool ChangECard::init() {
     this->cellIndex = 0;
-    this->HP = 20;
-    this->MaxHP = 20;
+    this->HP = 16000;
+//    this->MaxHP = 20;
     this->hitRuleNum = hitRuleType.faShi;
     this->cardName = "change";
     
-    this->wuLi = 20;
-    this->tongShuai = 10;
-    this->zhiLi = 10;
-    this->mingJie = 20;
-    this->yunQi = 20;
-    this->zhiLiao = 2;
-    this->wuliHart = 10;
-    this->wuliMianShang = 10;
-    this->fashuHart = 10;
-    this->fashuMianShang = 10;
-    this->shanBi = 20;
-    this->mingZhong = 10;
-    this->baoJi = 10;
-    this->mianBao = 10;
-    this->lianJi = 1;
-    this->hitValue = 0;
+    this->wuLi = 60;
+    this->tongShuai = 72;
+    this->zhiLi = 78;
+    this->mingJie = 90;
+    this->yunQi = 95;
+    
+    this->gongJi = 17000;
+    this->faLi = 20000;
+    this->fangYu = 17000;
+  //  this->zhiLiao = 2;
+//    this->wuliHart = 10;
+//    this->wuliMianShang = 10;
+//    this->fashuHart = 10;
+//    this->fashuMianShang = 10;
+//    this->shanBi = 20;
+//    this->mingZhong = 10;
+//    this->baoJi = 10;
+//    this->mianBao = 10;
+
+//    this->hitValue = 0;
     this->bingKinds = bingZhongType.guWu;
+    this->hitLevel = 1.05;
+    this->cardLevel = 60;
     return true;
 }
 
@@ -66,7 +74,9 @@ void ChangECard::running(FightPlayer *enemyTemp) {
     auto defalutScale = this->cardSprite->getScale();
     auto big = ScaleTo::create(1.0, 1.0);
     auto small = ScaleTo::create(1.0, defalutScale);
+    auto tooSmall = ScaleTo::create(1.0, 0.3);
     auto hit = CallFunc::create(CC_CALLBACK_0(ChangECard::hitAction,this));
+    auto wait = ActionWait::create(1.0);
     auto maxHit = CallFunc::create(CC_CALLBACK_0(ChangECard::ultimateSkill, this));
     auto addNuqi = CallFunc::create(CC_CALLBACK_0(ChangECard::nuQiManage, this));
     auto block = CallFunc::create(CC_CALLBACK_0(ChangECard::actionBlock,this));
@@ -77,7 +87,7 @@ void ChangECard::running(FightPlayer *enemyTemp) {
         //this->cardSprite->runAction(Sequence::create(hit,addNuqi,block,NULL));
         
     }else {
-        this->cardSprite->runAction(Sequence::create(maxHit, block,NULL));
+        this->cardSprite->runAction(Sequence::create(tooSmall,small,maxHit, wait,block,NULL));
     }
     
     
@@ -105,10 +115,14 @@ void ChangECard::hitAction() {
 }
 
 void ChangECard::ultimateSkill() {
+   // printf("%s   fang da %d \n",this->playerName.c_str(),this->cellIndex);
     for (int i = 0; i < this->forPlayer->fMap->mapCellArray.size(); i++) {
         auto temp = (Card*)(this->forPlayer->fMap->mapCellArray.at(i))->obj;
-        if (temp != NULL && temp->cellIndex != this->cellIndex) {
-             this->addNuQi(temp, 1);
+        if (temp != NULL) {
+            if (temp->cellIndex != this->cellIndex) {
+                this->addNuQi(temp, 1);
+            }
+            
 //            if (temp->fPro->nuqiPro->getPercentage() < 100) {
 //                temp->fPro->setNuQiProPrecent(34+temp->fPro->nuqiPro->getPercentage());
 //            }
@@ -117,7 +131,8 @@ void ChangECard::ultimateSkill() {
 //                temp->HP = temp->MaxHP;
 //            }
 //            temp->fPro->hpPro->setPercentage((1-(float)temp->HP/temp->MaxHP)*100);
-            this->addHP(temp, this->zhiLiao);
+           // CommonFunc::reckonZhiLiaoValue(this, temp);
+            this->addHP(temp, CommonFunc::reckonZhiLiaoValue(this, temp));
         }
     }
     

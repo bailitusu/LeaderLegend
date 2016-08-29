@@ -8,7 +8,7 @@
 
 #include "AttackRule.h"
 #include "MapCell.h"
-
+#include "Card.h"
 bool AttackRule::init() {
 //    ruleOneArray = {1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,
 //        2,1,3,4,6,5,7,8,10,9,11,12,14,13,15,16,
@@ -66,3 +66,35 @@ int AttackRule::Rule(int standIndex, int ruleNum, FightMap* map) {
     }
     return AttackError;
 }
+
+Vector<MapCell*> AttackRule::NuQiMaxRule(int standIndex, int ruleNum, FightMap *map) {
+    Vector<MapCell*> tempCellArray;
+    int temp = standIndex % 4 +1;
+
+    for (int i = (temp-1)*16; i< (temp*16) ; i++) {
+        switch (ruleNum) {
+            case 1:
+                if ((map->mapCellArray.at(ruleOneArray[i]-1))->obj != NULL) {
+                    
+                    tempCellArray.pushBack(map->mapCellArray.at(ruleOneArray[i]-1));
+                }
+                break;
+            case 2:
+                if ((map->mapCellArray.at(ruleTwoArray[i]-1))->obj != NULL) {
+                    tempCellArray.pushBack(map->mapCellArray.at(ruleTwoArray[i]-1));
+                }
+                break;
+            case 3:
+                if ((map->mapCellArray.at(ruleThirdArray[i]-1))->obj != NULL) {
+
+                    tempCellArray.pushBack(map->mapCellArray.at(ruleThirdArray[i]-1));
+                }
+                break;
+            default:
+                break;
+        }
+    }
+    return tempCellArray;
+}
+
+
