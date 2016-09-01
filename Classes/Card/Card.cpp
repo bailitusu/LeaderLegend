@@ -27,16 +27,33 @@ void Card::didBeHit(Card* fromCard, std::string hitKinds) {
     if (CommonFunc::isInPercent(this->geDang)) {
         hartValue = hartValue*0.4;
     }
+    hartValue = this->magicGoods->specialMianShang(this, hartValue);
     if (CommonFunc::isInPercent(CommonFunc::reckonShanBiPercent(fromCard, this, hitKinds)) != false) {
-        this->decreaseHP(this,hartValue);
+        
         
         fromCard->xiXue = hartValue;
-        
-
-        if (this->HP <= 0) {
-            this->cardDead();
-            return;
+        this->decreaseHP(this,hartValue);
+        float tempHart = 0;
+        if (hitKinds == "wuli") {
+            tempHart = this->magicGoods->fanTanWuLiHart(hartValue);
+            if (tempHart != 0) {
+                fromCard->decreaseHP(fromCard, tempHart);
+            }
+        }else if(hitKinds == "fashu") {
+            tempHart = this->magicGoods->fanTanFaShuHart(hartValue);
+            if (tempHart != 0) {
+                fromCard->decreaseHP(fromCard, tempHart);
+            }
         }
+
+//        if (this->HP <= 0) {
+//            if (this->magicGoods->spriteBrother(this) == true) {
+//                return;
+//            }
+//            this->cardDead();
+//            return;
+//        }
+
     }else {
         this->textLabel->setTextColor(Color4B(0, 0, 240, 255));
         this->showLabelText(this->textLabel, 0, "ShanBi");
@@ -89,6 +106,13 @@ void Card::decreaseHP(Card* card,float hpValue) {
 //        this->hpLabel->runAction(Sequence::create(appear,disappear, NULL));
         card->HP = card->HP - hpValue;
         card->fPro->hpPro->setPercentage((1-(float)card->HP/card->MaxHP)*100);
+        
+        if (card->HP <= 0) {
+            if (card->magicGoods->spriteBrother(card) == true) {
+                return;
+            }
+            card->cardDead();
+        }
     }
 
 }
@@ -153,7 +177,8 @@ void Card::decreaseNuQi(Card* card,int num, bool isDaZhao) {
                     hasZhenfen = true;
                 }
             }
-            if (hasZhenfen == false || isDaZhao == true) {
+
+            if (hasZhenfen == false || isDaZhao == true || card->magicGoods->mianYiCuoZhi() == false) {
                 switch (num) {
                     case 1:
                         card->fPro->setNuQiProPrecent(card->fPro->nuqiPro->getPercentage()-34);
@@ -185,6 +210,8 @@ void Card::willRun(FightPlayer* enemyTemp) {
             
         }
     }
+    this->magicGoods->everyRoundAddHP(this);
+    this->magicGoods->willRunAddNuQi(this);
 }
 
 void Card::running(FightPlayer* enemyTemp) {
@@ -212,6 +239,14 @@ void Card::endRun(FightPlayer* enemyTemp) {
         if(this->isHaveThisBuff("mianbao")->thisBuffisEffect() == false) {
             this->shanBi = this->isHaveThisBuff("mianbao")->defaultValue;
             this->buffArray.eraseObject(this->isHaveThisBuff("mianbao"));
+            
+        }
+    }
+    
+    if (this->isHaveThisBuff("zhenfen")) {
+        if(this->isHaveThisBuff("zhenfen")->thisBuffisEffect() == false) {
+          //  this->shanBi = this->isHaveThisBuff("zhenfen")->defaultValue;
+            this->buffArray.eraseObject(this->isHaveThisBuff("zhenfen"));
             
         }
     }
@@ -267,6 +302,9 @@ void Card::ultimateSkill() {
 
 void Card::cardDead() {
     this->forPlayer->fMap->mapCellArray.at(this->cellIndex)->obj = NULL;
+    
+    this->magicGoods->bingFaHuiFuHp(this->forPlayer);
+    
     this->fPro->hpPro->setVisible(false);
     this->fPro->hpProBg->setVisible(false);
     this->fPro->nuqiPro->setVisible(false);
@@ -291,6 +329,14 @@ void Card::initFightShuXing() {
     this->initCharacter();
     this->initHpLabel();
 
+    this->gongJi = this->magicGoods->gongJi+this->gongJi;
+    this->fangYu = this->fangYu+this->magicGoods->fangYu;
+    this->faLi = this->faLi+this->magicGoods->faLi;
+    this->mingZhong = this->mingZhong + this->magicGoods->mingZhong;
+    this->shanBi = this->shanBi + this->magicGoods->shanBi;
+    this->baoJi = this->baoJi + this->magicGoods->baoJi;
+    this->mianBao = this->mianBao + this->magicGoods->mianBao;
+    this->magicGoods->initNuQi(this);
 }
 
 void Card::initCharacter() {

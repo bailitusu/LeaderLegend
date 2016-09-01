@@ -15,7 +15,7 @@ bool ZhenFenBuff::init() {
     return true;
 }
 
-void ZhenFenBuff::addBuff(Card *card) {
+void ZhenFenBuff::addBuff(Card *card,float value) {
     if (card->isHaveThisBuff("zhenfen")) {
         //  printf("-------------%d--------------",card->isHaveThisBuff("gedang")->huiHeNum);
         card->isHaveThisBuff("zhenfen")->huiHeNum = 2;
@@ -25,7 +25,7 @@ void ZhenFenBuff::addBuff(Card *card) {
     card->buffArray.pushBack(this);
 }
 
-void ZhenFenBuff::decreaseBuff(Card *card) {
+void ZhenFenBuff::decreaseBuff(Card *card,float value) {
     if (card->isHaveThisBuff("zhenfen")) {
         //  printf("-------------%d--------------",card->isHaveThisBuff("gedang")->huiHeNum);
         card->isHaveThisBuff("zhenfen")->huiHeNum = 2;

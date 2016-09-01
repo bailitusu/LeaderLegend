@@ -42,7 +42,7 @@ bool FengBoCard::init() {
 //    this->lianJi = 1;
     this->bingKinds = bingZhongType.faShi;
 //    this->hitValue = 2;
-    this->hitLevel = 1.05;
+    this->hitLevel = 0.6;
     this->cardLevel = 60;
 
     return true;
@@ -114,9 +114,9 @@ void FengBoCard::ultimateSkill() {
         this->addNuQi((Card*)(temp.at(i))->obj, 1);
         if (((Card*)(temp.at(i))->obj) != NULL) {
             auto shanBiBuff = ShanBiBuff::create();
-            shanBiBuff->decreaseBuff(((Card*)(temp.at(i))->obj));
+            shanBiBuff->decreaseBuff(((Card*)(temp.at(i))->obj),0.05);
             auto mianBaoBuff = MianBaoBuff::create();
-            mianBaoBuff->decreaseBuff(((Card*)(temp.at(i))->obj));
+            mianBaoBuff->decreaseBuff(((Card*)(temp.at(i))->obj),0.05);
         }
         
     }

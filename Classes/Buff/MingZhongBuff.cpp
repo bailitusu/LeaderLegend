@@ -15,24 +15,24 @@ bool MingZhongBuff::init() {
     return true;
 }
 
-void MingZhongBuff::addBuff(Card *card) {
+void MingZhongBuff::addBuff(Card *card,float value) {
     if (card->isHaveThisBuff("mingzhong")) {
         //  printf("-------------%d--------------",card->isHaveThisBuff("gedang")->huiHeNum);
-        card->isHaveThisBuff("mingzhong")->huiHeNum = 2;
+      //  card->isHaveThisBuff("mingzhong")->huiHeNum = 2;
         return;
     }
     this->defaultValue = card->mingZhong;
-    card->mingZhong = card->mingZhong+card->mingZhong*0.1;
+    card->mingZhong = card->mingZhong+card->mingZhong*value;
     card->buffArray.pushBack(this);
 }
 
-void MingZhongBuff::decreaseBuff(Card *card) {
+void MingZhongBuff::decreaseBuff(Card *card,float value) {
     if (card->isHaveThisBuff("mingzhong")) {
         //  printf("-------------%d--------------",card->isHaveThisBuff("gedang")->huiHeNum);
         card->isHaveThisBuff("mingzhong")->huiHeNum = 2;
         return;
     }
     this->defaultValue = card->mingZhong;
-    card->mingZhong = card->mingZhong-card->mingZhong*0.1;
+    card->mingZhong = card->mingZhong-card->mingZhong*value;
     card->buffArray.pushBack(this);
 }

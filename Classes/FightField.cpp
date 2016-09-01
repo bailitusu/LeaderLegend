@@ -8,6 +8,8 @@
 
 #include "FightField.h"
 #include "FightPlayer.h"
+#include "Dragon/Dragon.h"
+#include "Setting/ActionWait.h"
 bool  FightField::init() {
     playerIndex = 0;
     enemyIndex = 0;
@@ -104,13 +106,36 @@ void FightField::netxRound() {
         playerIndex = 0;
         enemyIndex = 0;
         roundNum++;
-        this->startFight();
+        if (this->player->xiangong > this->enemyPlayer->xiangong) {
+            auto wait = ActionWait::create(1.0);
+            auto apper = FadeTo::create(0.5, 255);
+            auto disapper = FadeTo::create(0.5, 0);
+            auto run = CallFunc::create(CC_CALLBACK_0(FightField::dragonRun,this,"player"));
+            auto block = CallFunc::create(CC_CALLBACK_0(FightField::dragonBlock,this,"player"));
+            this->player->fDragon->dragonSprite->runAction(Sequence::create(apper,disapper,run,wait,block, NULL));
+        }else {
+            auto wait = ActionWait::create(1.0);
+            auto apper = FadeTo::create(0.5, 255);
+            auto disapper = FadeTo::create(0.5, 0);
+            auto run = CallFunc::create(CC_CALLBACK_0(FightField::dragonRun,this,"enemy"));
+            auto block = CallFunc::create(CC_CALLBACK_0(FightField::dragonBlock,this,"enemy"));
+            this->enemyPlayer->fDragon->dragonSprite->runAction(Sequence::create(apper,disapper,run,wait,block, NULL));
+        }
+       // this->startFight();
     }else if(playerIndex <= (player->cardArray.size()-1) ) {
         this->playerNextRun();
     }else if(enemyIndex <= (enemyPlayer->cardArray.size()-1)) {
         this->enemyPlayerNextRun();
     }
     
+}
+
+void FightField::dragonRun(std::string playerName) {
+    if (playerName.compare("player") == 0) {
+        this->player->fDragon->runNextDragonSkill(this->player);
+    }else {
+        this->enemyPlayer->fDragon->runNextDragonSkill(this->enemyPlayer);
+    }
 }
 
 bool FightField::isHasCard(FightPlayer *tempPlayer) {
@@ -122,3 +147,20 @@ bool FightField::isHasCard(FightPlayer *tempPlayer) {
     return false;
 }
 
+void FightField::dragonBlock(std::string playerName) {
+    if (playerName.compare("player") == 0) {
+        auto wait = ActionWait::create(1.0);
+        auto apper = FadeTo::create(0.5, 255);
+        auto disapper = FadeTo::create(0.5, 0);
+        auto run = CallFunc::create(CC_CALLBACK_0(FightField::dragonRun,this,"enemy"));
+        auto block = CallFunc::create(CC_CALLBACK_0(FightField::startFight,this));
+        this->enemyPlayer->fDragon->dragonSprite->runAction(Sequence::create(apper,disapper,run,wait,block, NULL));
+    }else if (playerName.compare("enemy") == 0) {
+        auto wait = ActionWait::create(1.0);
+        auto apper = FadeTo::create(0.5, 255);
+        auto disapper = FadeTo::create(0.5, 0);
+        auto run = CallFunc::create(CC_CALLBACK_0(FightField::dragonRun,this,"player"));
+        auto block = CallFunc::create(CC_CALLBACK_0(FightField::startFight,this));
+        this->player->fDragon->dragonSprite->runAction(Sequence::create(apper,disapper,run,wait,block, NULL));
+    }
+}

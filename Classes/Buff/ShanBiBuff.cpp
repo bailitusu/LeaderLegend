@@ -15,24 +15,24 @@ bool ShanBiBuff::init() {
     return true;
 }
 
-void ShanBiBuff::addBuff(Card *card) {
+void ShanBiBuff::addBuff(Card *card,float value) {
     if (card->isHaveThisBuff("shanbi")) {
         //  printf("-------------%d--------------",card->isHaveThisBuff("gedang")->huiHeNum);
-        card->isHaveThisBuff("shanbi")->huiHeNum = 2;
+      //  card->isHaveThisBuff("shanbi")->huiHeNum = 2;
         return;
     }
     this->defaultValue = card->shanBi;
-    card->shanBi = card->shanBi+card->shanBi*0.05;
+    card->shanBi = card->shanBi+card->shanBi*value;
     card->buffArray.pushBack(this);
 }
 
-void ShanBiBuff::decreaseBuff(Card *card) {
+void ShanBiBuff::decreaseBuff(Card *card,float value) {
     if (card->isHaveThisBuff("shanbi")) {
         //  printf("-------------%d--------------",card->isHaveThisBuff("gedang")->huiHeNum);
         card->isHaveThisBuff("shanbi")->huiHeNum = 2;
         return;
     }
     this->defaultValue = card->shanBi;
-    card->shanBi = card->shanBi-card->shanBi*0.05;
+    card->shanBi = card->shanBi-card->shanBi*value;
     card->buffArray.pushBack(this);
 }

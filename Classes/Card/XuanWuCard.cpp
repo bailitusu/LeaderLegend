@@ -145,7 +145,7 @@ void XuanWuCard::ultimateSkill() {
         ((Card*)(temp.at(i))->obj)->didBeHit(this,"fashu");
         if (((Card*)(temp.at(i))->obj) != NULL) {
             auto mingZhongBuff = MingZhongBuff::create();
-            mingZhongBuff->decreaseBuff(((Card*)(temp.at(i))->obj));
+            mingZhongBuff->decreaseBuff(((Card*)(temp.at(i))->obj),0.1);
         }
 
     }

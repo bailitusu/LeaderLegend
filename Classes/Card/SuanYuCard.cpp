@@ -64,15 +64,26 @@ void SuanYuCard::didBeHit(Card* fromCard, std::string hitKinds) {
     if (fromCard->bingKinds == bingZhongType.yuanCheng) {
         hartValue = hartValue*2;
     }
+    hartValue = this->magicGoods->specialMianShang(this, hartValue);
     if (CommonFunc::isInPercent(CommonFunc::reckonShanBiPercent(fromCard, this, hitKinds)) != false) {
-        this->decreaseHP(this,hartValue);
+        
         
         fromCard->xiXue = hartValue;
-
-        if (this->HP <= 0) {
-            this->cardDead();
-            return;
+        this->decreaseHP(this,hartValue);
+        
+        float tempHart = 0;
+        if (hitKinds == "wuli") {
+            tempHart = this->magicGoods->fanTanWuLiHart(hartValue);
+            if (tempHart != 0) {
+                fromCard->decreaseHP(fromCard, tempHart);
+            }
+        }else if(hitKinds == "fashu") {
+            tempHart = this->magicGoods->fanTanFaShuHart(hartValue);
+            if (tempHart != 0) {
+                fromCard->decreaseHP(fromCard, tempHart);
+            }
         }
+
     }else {
         this->textLabel->setTextColor(Color4B(0, 0, 240, 255));
         this->showLabelText(this->textLabel, 0, "ShanBi");
@@ -174,7 +185,7 @@ void SuanYuCard::ultimateSkill() {
                 
                 if (((Card*)(temp.at(i))->obj) != NULL) {
                     auto xuanYunBuff = XuanYunBuff::create();
-                    xuanYunBuff->addBuff(((Card*)(temp.at(i))->obj));
+                    xuanYunBuff->addBuff(((Card*)(temp.at(i))->obj),0);
                 }
                 return;
             }

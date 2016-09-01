@@ -14,25 +14,25 @@ bool BaojiBuff::init() {
     return true;
 }
 
-void BaojiBuff::addBuff(Card *card) {
+void BaojiBuff::addBuff(Card *card,float value) {
     if (card->isHaveThisBuff("baoji")) {
         //  printf("-------------%d--------------",card->isHaveThisBuff("gedang")->huiHeNum);
-        card->isHaveThisBuff("baoji")->huiHeNum = 2;
+     //   card->isHaveThisBuff("baoji")->huiHeNum = 2;
         return;
     }
     this->defaultValue = card->baoJi;
-    card->baoJi = card->baoJi+card->baoJi*0.2;
+    card->baoJi = card->baoJi+card->baoJi*value;
     card->buffArray.pushBack(this);
 }
 
-void BaojiBuff::decreaseBuff(Card *card) {
+void BaojiBuff::decreaseBuff(Card *card,float value) {
     if (card->isHaveThisBuff("baoji")) {
         //  printf("-------------%d--------------",card->isHaveThisBuff("gedang")->huiHeNum);
         card->isHaveThisBuff("baoji")->huiHeNum = 2;
         return;
     }
     this->defaultValue = card->baoJi;
-    card->baoJi = card->baoJi-card->baoJi*0.2;
+    card->baoJi = card->baoJi-card->baoJi*value;
     card->buffArray.pushBack(this);
 }
 

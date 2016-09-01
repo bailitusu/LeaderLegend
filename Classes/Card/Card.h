@@ -13,6 +13,7 @@
 #include "StandMapCellInterface.h"
 #include "FightProgress.h"
 #include "Buff.h"
+#include "Treasure.h"
 USING_NS_CC;
 
 class FightPlayer;
@@ -60,6 +61,7 @@ public:
     FightPlayer* forEnemy;
     FightPlayer* forPlayer;
     Vector<Buff*> buffArray;
+    Treasure* magicGoods;
     Buff* isHaveThisBuff(std::string buffName);
     int hitRuleNum;
     

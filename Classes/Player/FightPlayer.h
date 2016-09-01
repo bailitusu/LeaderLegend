@@ -12,13 +12,14 @@
 #include "cocos2d.h"
 #include "FightMap.h"
 #include "Card.h"
+class Dragon;
 class FightLayer;
 USING_NS_CC;
 class FightPlayer : public Ref {
     
 public:
     FightMap* fMap;
-
+    Dragon* fDragon;
     Vector<Card*> cardArray;
     CREATE_FUNC(FightPlayer);
     virtual bool init();
@@ -30,7 +31,11 @@ public:
     
     void setCardsPositon(Card *card, int index, int zPoint);
     void initCardStandArray();
-    void initTackCard(Card* card, std::string imageName, int standIndex, std::string playerName);
+    void initTackCard(Card* card, std::string imageName, int standIndex, std::string playerName,Treasure* treasure);
+    
+    void initDragon(std::string imageName);
+    
+    void initCardTreasure(Treasure* treasure);
 };
 
 #endif /* FightPlayer_h */

@@ -24,6 +24,16 @@
 #include "FengBoCard.h"
 #include "FengHouCard.h"
 #include "SuanYuCard.h"
+
+#include "Dragon/Dragon.h"
+#include "Setting/ActionWait.h"
+#include "Treasure/HuFuTreasure.h"
+#include "DunJiaTianShu.h"
+#include "BingFaTreasure.h"
+#include "YiBingBuDao.h"
+#include "MianYiCuoZhiTreasure.h"
+#include "FanTanWuLiTreasure.h"
+#include "FanTanFaShuTreasure.h"
 Scene* FightLayer::createScene() {
     
     Scene* scene = Scene::create();
@@ -57,11 +67,15 @@ void FightLayer::initFightLayer() {
     this->player->fightLayer = this;
     this->player->initMap("leftmap.png", "left");
     this->player->fMap->setPosition(20+origin.x, 80+origin.y);
+    this->player->initDragon("dragon_left.png");
+    this->player->fDragon->dragonSprite->setPosition(150+origin.x,screenSize.height+origin.y);
     
     this->enemyPlay = FightPlayer::create();
     this->enemyPlay->fightLayer = this;
     this->enemyPlay->initMap("rightmap.png", "right");
     this->enemyPlay->fMap->setPosition(screenSize.width-(enemyPlay->fMap->getBoundingBox().size.width+20+origin.x),80+origin.y);
+    this->enemyPlay->initDragon("dragon_right.png");
+    this->enemyPlay->fDragon->dragonSprite->setPosition(screenSize.width-150+origin.x,screenSize.height+origin.y);
     
     this->player->enemy = this->enemyPlay;
     this->enemyPlay->enemy = this->player;
@@ -71,91 +85,25 @@ void FightLayer::initFightLayer() {
     this->player->retain();
     this->enemyPlay->retain();
     
-    this->player->initTackCard(XingTianCard::create(), "xuanwu_left1.png", 0, "player");
-    this->player->initTackCard(XuanWuCard::create(), "xingtian_left1.png", 3, "player");
-    this->player->initTackCard(XingTianCard::create(), "change_left1.png", 5, "player");
-    this->player->initTackCard(ChangECard::create(), "fengbo_left1.png", 6, "player");
-    this->player->initTackCard(SuanYuCard::create(), "fenghou_left1.png", 9, "player");
-    this->player->initTackCard(ChangECard::create(), "suanyu_left1.png", 10, "player");
-    this->player->initTackCard(ChangECard::create(), "taotie_left1.png", 12, "player");
-    this->player->initTackCard(ChangECard::create(), "houyi_left1.png", 15, "player");
-//    for (int i = 0; i < 8; i ++) {
-//        
-//        auto playerHuangdi = HouYiCard::create();
-//        playerHuangdi->initCardSprite("longLeft.png");
-//        playerHuangdi->playerName = "player";
-//       
-//        this->player->setCardsPositon(playerHuangdi, i,10+i);
-//        playerHuangdi->forPlayer = this->player;
-//        playerHuangdi->fPro = FightProgress::create();
-//        playerHuangdi->fPro->hpProBg->setPosition(playerHuangdi->cardSprite->getPosition().x,playerHuangdi->cardSprite->getPosition().y+playerHuangdi->cardSprite->getBoundingBox().size.height+10);
-//        this->player->fMap->addChild(playerHuangdi->fPro->hpProBg,10+i+10);
-//        
-//        playerHuangdi->fPro->hpPro->setPosition(playerHuangdi->fPro->hpProBg->getPosition());
-//        this->player->fMap->addChild(playerHuangdi->fPro->hpPro,10+i+20);
-//
-//        
-//        playerHuangdi->fPro->initNuQiPro(0);
-//        playerHuangdi->fPro->nuqiProBg->setPosition(playerHuangdi->cardSprite->getPosition().x,playerHuangdi->cardSprite->getPosition().y+playerHuangdi->cardSprite->getBoundingBox().size.height+5);
-//        this->player->fMap->addChild(playerHuangdi->fPro->nuqiProBg, 10+i+10);
-//        
-//        playerHuangdi->fPro->nuqiPro->setPosition(playerHuangdi->fPro->nuqiProBg->getPosition());
-//        this->player->fMap->addChild(playerHuangdi->fPro->nuqiPro,10+i+20);
-//        playerHuangdi->initFightShuXing();
-//        playerHuangdi->fPro->retain();
-//        playerHuangdi->retain();
-////        playerHuangdi->fPro->hpPro->setPosition(0, 0);
-////        playerHuangdi->fPro->hpProBg->addChild( playerHuangdi->fPro->hpPro,51);
-////        
-//        
-//       // playerHuangdi->retain();
-//        //        Vec2 position = Vec2(((MapCell*)(player->fMap->mapCellArray->objectAtIndex(i)))->position.x, ((MapCell*)(player->fMap->mapCellArray->objectAtIndex(i)))->position.y);
-//        //        ((MapCell*)(player->fMap->mapCellArray->objectAtIndex(i)))->obj = playerHuangdi;
-//        //        playerHuangdi->cardSprite->setPosition(position.x, position.y);
-//        
-//    }
+    this->player->initTackCard(XingTianCard::create(), "xuanwu_left1.png", 0, "player",HuFuTreasure::create());
+    this->player->initTackCard(XuanWuCard::create(), "xingtian_left1.png", 3, "player",YiBingBuDao::create());
+    this->player->initTackCard(TaoTieCard::create(), "change_left1.png", 5, "player",HuFuTreasure::create());
+    this->player->initTackCard(FengHouCard::create(), "fengbo_left1.png", 6, "player",HuFuTreasure::create());
+    this->player->initTackCard(SuanYuCard::create(), "fenghou_left1.png", 9, "player",HuFuTreasure::create());
+    this->player->initTackCard(HouYiCard::create(), "suanyu_left1.png", 10, "player",HuFuTreasure::create());
+    this->player->initTackCard(ChangECard::create(), "taotie_left1.png", 12, "player",HuFuTreasure::create());
+    this->player->initTackCard(FengBoCard::create(), "houyi_left1.png", 15, "player",HuFuTreasure::create());
+
     this->player->initCardStandArray();
-    //   ((MapCell*)(player->fMap->mapCellArray->objectAtIndex(0)))->obj->didBeHit(100);
-//    for (int i = 0; i < 8; i ++) {
-//        
-//        auto enemyHuangdi = ChangECard::create();
-//        enemyHuangdi->playerName = "enemyPlayer";
-//        enemyHuangdi->initCardSprite("longRight.png");
-//        this->enemyPlay->setCardsPositon(enemyHuangdi, i, 10+i);
-//        enemyHuangdi->forPlayer = this->enemyPlay;
-//        
-//        enemyHuangdi->fPro = FightProgress::create();
-//        enemyHuangdi->fPro->hpProBg->setPosition(enemyHuangdi->cardSprite->getPosition().x,enemyHuangdi->cardSprite->getPosition().y+enemyHuangdi->cardSprite->getBoundingBox().size.height+10);
-//        this->enemyPlay->fMap->addChild(enemyHuangdi->fPro->hpProBg,10+i+10);
-//        
-//        enemyHuangdi->fPro->hpPro->setPosition(enemyHuangdi->fPro->hpProBg->getPosition());
-//        this->enemyPlay->fMap->addChild(enemyHuangdi->fPro->hpPro,10+i+20);
-//        
-//        enemyHuangdi->fPro->initNuQiPro(0);
-//        enemyHuangdi->fPro->nuqiProBg->setPosition(enemyHuangdi->cardSprite->getPosition().x,enemyHuangdi->cardSprite->getPosition().y+enemyHuangdi->cardSprite->getBoundingBox().size.height+5);
-//        this->enemyPlay->fMap->addChild(enemyHuangdi->fPro->nuqiProBg, 10+i+10);
-//        
-//        enemyHuangdi->fPro->nuqiPro->setPosition(enemyHuangdi->fPro->nuqiProBg->getPosition());
-//        this->enemyPlay->fMap->addChild(enemyHuangdi->fPro->nuqiPro,10+i+20);
-//        
-//        enemyHuangdi->fPro->retain();
-//        enemyHuangdi->retain();
-//       // enemyHuangdi->retain();
-//        //        Vec2 position = Vec2(((MapCell*)(enemy->fMap->mapCellArray->objectAtIndex(i)))->position.x, ((MapCell*)(enemy->fMap->mapCellArray->objectAtIndex(i)))->position.y);
-//        //
-//        //        enemyHuangdi->cardSprite->setPosition(position.x, position.y);
-//        
-//        //   enemy->fMap->addChild(enemyHuangdi->cardSprite,10);
-//        
-//    }
-    this->enemyPlay->initTackCard(XingTianCard::create(), "xuanwu_right1.png", 0, "enemyPlayer");
-    this->enemyPlay->initTackCard(XuanWuCard::create(), "xingtian_right1.png", 3, "enemyPlayer");
-    this->enemyPlay->initTackCard(XingTianCard::create(), "change_right1.png", 5, "enemyPlayer");
-    this->enemyPlay->initTackCard(XingTianCard::create(), "fengbo_right1.png", 6, "enemyPlayer");
-    this->enemyPlay->initTackCard(ChangECard::create(), "fenghou_right1.png", 9, "enemyPlayer");
-    this->enemyPlay->initTackCard(ChangECard::create(), "suanyu_right1.png", 10, "enemyPlayer");
-    this->enemyPlay->initTackCard(ChangECard::create(), "taotie_right1.png", 12, "enemyPlayer");
-    this->enemyPlay->initTackCard(ChangECard::create(), "houyi_right1.png", 15, "enemyPlayer");
+
+    this->enemyPlay->initTackCard(XingTianCard::create(), "xuanwu_right1.png", 0, "enemyPlayer",HuFuTreasure::create());
+    this->enemyPlay->initTackCard(XuanWuCard::create(), "xingtian_right1.png", 3, "enemyPlayer",YiBingBuDao::create());
+    this->enemyPlay->initTackCard(TaoTieCard::create(), "change_right1.png", 5, "enemyPlayer",HuFuTreasure::create());
+    this->enemyPlay->initTackCard(FengHouCard::create(), "fengbo_right1.png", 6, "enemyPlayer",HuFuTreasure::create());
+    this->enemyPlay->initTackCard(SuanYuCard::create(), "fenghou_right1.png", 9, "enemyPlayer",HuFuTreasure::create());
+    this->enemyPlay->initTackCard(HouYiCard::create(), "suanyu_right1.png", 10, "enemyPlayer",HuFuTreasure::create());
+    this->enemyPlay->initTackCard(ChangECard::create(), "taotie_right1.png", 12, "enemyPlayer",HuFuTreasure::create());
+    this->enemyPlay->initTackCard(FengBoCard::create(), "houyi_right1.png", 15, "enemyPlayer",HuFuTreasure::create());
     this->enemyPlay->initCardStandArray();
     
 //    Sprite* ttt = Sprite::create("taotieLeft.png");
@@ -191,6 +139,7 @@ void shifang() {
     //this->enemyPlay->retain();
     //playerHuangdi->retain();
     //field->retain();
+    //fDragon->retain();
 }
 
 bool FightLayer::onTouchBegan(cocos2d::Touch *touch, cocos2d::Event *unused_event) {
@@ -205,8 +154,26 @@ bool FightLayer::onTouchBegan(cocos2d::Touch *touch, cocos2d::Event *unused_even
     auto field = FightField::create();
     field->player = this->player;
     field->enemyPlayer = this->enemyPlay;
-    field->startFight();
+   // field->startFight();
     field->retain();
+//    if (this->player->fDragon->dragonSkillArray.size() == 0 && ) {
+//        <#statements#>
+//    }
+    if (this->player->xiangong > this->enemyPlay->xiangong) {
+        auto wait = ActionWait::create(1.0);
+        auto apper = FadeTo::create(0.5, 255);
+        auto disapper = FadeTo::create(0.5, 0);
+        auto run = CallFunc::create(CC_CALLBACK_0(FightField::dragonRun,field,"player"));
+        auto block = CallFunc::create(CC_CALLBACK_0(FightField::dragonBlock,field,"player"));
+        this->player->fDragon->dragonSprite->runAction(Sequence::create(apper,disapper,run,wait,block, NULL));
+    }else {
+        auto wait = ActionWait::create(1.0);
+        auto apper = FadeTo::create(0.5, 255);
+        auto disapper = FadeTo::create(0.5, 0);
+        auto run = CallFunc::create(CC_CALLBACK_0(FightField::dragonRun,field,"enemy"));
+        auto block = CallFunc::create(CC_CALLBACK_0(FightField::dragonBlock,field,"enemy"));
+        this->enemyPlay->fDragon->dragonSprite->runAction(Sequence::create(apper,disapper,run,wait,block, NULL));
+    }
     return true;
 }
 

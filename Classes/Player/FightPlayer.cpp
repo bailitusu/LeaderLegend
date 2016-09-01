@@ -11,6 +11,13 @@
 #include "HuangDiCard.h"
 #include "MapCell.h"
 #include "FightLayer.h"
+#include "Dragon.h"
+#include "AllArmyGuWu.h"
+#include "HuiMieBoDong.h"
+#include "CommonFunc.h"
+#include "JiuXiaoLongYin.h"
+#include "ZaiShengLongHou.h"
+#include "ZhanYiGaoAng.h"
 bool FightPlayer::init() {
 
     xiangong = 0;
@@ -43,7 +50,7 @@ void FightPlayer::initCardStandArray() {
     }
 }
 
-void FightPlayer::initTackCard(Card* card, std::string imageName, int standIndex, std::string playerName) {
+void FightPlayer::initTackCard(Card* card, std::string imageName, int standIndex, std::string playerName,Treasure* treasure) {
     card->initCardSprite(imageName);
     card->playerName = playerName;
     
@@ -64,10 +71,28 @@ void FightPlayer::initTackCard(Card* card, std::string imageName, int standIndex
     
     card->fPro->nuqiPro->setPosition(card->fPro->nuqiProBg->getPosition());
     this->fMap->addChild(card->fPro->nuqiPro,standIndex*10+20);
+    
+    card->magicGoods = treasure;
+    card->magicGoods->retain();
+    
     card->initFightShuXing();
     card->fPro->retain();
     card->retain();
 
 }
 
-
+void FightPlayer::initDragon(std::string imageName) {
+    this->fDragon = Dragon::create();
+    this->fDragon->dragonSprite = Sprite::create(imageName);
+    CommonFunc::setSpriteSize(this->fDragon->dragonSprite, 100);
+    this->fDragon->dragonSprite->setAnchorPoint(Vec2(0.5, 1));
+    this->fightLayer->addChild(this->fDragon->dragonSprite,200);
+    this->fDragon->dragonSprite->setOpacity(0);
+    this->fDragon->retain();
+    
+    this->fDragon->addDragonSkill(JiuXiaoLongYin::create(), 0);
+    this->fDragon->addDragonSkill(HuiMieBoDong::create(), 1);
+    this->fDragon->addDragonSkill(ZaiShengLongHou::create(), 2);
+    this->fDragon->addDragonSkill(AllArmyGuWu::create(), 3);
+    this->fDragon->addDragonSkill(ZhanYiGaoAng::create(), 4);
+}

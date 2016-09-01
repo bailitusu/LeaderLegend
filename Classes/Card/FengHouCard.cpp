@@ -127,10 +127,10 @@ void FengHouCard::ultimateSkill() {
         
         if (((Card*)(temp.at(i))->obj) != NULL) {
             auto zhenFen = ZhenFenBuff::create();
-            zhenFen->addBuff(((Card*)(temp.at(i))->obj));
+            zhenFen->addBuff(((Card*)(temp.at(i))->obj),0);
             auto baoJi = BaojiBuff::create();
-            baoJi->addBuff(((Card*)(temp.at(i))->obj));
-
+            baoJi->addBuff(((Card*)(temp.at(i))->obj),0.2);
+            
         }
     }
     

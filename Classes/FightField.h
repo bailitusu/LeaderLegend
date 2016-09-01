@@ -28,8 +28,9 @@ public:
     void enemyPlayerNextRun();
     void startFight();
     void netxRound();
-    
+    void dragonBlock(std::string playerName);
     bool isHasCard(FightPlayer* tempPlayer);
+    void dragonRun(std::string playerName);
 };
 
 #endif /* FightField_h */

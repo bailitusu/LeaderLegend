@@ -67,15 +67,30 @@ void XingTianCard::didBeHit(Card* fromCard, std::string hitKinds) {
     if (fromCard->bingKinds == bingZhongType.yuanCheng) {
         hartValue = hartValue*0.2;
     }
+    hartValue = this->magicGoods->specialMianShang(this, hartValue);
     if (CommonFunc::isInPercent(CommonFunc::reckonShanBiPercent(fromCard, this, hitKinds)) != false) {
         // printf("%d xingtian %f\n",this->cellIndex,this->geDang);
-        this->decreaseHP(this, hartValue);
+        
         
         fromCard->xiXue = hartValue;
-        if (this->HP <= 0) {
-            this->cardDead();
-            return;
+        this->decreaseHP(this, hartValue);
+        float tempHart = 0;
+        if (hitKinds == "wuli") {
+            tempHart = this->magicGoods->fanTanWuLiHart(hartValue);
+            if (tempHart != 0) {
+                fromCard->decreaseHP(fromCard, tempHart);
+            }
+        }else if(hitKinds == "fashu") {
+            tempHart = this->magicGoods->fanTanFaShuHart(hartValue);
+            if (tempHart != 0) {
+                fromCard->decreaseHP(fromCard, tempHart);
+            }
         }
+
+//        if (this->HP <= 0) {
+//            this->cardDead();
+//            return;
+//        }
     }else {
         this->textLabel->setTextColor(Color4B(0, 0, 240, 255));
         this->showLabelText(this->textLabel, 0, "ShanBi");
@@ -149,7 +164,7 @@ void XingTianCard::hitAction() {
 void XingTianCard::ultimateSkill() {
 
     auto geDangBuff = GeDangBuff::create();
-    geDangBuff->addBuff(this);
+    geDangBuff->addBuff(this,0.5);
   //  geDangBuff->retain();
 //    this->buffArray
 //    this->geDang = this->geDang*0.15 + this->geDang;
