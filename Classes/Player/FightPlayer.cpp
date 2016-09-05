@@ -30,7 +30,7 @@ void FightPlayer::initMap(std::string imageName,std::string direction) {
     fMap = FightMap::create();
     fMap->init(imageName, direction);
     fMap->map->setPosition(0,0);
-    fightLayer->addChild(fMap);
+    fightLayer->addChild(fMap,-10);
 
 }
 
@@ -54,7 +54,7 @@ void FightPlayer::initTackCard(Card* card, std::string imageName, int standIndex
     card->initCardSprite(imageName);
     card->playerName = playerName;
     
-    this->setCardsPositon(card, standIndex,standIndex*10);
+    this->setCardsPositon(card, standIndex,standIndex*10+5);
     card->forPlayer = this;
     card->fPro = FightProgress::create();
     card->fPro->hpProBg->setPosition(card->cardSprite->getPosition().x,card->cardSprite->getPosition().y+card->cardSprite->getBoundingBox().size.height+10);
@@ -78,7 +78,14 @@ void FightPlayer::initTackCard(Card* card, std::string imageName, int standIndex
     card->initFightShuXing();
     card->fPro->retain();
     card->retain();
-
+    
+    if (card->cardName == "houyi") {
+        auto zhanli = CommonFunc::creatAnimation("xiaoheiZhanLi_%d.png", 5, 0.5f, 1);
+        //zhanli->setTag(10);
+        auto temp = RepeatForever::create(zhanli);
+        temp->setTag(10);
+        card->cardSprite->runAction(temp);
+    }
 }
 
 void FightPlayer::initDragon(std::string imageName) {

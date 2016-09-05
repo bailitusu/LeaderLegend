@@ -212,6 +212,7 @@ void Card::willRun(FightPlayer* enemyTemp) {
     }
     this->magicGoods->everyRoundAddHP(this);
     this->magicGoods->willRunAddNuQi(this);
+    this->forPlayer->fMap->setLocalZOrder(1000);
 }
 
 void Card::running(FightPlayer* enemyTemp) {
@@ -280,9 +281,16 @@ void Card::actionBlock() {
     this->fPro->nuqiPro->setVisible(true);
     this->fPro->nuqiProBg->setVisible(true);
     
-    
+    this->forPlayer->fMap->setLocalZOrder(-10);
     this->endRun(this->forEnemy);
-    
+    if (this->cardName.compare("houyi") == 0) {
+        auto zhanli = CommonFunc::creatAnimation("xiaoheiZhanLi_%d.png", 5, 0.5f, 1);
+        //zhanli->setTag(10);
+        auto temp = RepeatForever::create(zhanli);
+        temp->setTag(10);
+        this->cardSprite->runAction(temp);
+
+    }
     auto dispatcher = Director::getInstance()->getEventDispatcher();
     if (playerName.compare("player") == 0) {
         EventCustom event = EventCustom("enemyPlayerNextRun");
@@ -365,5 +373,5 @@ void Card::initCardSprite(std::string imageName) {
     this->cardSprite = Sprite::create(imageName);
     this->cardSprite->setAnchorPoint(Vec2(0.5, 0));
     // player->setFlippedX(true);
-    CommonFunc::setSpriteSize(this->cardSprite, screenSize.width*0.075);
+    CommonFunc::setSpriteSize(this->cardSprite, screenSize.width*0.085);
 }

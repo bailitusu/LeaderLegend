@@ -18,7 +18,7 @@ bool HuFuTreasure::init() {
     this->baoJi = 0.2;
     this->mianBao = 0.05;
     this->level = 3;
-    this->nuQiNum = 3;
+    this->nuQiNum = 0;
     this->treasureName = "hufu";
     return true;
 }

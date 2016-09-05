@@ -111,9 +111,24 @@ void XingTianCard::running(FightPlayer *enemyTemp) {
     
     float tagetX = this->forEnemy->fMap->getPosition().x-this->forEnemy->enemy->fMap->getPosition().x+this->forEnemy->fMap->mapCellArray.at(this->targetNum)->position.x;
     Vec2 target = Vec2(tagetX, this->forEnemy->fMap->mapCellArray.at(this->targetNum)->position.y); //this->playerTemp->fMap->mapCellArray.at(cellNum)->position;
+   // this->cardSprite->setLocalZOrder(1000);
+   
     
-    auto moveTo = MoveTo::create(1.0, target);
-    auto movaFanhui = MoveTo::create(1.0, defaultPosition);
+//    auto animationHit = Animation::create();
+//    for (int i = 0; i < 15; i++) {
+//        char tempName[50] = {0};
+//        sprintf(tempName, "jianshenghit_%d.png",i);
+//        animationHit->addSpriteFrameWithFile(tempName);
+//    }
+//    animationHit->setDelayPerUnit(1.0f/15);
+//    animationHit->setRestoreOriginalFrame(true);
+//    animationHit->setLoops(1);
+//    auto animateActionHit= Animate::create(animationHit);
+   // this->cardSprite->runAction(animateActionHit);
+    auto animateActionHit = CommonFunc::creatAnimation("jianshenghit_%d.png", 15, 1.0f, 1);
+    auto moveTo = MoveTo::create(2.0, target);
+    
+    auto movaFanhui = MoveTo::create(2.0, defaultPosition);
     
     auto hit = CallFunc::create(CC_CALLBACK_0(XingTianCard::hitAction,this));
     auto wait = ActionWait::create(1.0);
@@ -122,13 +137,24 @@ void XingTianCard::running(FightPlayer *enemyTemp) {
     auto block = CallFunc::create(CC_CALLBACK_0(XingTianCard::actionBlock,this));
     if (this->fPro->nuqiPro->getPercentage() < 100) {
         
-        this->cardSprite->runAction(Sequence::create(moveTo,hit,movaFanhui,addNuqi,block,NULL));
+        this->cardSprite->runAction(Sequence::create(moveTo,animateActionHit,hit,movaFanhui,addNuqi,block,NULL));
         
     }else {
         this->cardSprite->runAction(Sequence::create(moveTo,hit,wait,hit,wait,hit,wait,maxHit,movaFanhui,block,NULL));
     }
     
-    
+//    auto animationWalk = Animation::create();
+//        for (int i = 0; i < 17; i++) {
+//            char tempName[50] = {0};
+//            sprintf(tempName, "jianshengwalk_%d.png",i);
+//            animationWalk->addSpriteFrameWithFile(tempName);
+//        }
+//    animationWalk->setDelayPerUnit(2.0f/16);
+//    animationWalk->setRestoreOriginalFrame(true);
+//    animationWalk->setLoops(1);
+    auto animateActionWalk = CommonFunc::creatAnimation("jianshengwalk_%d.png", 17, 2.0f, 1);
+
+    this->cardSprite->runAction(animateActionWalk);
     
     this->fPro->hpPro->setVisible(false);
     this->fPro->hpProBg->setVisible(false);
@@ -143,6 +169,8 @@ void XingTianCard::nuQiManage() {
 }
 
 void XingTianCard::hitAction() {
+    
+    
   //  int cellNum = AttackRule::Rule(this->cellIndex, this->hitRuleNum, this->forEnemy->fMap);
     if (((Card*)(this->forEnemy->fMap->mapCellArray.at(this->targetNum))->obj) != NULL) {
         ((Card*)(this->forEnemy->fMap->mapCellArray.at(this->targetNum))->obj)->didBeHit(this,"wuli");
@@ -151,8 +179,12 @@ void XingTianCard::hitAction() {
 //                ((Card*)(this->forEnemy->fMap->mapCellArray.at(cellNum))->obj)->fPro->setNuQiProPrecent(34+((Card*)(this->forEnemy->fMap->mapCellArray.at(cellNum))->obj)->fPro->nuqiPro->getPercentage());
 //            }
 //        }
-        this->addNuQi((Card*)(this->forEnemy->fMap->mapCellArray.at(this->targetNum)->obj), 1);
 
+        this->addNuQi((Card*)(this->forEnemy->fMap->mapCellArray.at(this->targetNum)->obj), 1);
+        
+        auto animateActionWalk = CommonFunc::creatAnimation("jianshengwalk_%d.png", 17, 2.0f, 1);
+        
+        this->cardSprite->runAction(animateActionWalk);
     }
     
     

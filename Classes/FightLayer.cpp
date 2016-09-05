@@ -85,23 +85,23 @@ void FightLayer::initFightLayer() {
     this->player->retain();
     this->enemyPlay->retain();
     
-    this->player->initTackCard(XingTianCard::create(), "xuanwu_left1.png", 0, "player",HuFuTreasure::create());
+    this->player->initTackCard(XingTianCard::create(), "jianshengwalk_0.png", 0, "player",HuFuTreasure::create());
     this->player->initTackCard(XuanWuCard::create(), "xingtian_left1.png", 3, "player",YiBingBuDao::create());
-    this->player->initTackCard(TaoTieCard::create(), "change_left1.png", 5, "player",HuFuTreasure::create());
-    this->player->initTackCard(FengHouCard::create(), "fengbo_left1.png", 6, "player",HuFuTreasure::create());
+    this->player->initTackCard(FengHouCard::create(), "fengbo_left1.png", 5, "player",HuFuTreasure::create());
+    this->player->initTackCard(HouYiCard::create(), "xiaoheiZhanLi_0.png", 6, "player",HuFuTreasure::create());
     this->player->initTackCard(SuanYuCard::create(), "fenghou_left1.png", 9, "player",HuFuTreasure::create());
-    this->player->initTackCard(HouYiCard::create(), "suanyu_left1.png", 10, "player",HuFuTreasure::create());
+    this->player->initTackCard(TaoTieCard::create(), "suanyu_left1.png", 10, "player",HuFuTreasure::create());
     this->player->initTackCard(ChangECard::create(), "taotie_left1.png", 12, "player",HuFuTreasure::create());
     this->player->initTackCard(FengBoCard::create(), "houyi_left1.png", 15, "player",HuFuTreasure::create());
 
     this->player->initCardStandArray();
 
-    this->enemyPlay->initTackCard(XingTianCard::create(), "xuanwu_right1.png", 0, "enemyPlayer",HuFuTreasure::create());
+    this->enemyPlay->initTackCard(XingTianCard::create(), "jianshengwalk_0.png", 0, "enemyPlayer",HuFuTreasure::create());
     this->enemyPlay->initTackCard(XuanWuCard::create(), "xingtian_right1.png", 3, "enemyPlayer",YiBingBuDao::create());
-    this->enemyPlay->initTackCard(TaoTieCard::create(), "change_right1.png", 5, "enemyPlayer",HuFuTreasure::create());
-    this->enemyPlay->initTackCard(FengHouCard::create(), "fengbo_right1.png", 6, "enemyPlayer",HuFuTreasure::create());
+    this->enemyPlay->initTackCard(FengHouCard::create(),"fengbo_right1.png" , 5, "enemyPlayer",HuFuTreasure::create());
+    this->enemyPlay->initTackCard(HouYiCard::create(), "xiaoheiZhanLi_0.png", 6, "enemyPlayer",HuFuTreasure::create());
     this->enemyPlay->initTackCard(SuanYuCard::create(), "fenghou_right1.png", 9, "enemyPlayer",HuFuTreasure::create());
-    this->enemyPlay->initTackCard(HouYiCard::create(), "suanyu_right1.png", 10, "enemyPlayer",HuFuTreasure::create());
+    this->enemyPlay->initTackCard(TaoTieCard::create(), "suanyu_right1.png", 10, "enemyPlayer",HuFuTreasure::create());
     this->enemyPlay->initTackCard(ChangECard::create(), "taotie_right1.png", 12, "enemyPlayer",HuFuTreasure::create());
     this->enemyPlay->initTackCard(FengBoCard::create(), "houyi_right1.png", 15, "enemyPlayer",HuFuTreasure::create());
     this->enemyPlay->initCardStandArray();

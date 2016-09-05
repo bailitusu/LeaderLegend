@@ -124,6 +124,23 @@ float CommonFunc::reckonZhiLiaoValue(Card *zhiLiaoCard, Card *beZhiLiaoCard) {
     return zhiLiaoValue;
 }
 
+
+Animate* CommonFunc::creatAnimation(std::string onePic, int picSumNum, float time, int loopTimes) {
+    auto animation = Animation::create();
+    for (int i = 0; i < picSumNum; i++) {
+        char tempName[50] = {0};
+        sprintf(tempName, onePic.c_str(),i);
+        animation->addSpriteFrameWithFile(tempName);
+    }
+    animation->setDelayPerUnit(time/picSumNum);
+    animation->setRestoreOriginalFrame(true);
+    if (loopTimes != 0) {
+        animation->setLoops(loopTimes);
+    }
+    return Animate::create(animation);
+    //  auto animateAction= ;
+    
+}
 //void CommonFunc::showHitValue(Label* textLabel,int hitValue, std::string text) {
 //
 //

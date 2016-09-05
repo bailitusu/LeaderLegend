@@ -75,8 +75,11 @@ void HouYiCard::running(FightPlayer *enemyTemp) {
     float tagetX = this->forEnemy->fMap->getPosition().x-this->forEnemy->enemy->fMap->getPosition().x+this->forEnemy->fMap->mapCellArray.at(this->targetNum)->position.x;
     Vec2 target = Vec2(tagetX, this->forEnemy->fMap->mapCellArray.at(this->targetNum)->position.y); //this->playerTemp->fMap->mapCellArray.at(cellNum)->position;
     
-    auto moveTo = MoveTo::create(1.0, target);
-    auto movaFanhui = MoveTo::create(1.0, defaultPosition);
+    this->cardSprite->stopActionByTag(10);
+    auto gong = CommonFunc::creatAnimation("xiaoheihit_%d.png", 22, 1.5f, 1);
+    auto dazhao = CommonFunc::creatAnimation("xiaoheidazhao_%d.png", 22, 2.0f, 1);
+//    auto moveTo = MoveTo::create(1.0, target);
+//    auto movaFanhui = MoveTo::create(1.0, defaultPosition);
     
     auto hit = CallFunc::create(CC_CALLBACK_0(HouYiCard::hitAction,this));
     auto wait = ActionWait::create(1.0);
@@ -85,12 +88,15 @@ void HouYiCard::running(FightPlayer *enemyTemp) {
     auto block = CallFunc::create(CC_CALLBACK_0(HouYiCard::actionBlock,this));
     if (this->fPro->nuqiPro->getPercentage() < 100) {
         if (CommonFunc::isInPercent(0.5)) {
-            this->cardSprite->runAction(Sequence::create(moveTo,hit,wait,hit,movaFanhui,addNuqi,block,NULL));
+            this->cardSprite->runAction(Sequence::create(gong,hit,wait,gong,hit,wait,addNuqi,block, NULL));
+      //      this->cardSprite->runAction(Sequence::create(moveTo,hit,wait,hit,movaFanhui,addNuqi,block,NULL));
         } else {
-            this->cardSprite->runAction(Sequence::create(moveTo,hit,movaFanhui,addNuqi,block,NULL));
+            this->cardSprite->runAction(Sequence::create(gong,hit,addNuqi,block, NULL));
+       //     this->cardSprite->runAction(Sequence::create(moveTo,hit,movaFanhui,addNuqi,block,NULL));
         }
     }else {
-        this->cardSprite->runAction(Sequence::create(moveTo,maxHit,movaFanhui,block,NULL));
+        this->cardSprite->runAction(Sequence::create(dazhao,maxHit,block, NULL));
+       // this->cardSprite->runAction(Sequence::create(moveTo,maxHit,movaFanhui,block,NULL));
     }
     
     
