@@ -18,6 +18,8 @@
 #include "JiuXiaoLongYin.h"
 #include "ZaiShengLongHou.h"
 #include "ZhanYiGaoAng.h"
+
+#include "SetRoleFormatLayer.h"
 bool FightPlayer::init() {
 
     xiangong = 0;
@@ -50,14 +52,33 @@ void FightPlayer::initCardStandArray() {
     }
 }
 
+void FightPlayer::initRecordTackCard(Card *card, int standIndex, std::string playerName, Treasure *treasure) {
+    card->playerName = playerName;
+    (fMap->mapCellArray.at(standIndex))->obj = card;
+    card->cellIndex = standIndex;
+    card->forPlayer = this;
+   
+    card->magicGoods = treasure;
+    if (playerName.compare("enemyPlayer")==0) {
+        card->magicGoods->retain();
+    }
+   // card->magicGoods->retain();
+    card->initFightShuXing();
+    card->retain();
+    card->magicGoods->initRecordNuqi(card);
+    
+}
+
+
+
 void FightPlayer::initTackCard(Card* card, std::string imageName, int standIndex, std::string playerName,Treasure* treasure) {
     card->initCardSprite(imageName);
     card->playerName = playerName;
-    
+   // printf("%d", this->xiangong);
     this->setCardsPositon(card, standIndex,standIndex*10+5);
     card->forPlayer = this;
     card->fPro = FightProgress::create();
-    card->fPro->hpProBg->setPosition(card->cardSprite->getPosition().x,card->cardSprite->getPosition().y+card->cardSprite->getBoundingBox().size.height+10);
+    card->fPro->hpProBg->setPosition(card->cardSprite->getPosition().x,card->cardSprite->getPosition().y+40);
     this->fMap->addChild(card->fPro->hpProBg,standIndex*10+10);
     
     card->fPro->hpPro->setPosition(card->fPro->hpProBg->getPosition());
@@ -66,26 +87,27 @@ void FightPlayer::initTackCard(Card* card, std::string imageName, int standIndex
 
     
     card->fPro->initNuQiPro(0);
-    card->fPro->nuqiProBg->setPosition(card->cardSprite->getPosition().x,card->cardSprite->getPosition().y+card->cardSprite->getBoundingBox().size.height+5);
+    card->fPro->nuqiProBg->setPosition(card->cardSprite->getPosition().x,card->cardSprite->getPosition().y+35);
     this->fMap->addChild(card->fPro->nuqiProBg, standIndex*10+10);
     
     card->fPro->nuqiPro->setPosition(card->fPro->nuqiProBg->getPosition());
     this->fMap->addChild(card->fPro->nuqiPro,standIndex*10+20);
     
     card->magicGoods = treasure;
-    card->magicGoods->retain();
+    if (playerName.compare("enemyPlayer") == 0) {
+        card->magicGoods->retain();
+    }
+    
     
     card->initFightShuXing();
     card->fPro->retain();
     card->retain();
+       card->initHpLabel();
     
-    if (card->cardName == "houyi") {
-        auto zhanli = CommonFunc::creatAnimation("xiaoheiZhanLi_%d.png", 5, 0.5f, 1);
-        //zhanli->setTag(10);
-        auto temp = RepeatForever::create(zhanli);
-        temp->setTag(10);
-        card->cardSprite->runAction(temp);
-    }
+    auto aa = card->magicGoods;
+    aa->initNuQi(card);
+//    card->magicGoods->initNuQi(card);
+    card->runZhanLiAnimation();
 }
 
 void FightPlayer::initDragon(std::string imageName) {
@@ -97,9 +119,9 @@ void FightPlayer::initDragon(std::string imageName) {
     this->fDragon->dragonSprite->setOpacity(0);
     this->fDragon->retain();
     
-    this->fDragon->addDragonSkill(JiuXiaoLongYin::create(), 0);
-    this->fDragon->addDragonSkill(HuiMieBoDong::create(), 1);
-    this->fDragon->addDragonSkill(ZaiShengLongHou::create(), 2);
-    this->fDragon->addDragonSkill(AllArmyGuWu::create(), 3);
-    this->fDragon->addDragonSkill(ZhanYiGaoAng::create(), 4);
+//    this->fDragon->addDragonSkill(JiuXiaoLongYin::create(), 0);
+//    this->fDragon->addDragonSkill(HuiMieBoDong::create(), 1);
+//    this->fDragon->addDragonSkill(ZaiShengLongHou::create(), 2);
+//    this->fDragon->addDragonSkill(AllArmyGuWu::create(), 3);
+//    this->fDragon->addDragonSkill(ZhanYiGaoAng::create(), 4);
 }

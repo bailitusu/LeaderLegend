@@ -39,6 +39,7 @@ public:
     virtual bool mianYiCuoZhi();
     virtual float fanTanWuLiHart(float hartValue);
     virtual float fanTanFaShuHart(float hartValue);
+    virtual void initRecordNuqi(Card* card);
 };
 
 #endif /* Treasure_hpp */

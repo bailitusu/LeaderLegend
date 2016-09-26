@@ -11,6 +11,7 @@
 #include "Card.h"
 bool AllArmyGuWu::init() {
     this->skillLevel = 1;
+    this->dargonName = "allarmyguwu";
     return true;
 }
 

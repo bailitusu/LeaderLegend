@@ -18,6 +18,7 @@ public:
     CREATE_FUNC(DunJiaTianShu);
     virtual bool init();
     virtual void initNuQi(Card* card);
+    virtual void initRecordNuqi(Card* card);
 };
 
 #endif /* DunJiaTianShu_h */

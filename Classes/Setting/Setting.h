@@ -13,7 +13,7 @@
 
 #define screenSize Director::getInstance()->getVisibleSize()
 #define origin Director::getInstance()->getVisibleOrigin()
-
+#define animationFactor 0.08
 struct CardRuleType {
     int jinZhan = 1;
     int gongJian = 2;

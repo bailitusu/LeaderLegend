@@ -11,6 +11,7 @@
 #include "Card.h"
 bool HuiMieBoDong::init() {
     this->skillLevel = 9;
+    this->dargonName = "huimiebodong";
     return true;
 }
 

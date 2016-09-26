@@ -21,7 +21,7 @@ public:
     virtual void runAnimation(FightPlayer* playerTemp);
     virtual void ultimateSkill();
     virtual void cardDead();
-
+    
  //   void initCardSprite(std::string imageName);
     void actionBlock();
 };

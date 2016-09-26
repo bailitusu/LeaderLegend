@@ -24,7 +24,9 @@ float Treasure::specialMianShang(Card *card, float value) {
 void Treasure::initNuQi(Card *card) {
     
 }
-
+void Treasure::initRecordNuqi(Card* card) {
+    
+}
 void Treasure::everyRoundAddHP(Card* card) {
     
 }

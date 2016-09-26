@@ -13,6 +13,7 @@
 #include "MingZhongBuff.h"
 bool ZhanYiGaoAng::init() {
     this->skillLevel = 9;
+    this->dargonName = "zhanyigaoang";
     return true;
 }
 

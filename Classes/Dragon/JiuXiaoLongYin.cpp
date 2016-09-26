@@ -12,6 +12,7 @@
 
 bool JiuXiaoLongYin::init() {
     this->skillLevel = 9;
+    this->dargonName = "jiuxiaolongyin";
     return true;
 }
 

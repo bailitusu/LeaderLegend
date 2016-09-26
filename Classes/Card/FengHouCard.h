@@ -17,11 +17,21 @@ public:
     CREATE_FUNC(FengHouCard);
     virtual bool init();
 
-    virtual void ultimateSkill();
-    virtual void running(FightPlayer* enemyTemp);
+//    virtual void ultimateSkill();
+//    virtual void running(FightPlayer* enemyTemp);
 
     void nuQiManage();
-    void hitAction();
+   // void hitAction();
+    void hitBlock(Vector<OneRecord*> affectRecordArray);
+    void daHitBlock(Vector<OneRecord*> affectRecordArray);
+    void recordHit();
+    virtual void xiaoSkll(OneRecord* info);
+    virtual void daSkill(OneRecord* info);
+    virtual void recordRuning(FightPlayer* enemyTemp);
+    virtual void runZhanLiAnimation();
+    void moveAnimation(Vec2 target);
+    void appearUI();
+    void recordUltimateSkill();
 
 };
 

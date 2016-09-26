@@ -14,8 +14,10 @@
 #include "FightProgress.h"
 #include "Buff.h"
 #include "Treasure.h"
+#include "ReadRecordFight.h"
 USING_NS_CC;
 
+class OneRecord;
 class FightPlayer;
 class Card: public Ref, public StandMapCellInterface  {
 
@@ -32,6 +34,7 @@ public:
     Label *textLabel;
     virtual bool init();
     virtual void didBeHit(Card* fromCard, std::string hitKinds);
+    virtual void recordDidBeHit(Card* fromCard, std::string hitKinds);
     virtual void runAnimation(FightPlayer* playerTemp);
     virtual void ultimateSkill();
     virtual void cardDead();
@@ -43,17 +46,31 @@ public:
     virtual void addNuQi(Card* card,int num);
     virtual void decreaseNuQi(Card* card,int num, bool isDaZhao);
     
+    virtual void recordAddHP(Card *card, float hpValue);
+    virtual void recordCardDead();
+    virtual void recordDecreaseHP(Card* card,float hpValue);
+    virtual void recordAddNuqi(Card* card,int num);
+    virtual void recordDecreaseNuqi(Card *card, int num,bool isDaZhao);
+    virtual void recordRuning(FightPlayer* enemyTemp);
     virtual void willRun(FightPlayer* enemyTemp);
     virtual void running(FightPlayer* enemyTemp);
+    
     virtual void endRun(FightPlayer* enemyTemp);
     
+    virtual void xiaoSkll(OneRecord* info);
+    virtual void daSkill(OneRecord* info);
     virtual void initCharacter();
     virtual void suckBlood(Card* fangYuCard);
-    virtual void zaiShengBlood();
+    virtual void zaiShengBlood(bool isRecord);
     virtual void actionBlock();
+    virtual void recordActionBlock();
     virtual void textLabelDisappearBlock();
     virtual void initHpLabel();
     virtual void showLabelText(Label* label, int hpValue, std::string text);
+    virtual void runZhanLiAnimation();
+    virtual void animationShanBi();
+    virtual void stopStandAnimation();
+    RepeatForever* standAction;
     Buff* fBuff;
     FightProgress* fPro;
     int nuQiNum;
@@ -62,6 +79,7 @@ public:
     FightPlayer* forPlayer;
     Vector<Buff*> buffArray;
     Treasure* magicGoods;
+    ReadRecordFight* readRecordFight;
     Buff* isHaveThisBuff(std::string buffName);
     int hitRuleNum;
     

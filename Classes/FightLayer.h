@@ -11,6 +11,7 @@
 
 #include "cocos2d.h"
 #include "FightPlayer.h"
+#include "SetRoleFormatLayer.h"
 USING_NS_CC;
 class FightPlayer;
 class FightMap;
@@ -30,6 +31,8 @@ public:
 //    FightMap* leftMap;
 //    FightMap* rightMap;
     virtual bool onTouchBegan(Touch *touch, Event *unused_event);
+    Vector<SetRoleData*> roleData;
+    bool startFight;
 };
 
 #endif /* FightScene_h */

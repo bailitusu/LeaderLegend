@@ -19,6 +19,7 @@ public:
     virtual bool init();
     virtual void runSkill(FightPlayer* player);
     int skillLevel;
+    std::string dargonName;
 };
 
 #endif /* DragonSkill_h */

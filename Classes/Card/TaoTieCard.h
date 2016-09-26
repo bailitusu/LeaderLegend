@@ -18,13 +18,20 @@ public:
     CREATE_FUNC(TaoTieCard);
     virtual bool init();
     
-//    virtual void didBeHit(Card* fromCard);
-//    virtual void runAnimation(FightPlayer* playerTemp);
-    virtual void ultimateSkill();
-//    virtual void cardDead();
-    virtual void running(FightPlayer* enemyTemp);
+  //  virtual void ultimateSkill();
+    void recordUltimateSkill();
+    //virtual void running(FightPlayer* enemyTemp);
     void nuQiManage();
-    void hitAction();
+
+    void hitBlock(Vector<OneRecord*> affectRecordArray);
+    void daHitBlock(Vector<OneRecord*> affectRecordArray);
+    void recordHit();
+    virtual void xiaoSkll(OneRecord* info);
+    virtual void daSkill(OneRecord* info);
+    virtual void recordRuning(FightPlayer* enemyTemp);
+    virtual void runZhanLiAnimation();
+    void moveAnimation(Vec2 target);
+    void appearUI();
 //    void actionBlock();
 };
 

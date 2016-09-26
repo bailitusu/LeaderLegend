@@ -17,14 +17,17 @@ public:
     CREATE_FUNC(ChangECard);
     virtual bool init();
     
-//    virtual void didBeHit(Card* fromCard);
-//    virtual void runAnimation(FightPlayer* playerTemp);
-    virtual void ultimateSkill();
-    virtual void running(FightPlayer* enemyTemp);
-//    virtual void cardDead();
+    void recordUltimateSkill();
     void nuQiManage();
-    void hitAction();
-//    void actionBlock();
+    void hitBlock(Vector<OneRecord*> affectRecordArray);
+    void daHitBlock(Vector<OneRecord*> affectRecordArray);
+    void recordHit();
+    virtual void xiaoSkll(OneRecord* info);
+    virtual void daSkill(OneRecord* info);
+    virtual void recordRuning(FightPlayer* enemyTemp);
+    virtual void runZhanLiAnimation();
+    void appearUI();
+    //int hitTimes;
 };
 
 #endif /* ChangECard_h */

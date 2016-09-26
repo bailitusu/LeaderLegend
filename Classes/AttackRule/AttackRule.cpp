@@ -64,6 +64,8 @@ int AttackRule::Rule(int standIndex, int ruleNum, FightMap* map) {
                 break;
         }
     }
+    
+    printf("❌ can not find target");
     return AttackError;
 }
 

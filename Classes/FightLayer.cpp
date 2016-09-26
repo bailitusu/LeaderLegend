@@ -34,14 +34,21 @@
 #include "MianYiCuoZhiTreasure.h"
 #include "FanTanWuLiTreasure.h"
 #include "FanTanFaShuTreasure.h"
+
+#include "json/document.h"
+#include "json/writer.h"
+#include "json/stringbuffer.h"
+#include "Setting/RecordFight.h"
+#include "OneRecord.h"
+
 Scene* FightLayer::createScene() {
     
     Scene* scene = Scene::create();
     
-    FightLayer* layer = FightLayer::create();
-    
-    scene->addChild(layer);
-    layer->initFightLayer();
+//    FightLayer* layer = FightLayer::create();
+//    
+//    scene->addChild(layer);
+   // layer->initFightLayer();
     return scene;
 }
 
@@ -64,6 +71,7 @@ void FightLayer::initFightLayer() {
     dispatcher->addEventListenerWithSceneGraphPriority(liston, this);
     // Director::getInstance()->getEventDispatcher()->resumeEventListenersForTarget(this, true);
     this->player = FightPlayer::create();
+    this->player->fpName = "player";
     this->player->fightLayer = this;
     this->player->initMap("leftmap.png", "left");
     this->player->fMap->setPosition(20+origin.x, 80+origin.y);
@@ -71,6 +79,7 @@ void FightLayer::initFightLayer() {
     this->player->fDragon->dragonSprite->setPosition(150+origin.x,screenSize.height+origin.y);
     
     this->enemyPlay = FightPlayer::create();
+    this->enemyPlay->fpName = "enemyPlayer";
     this->enemyPlay->fightLayer = this;
     this->enemyPlay->initMap("rightmap.png", "right");
     this->enemyPlay->fMap->setPosition(screenSize.width-(enemyPlay->fMap->getBoundingBox().size.width+20+origin.x),80+origin.y);
@@ -84,33 +93,57 @@ void FightLayer::initFightLayer() {
     
     this->player->retain();
     this->enemyPlay->retain();
+    this->startFight = false;
+//    this->player->initTackCard(XingTianCard::create(), "jianshengwalk_0.png", 0, "player",HuFuTreasure::create());
+//    this->player->initTackCard(XuanWuCard::create(), "xingtian_left1.png", 3, "player",YiBingBuDao::create());
+//    this->player->initTackCard(FengHouCard::create(), "fengbo_left1.png", 5, "player",HuFuTreasure::create());
+//    this->player->initTackCard(HouYiCard::create(), "xiaoheiZhanLi_0.png", 6, "player",HuFuTreasure::create());
+//    this->player->initTackCard(SuanYuCard::create(), "fenghou_left1.png", 9, "player",HuFuTreasure::create());
+//    this->player->initTackCard(TaoTieCard::create(), "suanyu_left1.png", 10, "player",HuFuTreasure::create());
+//    this->player->initTackCard(ChangECard::create(), "taotie_left1.png", 12, "player",HuFuTreasure::create());
+//    this->player->initTackCard(FengBoCard::create(), "houyi_left1.png", 15, "player",HuFuTreasure::create());
+//
+//    this->player->initCardStandArray();
+//
+//    this->enemyPlay->initTackCard(XingTianCard::create(), "jianshengwalk_0.png", 0, "enemyPlayer",HuFuTreasure::create());
+//    this->enemyPlay->initTackCard(XuanWuCard::create(), "xingtian_right1.png", 3, "enemyPlayer",YiBingBuDao::create());
+//    this->enemyPlay->initTackCard(FengHouCard::create(),"fengbo_right1.png" , 5, "enemyPlayer",HuFuTreasure::create());
+//    this->enemyPlay->initTackCard(HouYiCard::create(), "xiaoheiZhanLi_0.png", 6, "enemyPlayer",HuFuTreasure::create());
+//    this->enemyPlay->initTackCard(SuanYuCard::create(), "fenghou_right1.png", 9, "enemyPlayer",HuFuTreasure::create());
+//    this->enemyPlay->initTackCard(TaoTieCard::create(), "suanyu_right1.png", 10, "enemyPlayer",HuFuTreasure::create());
+//    this->enemyPlay->initTackCard(ChangECard::create(), "taotie_right1.png", 12, "enemyPlayer",HuFuTreasure::create());
+//    this->enemyPlay->initTackCard(FengBoCard::create(), "houyi_right1.png", 15, "enemyPlayer",HuFuTreasure::create());
+//    this->enemyPlay->initCardStandArray();
     
-    this->player->initTackCard(XingTianCard::create(), "jianshengwalk_0.png", 0, "player",HuFuTreasure::create());
-    this->player->initTackCard(XuanWuCard::create(), "xingtian_left1.png", 3, "player",YiBingBuDao::create());
-    this->player->initTackCard(FengHouCard::create(), "fengbo_left1.png", 5, "player",HuFuTreasure::create());
-    this->player->initTackCard(HouYiCard::create(), "xiaoheiZhanLi_0.png", 6, "player",HuFuTreasure::create());
-    this->player->initTackCard(SuanYuCard::create(), "fenghou_left1.png", 9, "player",HuFuTreasure::create());
-    this->player->initTackCard(TaoTieCard::create(), "suanyu_left1.png", 10, "player",HuFuTreasure::create());
-    this->player->initTackCard(ChangECard::create(), "taotie_left1.png", 12, "player",HuFuTreasure::create());
-    this->player->initTackCard(FengBoCard::create(), "houyi_left1.png", 15, "player",HuFuTreasure::create());
+  //  printf("%d",this->roleData->at(0)->cellIndex);
+    for (int i = 0; i < this->roleData.size(); i++) {
+        this->player->initRecordTackCard(this->roleData.at(i)->card, this->roleData.at(i)->cellIndex, "player",this->roleData.at(i)->magicGoods);
+    }
 
     this->player->initCardStandArray();
+    
+//    this->player->initRecordTackCard(XuanWuCard::create(), 0, "player",DunJiaTianShu::create());
+//    this->player->initRecordTackCard(XingTianCard::create(), 3, "player",DunJiaTianShu::create());
+//    this->player->initRecordTackCard(ChangECard::create(), 5, "player",DunJiaTianShu::create());
+//    this->player->initRecordTackCard(TaoTieCard::create(), 6, "player",DunJiaTianShu::create());
+//    this->player->initRecordTackCard(FengHouCard::create(), 9, "player",DunJiaTianShu::create());
+//    this->player->initRecordTackCard(FengBoCard::create(), 10, "player",DunJiaTianShu::create());
+//    this->player->initRecordTackCard(HouYiCard::create(), 12, "player",DunJiaTianShu::create());
+//    this->player->initRecordTackCard(SuanYuCard::create(), 15, "player",DunJiaTianShu::create());
+//    
+//    this->player->initCardStandArray();
 
-    this->enemyPlay->initTackCard(XingTianCard::create(), "jianshengwalk_0.png", 0, "enemyPlayer",HuFuTreasure::create());
-    this->enemyPlay->initTackCard(XuanWuCard::create(), "xingtian_right1.png", 3, "enemyPlayer",YiBingBuDao::create());
-    this->enemyPlay->initTackCard(FengHouCard::create(),"fengbo_right1.png" , 5, "enemyPlayer",HuFuTreasure::create());
-    this->enemyPlay->initTackCard(HouYiCard::create(), "xiaoheiZhanLi_0.png", 6, "enemyPlayer",HuFuTreasure::create());
-    this->enemyPlay->initTackCard(SuanYuCard::create(), "fenghou_right1.png", 9, "enemyPlayer",HuFuTreasure::create());
-    this->enemyPlay->initTackCard(TaoTieCard::create(), "suanyu_right1.png", 10, "enemyPlayer",HuFuTreasure::create());
-    this->enemyPlay->initTackCard(ChangECard::create(), "taotie_right1.png", 12, "enemyPlayer",HuFuTreasure::create());
-    this->enemyPlay->initTackCard(FengBoCard::create(), "houyi_right1.png", 15, "enemyPlayer",HuFuTreasure::create());
+    this->enemyPlay->initRecordTackCard(XuanWuCard::create(), 0, "enemyPlayer",DunJiaTianShu::create());
+    this->enemyPlay->initRecordTackCard(XingTianCard::create(), 3, "enemyPlayer",DunJiaTianShu::create());
+    this->enemyPlay->initRecordTackCard(ChangECard::create(), 5, "enemyPlayer",DunJiaTianShu::create());
+    this->enemyPlay->initRecordTackCard(TaoTieCard::create(), 6, "enemyPlayer",DunJiaTianShu::create());
+    this->enemyPlay->initRecordTackCard(FengHouCard::create(), 9, "enemyPlayer",DunJiaTianShu::create());
+    this->enemyPlay->initRecordTackCard(FengBoCard::create(), 10, "enemyPlayer",DunJiaTianShu::create());
+    this->enemyPlay->initRecordTackCard(HouYiCard::create(), 12, "enemyPlayer",DunJiaTianShu::create());
+    this->enemyPlay->initRecordTackCard(SuanYuCard::create(), 15, "enemyPlayer",DunJiaTianShu::create());
     this->enemyPlay->initCardStandArray();
     
-//    Sprite* ttt = Sprite::create("taotieLeft.png");
-//    ttt->setAnchorPoint(Vec2(0.5, 0));
-//    ttt->setPosition(238, 177);
-//    CommonFunc::setSpriteSize(ttt, 100);
-//    this->addChild(ttt, 100);
+    
     background = Sprite::create("begin.jpg");
     CommonFunc::setSpriteSize(background, screenSize.width);
     background->setPosition(Vec2(screenSize.width/2+origin.x, screenSize.height/2+origin.y));
@@ -130,50 +163,104 @@ void FightLayer::initFightLayer() {
 
     
     this->addChild(background);
+    
+//    auto rff = RecordFight::GetInstance();
+//    rff->createRecord(1, 2, 3);
+//    OneRecord* one = OneRecord::create();
+//    one->hitTarget = 10;
+//    rff->addItemToRecord(one);
+
+    
+//    rapidjson::Document writedoc;
+//    writedoc.SetObject();
+//    rapidjson::Document::AllocatorType& allocator = writedoc.GetAllocator();
+//    rapidjson::Value array(rapidjson::kArrayType);
+//    rapidjson::Value object(rapidjson::kObjectType);
+//    
+//    // json object 格式添加 “名称/值” 对
+//    object.AddMember("inttag", 1, allocator);
+//    object.AddMember("doubletag", 1.0, allocator);
+//    object.AddMember("booltag", true, allocator);
+//    object.AddMember("hellotag", "helloworld", allocator);
+//    
+//    // json 加入数组
+//    array.PushBack(object, allocator);
+//    
+//    // json object 格式添加 “名称/值” 对
+//    writedoc.AddMember("json", "json string", allocator);
+//    writedoc.AddMember("array", array, allocator);
+//    
+//    rapidjson::StringBuffer buffer;
+//    rapidjson::Writer<rapidjson::StringBuffer> writer(buffer);
+//    writedoc.Accept(writer);
+//    
+//    auto path = FileUtils::getInstance()->getWritablePath();
+//    path.append("myhero.json");
+//    printf("%s",path.c_str());
+//    FILE* file = fopen(path.c_str(), "wb");
+//    if(file)
+//    {
+//        fputs(buffer.GetString(), file);
+//        fclose(file);
+//    }
+//  //  CCLOG("%s",buffer.GetString());
+
 }
 
 void shifang() {
-   // enemyHuangdi->fPro->retain();
-    //playerHuangdi->fPro->retain();
+    //card->retain();
+    //card->fPro->retain();
     //    this->player->retain();
     //this->enemyPlay->retain();
     //playerHuangdi->retain();
     //field->retain();
     //fDragon->retain();
+    //card->magicGoods->retain();
 }
 
 bool FightLayer::onTouchBegan(cocos2d::Touch *touch, cocos2d::Event *unused_event) {
     auto touchLocation = touch->getLocationInView();
     touchLocation = Director::getInstance()->convertToGL(touchLocation);
     
-//    Card* aaa = this->player->cardArray.at(0);
-   // aaa->fPro->nuqiPro->setPercentage(33);
-    //aaa->fPro->hpPro->setPercentage(aaa->fPro->hpPro->getPercentage()+20);
-//    ProgressFromTo* ac = ProgressFromTo::create(1.0, 0, 100);
-//    aaa->fPro->hpPro->runAction(ac);
-    auto field = FightField::create();
-    field->player = this->player;
-    field->enemyPlayer = this->enemyPlay;
-   // field->startFight();
-    field->retain();
-//    if (this->player->fDragon->dragonSkillArray.size() == 0 && ) {
-//        <#statements#>
-//    }
-    if (this->player->xiangong > this->enemyPlay->xiangong) {
-        auto wait = ActionWait::create(1.0);
-        auto apper = FadeTo::create(0.5, 255);
-        auto disapper = FadeTo::create(0.5, 0);
-        auto run = CallFunc::create(CC_CALLBACK_0(FightField::dragonRun,field,"player"));
-        auto block = CallFunc::create(CC_CALLBACK_0(FightField::dragonBlock,field,"player"));
-        this->player->fDragon->dragonSprite->runAction(Sequence::create(apper,disapper,run,wait,block, NULL));
-    }else {
-        auto wait = ActionWait::create(1.0);
-        auto apper = FadeTo::create(0.5, 255);
-        auto disapper = FadeTo::create(0.5, 0);
-        auto run = CallFunc::create(CC_CALLBACK_0(FightField::dragonRun,field,"enemy"));
-        auto block = CallFunc::create(CC_CALLBACK_0(FightField::dragonBlock,field,"enemy"));
-        this->enemyPlay->fDragon->dragonSprite->runAction(Sequence::create(apper,disapper,run,wait,block, NULL));
+    if (this->startFight == false) {
+        this->startFight = true;
+        auto field = FightField::create();
+        field->player = this->player;
+        field->enemyPlayer = this->enemyPlay;
+        // field->startFight();
+        for (int i = 0; i < this->roleData.size() ; i++) {
+            auto data = SetRoleData::create();
+            data->card = this->roleData.at(i)->card;
+            data->cellIndex = this->roleData.at(i)->cellIndex;
+            data->magicGoods = this->roleData.at(i)->magicGoods;
+            data->imageName = this->roleData.at(i)->imageName;
+            field->roleData.pushBack(data);
+        }
+        field->retain();
+        auto record = RecordFight::GetInstance();
+        record->createRecord(1, 2, 3);
+        record->currentRecordIndex= 0;
+        //    if (this->player->fDragon->dragonSkillArray.size() == 0 && ) {
+        //        <#statements#>
+        //    }
+        if (this->player->xiangong > this->enemyPlay->xiangong) {
+            auto wait = ActionWait::create(1.0);
+            auto apper = FadeTo::create(0.5, 255);
+            auto disapper = FadeTo::create(0.5, 0);
+            auto run = CallFunc::create(CC_CALLBACK_0(FightField::dragonRun,field,"player"));
+            auto block = CallFunc::create(CC_CALLBACK_0(FightField::dragonBlock,field,"player"));
+            this->player->fDragon->dragonSprite->runAction(Sequence::create(run,block, NULL));
+        }else {
+            auto wait = ActionWait::create(1.0);
+            auto apper = FadeTo::create(0.5, 255);
+            auto disapper = FadeTo::create(0.5, 0);
+            auto run = CallFunc::create(CC_CALLBACK_0(FightField::dragonRun,field,"enemy"));
+            auto block = CallFunc::create(CC_CALLBACK_0(FightField::dragonBlock,field,"enemy"));
+            this->enemyPlay->fDragon->dragonSprite->runAction(Sequence::create(run,block, NULL));
+        }
+
     }
+    
     return true;
 }
 

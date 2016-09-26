@@ -11,6 +11,7 @@
 
 #include "cocos2d.h"
 #include "Card.h"
+#include "SetRoleFormatLayer.h"
 class FightPlayer;
 USING_NS_CC;
 class FightField : public  Ref{
@@ -31,6 +32,7 @@ public:
     void dragonBlock(std::string playerName);
     bool isHasCard(FightPlayer* tempPlayer);
     void dragonRun(std::string playerName);
+    Vector<SetRoleData*> roleData;
 };
 
 #endif /* FightField_h */

@@ -26,3 +26,11 @@ bool DunJiaTianShu::init() {
 void DunJiaTianShu::initNuQi(Card *card) {
     card->addNuQi(card, this->nuQiNum);
 }
+
+void DunJiaTianShu::initRecordNuqi(Card *card) {
+    card->recordAddNuqi(card, this->nuQiNum);
+}
+
+
+
+

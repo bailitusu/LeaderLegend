@@ -11,10 +11,72 @@
 #include "CommonFunc.h"
 #include "Setting.h"
 #include "CommonFunc.h"
+#include "RecordFight.h"
+
+
 bool Card::init() {
     return true;
 }
+void Card::recordDidBeHit(Card *fromCard, std::string hitKinds) {
+    float hartValue = CommonFunc::reckonHitValue(fromCard, this, hitKinds);
+    OneRecord* oneRecord = OneRecord::create();
+    oneRecord->isBaoJi = false;
+    oneRecord->isGeDang = false;
+    oneRecord->isShanBi = false;
+    if (CommonFunc::isInPercent(CommonFunc::reckonBaoJiPercent(fromCard, this))) {
+        if (hitKinds == "wuli") {
+            hartValue = hartValue*1.5;
+        }else if(hitKinds == "fashu") {
+            hartValue = hartValue*1.75;
+        }
+        oneRecord->isBaoJi = true;
+    }
+    if (CommonFunc::isInPercent(this->geDang)) {
+        hartValue = hartValue*0.4;
+        oneRecord->isGeDang = true;
+    }
+    if (this->cardName.compare("xingtian") == 0) {
+        if (fromCard->bingKinds == bingZhongType.yuanCheng) {
+            hartValue = hartValue*0.2;
+        }
+    }
+    if (this->cardName.compare("suanyu") == 0) {
+        if (fromCard->bingKinds == bingZhongType.yuanCheng) {
+            hartValue = hartValue*2;
+        }
+    }
+    hartValue = this->magicGoods->specialMianShang(this, hartValue);
+    if (CommonFunc::isInPercent(CommonFunc::reckonShanBiPercent(fromCard, this, hitKinds)) != false) {
+        
+        oneRecord->isShanBi = false;
+        oneRecord->hitValue = hartValue;
+        fromCard->xiXue = hartValue;
+        this->recordDecreaseHP(this,hartValue);
+        float tempHart = 0;
+        if (hitKinds == "wuli") {
+            tempHart = this->magicGoods->fanTanWuLiHart(hartValue);
+            if (tempHart != 0) {
+                oneRecord->fanTanWuLiHartValue = tempHart;
+                fromCard->recordDecreaseHP(fromCard, tempHart);
+            }
+        }else if(hitKinds == "fashu") {
+            tempHart = this->magicGoods->fanTanFaShuHart(hartValue);
+            if (tempHart != 0) {
+                oneRecord->fanTanFaShuHartValue = tempHart;
+                fromCard->recordDecreaseHP(fromCard, tempHart);
+            }
+        }
 
+        
+    }else {
+        oneRecord->isShanBi = true;
+    }
+    oneRecord->playerName = this->playerName;
+    oneRecord->cardName = this->cardName;
+    oneRecord->standIndex = this->cellIndex;
+    RecordFight::GetInstance()->addAffectCardArray(RecordFight::GetInstance()->currentRecordIndex, oneRecord);
+
+}
 void Card::didBeHit(Card* fromCard, std::string hitKinds) {
     float hartValue = CommonFunc::reckonHitValue(fromCard, this, hitKinds);
     if (CommonFunc::isInPercent(CommonFunc::reckonBaoJiPercent(fromCard, this))) {
@@ -61,11 +123,24 @@ void Card::didBeHit(Card* fromCard, std::string hitKinds) {
 
 }
 
+void Card::xiaoSkll(OneRecord *info) {
+    
+}
+
+void Card::daSkill(OneRecord *info) {
+    
+}
+
+void Card::animationShanBi() {
+    this->textLabel->setTextColor(Color4B(0, 0, 240, 255));
+    this->showLabelText(this->textLabel, 0, "ShanBi");
+}
+
 void Card::initHpLabel() {
     this->textLabel = Label::createWithTTF("0", "fonts/Marker Felt.ttf", 16);
     this->textLabel->setTextColor(Color4B(240, 0, 0, 255));
     this->textLabel->setOpacity(0);
-    this->textLabel->setPosition(this->cardSprite->getPosition().x,this->cardSprite->getPosition().y+this->cardSprite->getBoundingBox().size.height+20);
+    this->textLabel->setPosition(this->cardSprite->getPosition().x,this->cardSprite->getPosition().y+50);
     this->cardSprite->getParent()->addChild(this->textLabel,200);
 }
 
@@ -90,6 +165,29 @@ void Card::addHP(Card* card,float hpValue) {
     }
 
 }
+void Card::recordAddHP(Card *card, float hpValue) {
+    if (card != NULL) {
+        card->HP = card->HP+hpValue;
+        if (card->HP > card->MaxHP) {
+            card->HP = card->MaxHP;
+        }
+    }
+}
+void Card::recordDecreaseHP(Card *card, float hpValue) {
+    if (card != NULL) {
+
+        card->HP = card->HP - hpValue;
+       // card->fPro->hpPro->setPercentage((1-(float)card->HP/card->MaxHP)*100);
+        
+        if (card->HP <= 0) {
+            if (card->magicGoods->spriteBrother(card) == true) {
+                return;
+            }
+            card->recordCardDead();
+        }
+    }
+
+}
 
 void Card::decreaseHP(Card* card,float hpValue) {
     if (card != NULL) {
@@ -111,6 +209,7 @@ void Card::decreaseHP(Card* card,float hpValue) {
             if (card->magicGoods->spriteBrother(card) == true) {
                 return;
             }
+            
             card->cardDead();
         }
     }
@@ -168,6 +267,41 @@ void Card::addNuQi(Card* card,int num) {
 
 }
 
+void Card::recordAddNuqi(Card *card, int num) {
+    if (card != NULL) {
+        if (card->nuQiNum < card->nuQiNumMax) {
+     
+            card->nuQiNum = card->nuQiNum+num;
+            if (card->nuQiNum >= card->nuQiNumMax) {
+                card->nuQiNum = card->nuQiNumMax;
+            }
+        }
+    }
+
+}
+
+void Card::recordDecreaseNuqi(Card *card, int num,bool isDaZhao) {
+    if (card != NULL) {
+        if (card->nuQiNum > 0) {
+            bool hasZhenfen = false;
+            for (int i = 0; i < card->buffArray.size(); i++) {
+                if (card->buffArray.at(i)->buffName.compare("zhenfen") == 0) {
+                    hasZhenfen = true;
+                }
+            }
+            
+            if (hasZhenfen == false || isDaZhao == true || card->magicGoods->mianYiCuoZhi() == false) {
+
+                card->nuQiNum = card->nuQiNum-num;
+                if (card->nuQiNum <= 0) {
+                    card->nuQiNum = 0;
+                }
+            }
+        }
+    }
+
+    
+}
 void Card::decreaseNuQi(Card* card,int num, bool isDaZhao) {
     if (card != NULL) {
         if (card->fPro->nuqiPro->getPercentage() > 0) {
@@ -203,6 +337,7 @@ void Card::decreaseNuQi(Card* card,int num, bool isDaZhao) {
 }
 
 void Card::willRun(FightPlayer* enemyTemp) {
+    this->forEnemy = enemyTemp;
     if (this->isHaveThisBuff("gedang")) {
         if(this->isHaveThisBuff("gedang")->thisBuffisEffect() == false) {
             this->geDang = this->isHaveThisBuff("gedang")->defaultValue;
@@ -217,6 +352,10 @@ void Card::willRun(FightPlayer* enemyTemp) {
 
 void Card::running(FightPlayer* enemyTemp) {
 
+}
+
+void Card::recordRuning(FightPlayer *enemyTemp) {
+    
 }
 
 void Card::endRun(FightPlayer* enemyTemp) {
@@ -251,6 +390,7 @@ void Card::endRun(FightPlayer* enemyTemp) {
             
         }
     }
+    this->forPlayer->fMap->setLocalZOrder(-10);
 }
 
 void Card::runAnimation(FightPlayer* playerTemp) {
@@ -261,13 +401,15 @@ void Card::runAnimation(FightPlayer* playerTemp) {
         if(this->isHaveThisBuff("xuanyun")->thisBuffisEffect() == false) {
    
             this->buffArray.eraseObject(this->isHaveThisBuff("xuanyun"));
-            this->running(playerTemp);
+           // this->running(playerTemp);
+            this->recordRuning(playerTemp);
         }else {
             this->forEnemy = playerTemp;
             this->actionBlock();
         }
     }else {
-        this->running(playerTemp);
+        //this->running(playerTemp);
+        this->recordRuning(playerTemp);
     }
     
     
@@ -275,22 +417,32 @@ void Card::runAnimation(FightPlayer* playerTemp) {
 //    printf("run Animation error");
 }
 
+void Card::recordActionBlock() {
+    this->endRun(this->forEnemy);
+    auto dispatcher = Director::getInstance()->getEventDispatcher();
+    if (playerName.compare("player") == 0) {
+        EventCustom event = EventCustom("enemyPlayerNextRun");
+        //event.setUserData((void*)123);
+        dispatcher->dispatchEvent(&event);
+    }else if (playerName.compare("enemyPlayer") == 0) {
+        EventCustom event = EventCustom("playerNextRun");
+        //event.setUserData((void*)123);
+        dispatcher->dispatchEvent(&event);
+    }
+
+}
+void Card::runZhanLiAnimation() {
+
+}
 void Card::actionBlock() {
-    this->fPro->hpPro->setVisible(true);
-    this->fPro->hpProBg->setVisible(true);
-    this->fPro->nuqiPro->setVisible(true);
-    this->fPro->nuqiProBg->setVisible(true);
+//    this->fPro->hpPro->setVisible(true);
+//    this->fPro->hpProBg->setVisible(true);
+//    this->fPro->nuqiPro->setVisible(true);
+//    this->fPro->nuqiProBg->setVisible(true);
     
     this->forPlayer->fMap->setLocalZOrder(-10);
     this->endRun(this->forEnemy);
-    if (this->cardName.compare("houyi") == 0) {
-        auto zhanli = CommonFunc::creatAnimation("xiaoheiZhanLi_%d.png", 5, 0.5f, 1);
-        //zhanli->setTag(10);
-        auto temp = RepeatForever::create(zhanli);
-        temp->setTag(10);
-        this->cardSprite->runAction(temp);
 
-    }
     auto dispatcher = Director::getInstance()->getEventDispatcher();
     if (playerName.compare("player") == 0) {
         EventCustom event = EventCustom("enemyPlayerNextRun");
@@ -308,6 +460,9 @@ void Card::ultimateSkill() {
     printf("card ultimateSkill ");
 }
 
+void Card::recordCardDead() {
+    this->forPlayer->fMap->mapCellArray.at(this->cellIndex)->obj = NULL;
+}
 void Card::cardDead() {
     this->forPlayer->fMap->mapCellArray.at(this->cellIndex)->obj = NULL;
     
@@ -335,7 +490,7 @@ void Card::initFightShuXing() {
     this->xianGong = this->mingJie*0.75+this->yunQi*0.25;
     this->MaxHP = this->HP;
     this->initCharacter();
-    this->initHpLabel();
+ 
 
     this->gongJi = this->magicGoods->gongJi+this->gongJi;
     this->fangYu = this->fangYu+this->magicGoods->fangYu;
@@ -344,7 +499,7 @@ void Card::initFightShuXing() {
     this->shanBi = this->shanBi + this->magicGoods->shanBi;
     this->baoJi = this->baoJi + this->magicGoods->baoJi;
     this->mianBao = this->mianBao + this->magicGoods->mianBao;
-    this->magicGoods->initNuQi(this);
+    
 }
 
 void Card::initCharacter() {
@@ -365,13 +520,22 @@ void Card::suckBlood(Card* fangYuCard) {
     this->addHP(this, this->xiXue*0.5);
 }
 
-void Card::zaiShengBlood() {
-    this->addHP(this, this->zhiLiao);
+void Card::zaiShengBlood(bool isRecord) {
+    if (isRecord == true) {
+        this->recordAddHP(this, this->zhiLiao);
+    }else {
+        this->addHP(this, this->zhiLiao);
+    }
+   
+}
+
+void Card::stopStandAnimation() {
+    this->cardSprite->stopActionByTag(10);
 }
 
 void Card::initCardSprite(std::string imageName) {
     this->cardSprite = Sprite::create(imageName);
-    this->cardSprite->setAnchorPoint(Vec2(0.5, 0));
+    this->cardSprite->setAnchorPoint(Vec2(0.5, 0.5));
     // player->setFlippedX(true);
-    CommonFunc::setSpriteSize(this->cardSprite, screenSize.width*0.085);
+    CommonFunc::setSpriteSize(this->cardSprite, screenSize.width*0.25);
 }

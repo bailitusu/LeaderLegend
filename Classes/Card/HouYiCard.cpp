@@ -12,6 +12,9 @@
 #include "Setting.h"
 #include "ActionWait.h"
 #include "CommonFunc.h"
+#include "OneRecord.h"
+#include "RecordFight.h"
+#include "ReadRecordFight.h"
 bool HouYiCard::init() {
     this->cellIndex = 0;
     this->HP = 18000;
@@ -42,80 +45,177 @@ bool HouYiCard::init() {
     this->hitLevel = 1.25;
     //this->geDang = 0.15;
     this->cardLevel = 60;
+    this->hitTimes = 0;
     return true;
 }
 
-//void HouYiCard::didBeHit(Card* fromCard) {
-//
+
+
+//void HouYiCard::running(FightPlayer *enemyTemp) {
+//    this->forEnemy = enemyTemp;
 //    
-//
-////    if (this->fPro->nuqiPro->getPercentage() < 100 && this->HP > 0) {
-////        this->fPro->setNuQiProPrecent(100/3+this->fPro->nuqiPro->getPercentage());
-////    }else {
-////        return;
-////    }
-////
-//    // std::cout << "huangdi hart" << hitValue << std::endl;
-//}
-//
-//void HouYiCard::cardDead() {
+//  //  printf("%dhouyi%f\n",this->cellIndex,this->mingZhong);
+//    auto defaultPosition = this->cardSprite->getPosition();
+//    this->targetNum = AttackRule::Rule(this->cellIndex, this->hitRuleNum, this->forEnemy->fMap);
+//    if (this->targetNum == 100) {
+//        return;
+//    }
+//    float tagetX = this->forEnemy->fMap->getPosition().x-this->forEnemy->enemy->fMap->getPosition().x+this->forEnemy->fMap->mapCellArray.at(this->targetNum)->position.x;
+//    Vec2 target = Vec2(tagetX, this->forEnemy->fMap->mapCellArray.at(this->targetNum)->position.y); //this->playerTemp->fMap->mapCellArray.at(cellNum)->position;
+//    
+//    this->cardSprite->stopActionByTag(10);
+//    auto gong = CommonFunc::creatAnimation("xiaoheihit_%d.png", 22, 1.5f, 1);
+//    auto dazhao = CommonFunc::creatAnimation("xiaoheidazhao_%d.png", 22, 2.0f, 1);
+////    auto moveTo = MoveTo::create(1.0, target);
+////    auto movaFanhui = MoveTo::create(1.0, defaultPosition);
+//    
+//    //auto hit = CallFunc::create(CC_CALLBACK_0(HouYiCard::Hit,this));
+//    auto wait = ActionWait::create(1.0);
+//    auto maxHit = CallFunc::create(CC_CALLBACK_0(HouYiCard::ultimateSkill, this));
+//    auto addNuqi = CallFunc::create(CC_CALLBACK_0(HouYiCard::nuQiManage, this));
+//    auto block = CallFunc::create(CC_CALLBACK_0(HouYiCard::actionBlock,this));
+//    if (this->fPro->nuqiPro->getPercentage() < 100) {
+//        if (CommonFunc::isInPercent(0.5)) {
+//   //         this->cardSprite->runAction(Sequence::create(gong,hit,wait,gong,hit,wait,addNuqi,block, NULL));
+//      //      this->cardSprite->runAction(Sequence::create(moveTo,hit,wait,hit,movaFanhui,addNuqi,block,NULL));
+//        } else {
+//     //       this->cardSprite->runAction(Sequence::create(gong,hit,addNuqi,block, NULL));
+//       //     this->cardSprite->runAction(Sequence::create(moveTo,hit,movaFanhui,addNuqi,block,NULL));
+//        }
+//    }else {
+//        this->cardSprite->runAction(Sequence::create(dazhao,maxHit,block, NULL));
+//       // this->cardSprite->runAction(Sequence::create(moveTo,maxHit,movaFanhui,block,NULL));
+//    }
+//    
+//    
+//    
+//    this->fPro->hpPro->setVisible(false);
+//    this->fPro->hpProBg->setVisible(false);
+//    this->fPro->nuqiPro->setVisible(false);
+//    this->fPro->nuqiProBg->setVisible(false);
 //    
 //
 //}
 
-void HouYiCard::running(FightPlayer *enemyTemp) {
-    this->forEnemy = enemyTemp;
+void HouYiCard::xiaoSkll(OneRecord *info) {
+    this->stopStandAnimation();
     
-  //  printf("%dhouyi%f\n",this->cellIndex,this->mingZhong);
-    auto defaultPosition = this->cardSprite->getPosition();
-    this->targetNum = AttackRule::Rule(this->cellIndex, this->hitRuleNum, this->forEnemy->fMap);
-    if (this->targetNum == 100) {
-        return;
-    }
-    float tagetX = this->forEnemy->fMap->getPosition().x-this->forEnemy->enemy->fMap->getPosition().x+this->forEnemy->fMap->mapCellArray.at(this->targetNum)->position.x;
-    Vec2 target = Vec2(tagetX, this->forEnemy->fMap->mapCellArray.at(this->targetNum)->position.y); //this->playerTemp->fMap->mapCellArray.at(cellNum)->position;
-    
-    this->cardSprite->stopActionByTag(10);
-    auto gong = CommonFunc::creatAnimation("xiaoheihit_%d.png", 22, 1.5f, 1);
-    auto dazhao = CommonFunc::creatAnimation("xiaoheidazhao_%d.png", 22, 2.0f, 1);
-//    auto moveTo = MoveTo::create(1.0, target);
-//    auto movaFanhui = MoveTo::create(1.0, defaultPosition);
-    
-    auto hit = CallFunc::create(CC_CALLBACK_0(HouYiCard::hitAction,this));
-    auto wait = ActionWait::create(1.0);
-    auto maxHit = CallFunc::create(CC_CALLBACK_0(HouYiCard::ultimateSkill, this));
-    auto addNuqi = CallFunc::create(CC_CALLBACK_0(HouYiCard::nuQiManage, this));
-    auto block = CallFunc::create(CC_CALLBACK_0(HouYiCard::actionBlock,this));
-    if (this->fPro->nuqiPro->getPercentage() < 100) {
-        if (CommonFunc::isInPercent(0.5)) {
-            this->cardSprite->runAction(Sequence::create(gong,hit,wait,gong,hit,wait,addNuqi,block, NULL));
-      //      this->cardSprite->runAction(Sequence::create(moveTo,hit,wait,hit,movaFanhui,addNuqi,block,NULL));
-        } else {
-            this->cardSprite->runAction(Sequence::create(gong,hit,addNuqi,block, NULL));
-       //     this->cardSprite->runAction(Sequence::create(moveTo,hit,movaFanhui,addNuqi,block,NULL));
-        }
+    Animate* gong = NULL;
+    if (this->playerName.compare("enemyPlayer") == 0) {
+        gong = CommonFunc::creatAnimation("xiaohei_attack_r%d.png", 12, animationFactor*12, 1);
     }else {
-        this->cardSprite->runAction(Sequence::create(dazhao,maxHit,block, NULL));
-       // this->cardSprite->runAction(Sequence::create(moveTo,maxHit,movaFanhui,block,NULL));
+        gong = CommonFunc::creatAnimation("xiaohei_attack_l%d.png", 12, animationFactor*12, 1);
     }
     
+    auto wait = ActionWait::create(1.0);
     
-    
+    auto addNuqi = CallFunc::create(CC_CALLBACK_0(HouYiCard::nuQiManage, this));
+    auto appear = CallFunc::create(CC_CALLBACK_0(HouYiCard::appearUI, this));
+    auto hit = CallFunc::create(CC_CALLBACK_0(HouYiCard::hitBlock,this,info->affectRecordArray));
+    auto recordBlock = CallFunc::create(CC_CALLBACK_0(ReadRecordFight::readNextFightRecord, this->readRecordFight));
+    if (info->isLianJi == true) {
+        auto sequence = Sequence::create(gong,hit,wait,gong,hit,wait,addNuqi,appear,recordBlock,NULL);
+        sequence->setTag(1);
+        this->cardSprite->runAction(sequence);
+    }else {
+        this->cardSprite->runAction(Sequence::create(gong,hit,wait,addNuqi,appear,recordBlock,NULL));
+    }
     this->fPro->hpPro->setVisible(false);
     this->fPro->hpProBg->setVisible(false);
     this->fPro->nuqiPro->setVisible(false);
     this->fPro->nuqiProBg->setVisible(false);
-    
-
 }
 
-//void HouYiCard::runAnimation(FightPlayer* playerTemp) {
-//    // AttackRule::Rule(1, 1, <#FightMap *map#>)
-//    // this->cardSprite->runAction(Sequence::create(animateAction, CallFunc::create(CC_CALLBACK_0(HuangDiCard::actionBlock,this)), NULL));
-//    
-//    
-//    
-//}
+void HouYiCard::appearUI() {
+    this->cardSprite->runAction(this->standAction);
+    this->fPro->hpPro->setVisible(true);
+    this->fPro->hpProBg->setVisible(true);
+    this->fPro->nuqiPro->setVisible(true);
+    this->fPro->nuqiProBg->setVisible(true);
+}
+
+void HouYiCard::daSkill(OneRecord *info) {
+    this->stopStandAnimation();
+    Animate* dazhao = NULL;
+    if (this->playerName.compare("enemyPlayer") == 0) {
+        dazhao = CommonFunc::creatAnimation("xiaohei_conjure_r%d.png", 16, animationFactor*16, 1);
+    }else {
+        dazhao = CommonFunc::creatAnimation("xiaohei_conjure_l%d.png", 16, animationFactor*16, 1);
+    }
+  //  auto dazhao = CommonFunc::creatAnimation("xiaohei_conjure_%d.png", 22, 2.0f, 1);
+    auto wait = ActionWait::create(1.0);
+    auto appear = CallFunc::create(CC_CALLBACK_0(HouYiCard::appearUI, this));
+    auto maxHit = CallFunc::create(CC_CALLBACK_0(HouYiCard::daHitBlock, this, info->affectRecordArray));
+    auto recordBlock = CallFunc::create(CC_CALLBACK_0(ReadRecordFight::readNextFightRecord, this->readRecordFight));
+    this->cardSprite->runAction(Sequence::create(dazhao,maxHit,wait,appear,recordBlock,NULL));
+    this->fPro->hpPro->setVisible(false);
+    this->fPro->hpProBg->setVisible(false);
+    this->fPro->nuqiPro->setVisible(false);
+    this->fPro->nuqiProBg->setVisible(false);
+}
+
+void HouYiCard::recordRuning(FightPlayer *enemyTemp) {
+    this->forEnemy = enemyTemp;
+    this->targetNum = AttackRule::Rule(this->cellIndex, this->hitRuleNum, this->forEnemy->fMap);
+    if (this->targetNum == 100) {
+        return;
+    }
+    auto oneRecord = OneRecord::create();
+    
+    oneRecord->hitTarget = this->targetNum;
+    oneRecord->cardName = this->cardName;
+    oneRecord->playerName = this->playerName;
+    oneRecord->standIndex = this->cellIndex;
+  //  printf("%d-------%s\n", this->cellIndex, this->playerName.c_str());
+//
+//    auto hit = CallFunc::create(CC_CALLBACK_0(HouYiCard::recordHit,this));
+//    auto maxHit = CallFunc::create(CC_CALLBACK_0(HouYiCard::ultimateSkill, this));
+//    auto addNuqi = CallFunc::create(CC_CALLBACK_0(HouYiCard::nuQiManage, this));
+//    auto block = CallFunc::create(CC_CALLBACK_0(HouYiCard::actionBlock,this));
+    if (this->nuQiNum < this->nuQiNumMax) {
+        oneRecord->isXiaoZhao = true;
+        oneRecord->isDaZhao = false;
+        if (CommonFunc::isInPercent(0.5)) {
+            oneRecord->isLianJi = true;
+        }else {
+            oneRecord->isLianJi = false;
+        }
+        RecordFight::GetInstance()->addItemToRecord(oneRecord);
+        if (oneRecord->isLianJi == true) {
+            this->recordHit();
+            this->recordHit();
+            //this->nuQiManage();
+            this->recordAddNuqi(this, 1);
+            this->recordActionBlock();
+           // this->cardSprite->runAction(Sequence::create(hit,hit,addNuqi,block, NULL));
+        }else {
+            this->recordHit();
+           // this->nuQiManage();
+            this->recordAddNuqi(this, 1);
+            this->recordActionBlock();
+        }
+    }else {
+        oneRecord->isXiaoZhao = false;
+        oneRecord->isDaZhao = true;
+        RecordFight::GetInstance()->addItemToRecord(oneRecord);
+        this->recordUltimateSkill();
+        this->recordActionBlock();
+       // this->cardSprite->runAction(Sequence::create(maxHit,block, NULL));
+    }
+    
+    
+}
+void HouYiCard::recordHit() {
+    if ((Card*)(this->forEnemy->fMap->mapCellArray.at(this->targetNum))->obj != NULL) {
+        ((Card*)(this->forEnemy->fMap->mapCellArray.at(this->targetNum))->obj)->recordDidBeHit(this,"wuli");
+        
+//        auto oneRecord = OneRecord::create();
+//        oneRecord->enemyNuQiChange = 1;
+        //RecordFight::GetInstance()->addItemOfNuqiBuff(RecordFight::GetInstance()->currentRecordIndex, oneRecord);
+        this->recordAddNuqi((Card*)(this->forEnemy->fMap->mapCellArray.at(this->targetNum)->obj), 1);
+    }
+}
+
 
 void HouYiCard::nuQiManage() {
 //    if (this->fPro->nuqiPro->getPercentage() < 100) {
@@ -124,29 +224,97 @@ void HouYiCard::nuQiManage() {
     this->addNuQi(this, 1);
 }
 
-void HouYiCard::hitAction() {
+void HouYiCard::hitBlock( Vector<OneRecord*> affectRecordArray) {
 
-    if ((Card*)(this->forEnemy->fMap->mapCellArray.at(this->targetNum))->obj != NULL) {
-        ((Card*)(this->forEnemy->fMap->mapCellArray.at(this->targetNum))->obj)->didBeHit(this,"wuli");
-
-        this->addNuQi((Card*)(this->forEnemy->fMap->mapCellArray.at(this->targetNum)->obj), 1);
+//    if ((Card*)(this->forEnemy->fMap->mapCellArray.at(this->targetNum))->obj != NULL) {
+//        ((Card*)(this->forEnemy->fMap->mapCellArray.at(this->targetNum))->obj)->didBeHit(this,"wuli");
+//
+//        this->addNuQi((Card*)(this->forEnemy->fMap->mapCellArray.at(this->targetNum)->obj), 1);
+//    }
+    if (affectRecordArray.size() == 2) {
+        if (this->hitTimes > 1 ) {
+            this->hitTimes = 0;
+        }
+    }else {
+        this->hitTimes = 0;
     }
+
+    auto beHitCardRecord = affectRecordArray.at(this->hitTimes);
+    if (beHitCardRecord->isShanBi == true) {
+
+        beHitCardRecord->card->animationShanBi();
+    }else {
+        if (beHitCardRecord->card->HP > 0) {
+            
+        
+            this->decreaseHP(beHitCardRecord->card, beHitCardRecord->hitValue);
+//            if (beHitCardRecord->card->HP < 0) {
+//                this->cardSprite->stopActionByTag(1);
+//                auto wait = ActionWait::create(1.0);
+//                auto addNuqi = CallFunc::create(CC_CALLBACK_0(HouYiCard::nuQiManage, this));
+//                auto recordBlock = CallFunc::create(CC_CALLBACK_0(ReadRecordFight::readNextFightRecord, this->readRecordFight));
+//                
+//                this->cardSprite->runAction(Sequence::create(wait,addNuqi,recordBlock,NULL));
+//            }
+            this->addNuQi(beHitCardRecord->card, 1);
+            
+        }
+    }
+    this->hitTimes++;
     
  
 }
 
+void HouYiCard::daHitBlock(Vector<OneRecord*> affectRecordArray) {
+    for (int i = 0 ; i < affectRecordArray.size(); i++) {
+        auto beHitCard = affectRecordArray.at(i)->card;
+        if (affectRecordArray.at(i)->isShanBi == true) {
+            beHitCard->animationShanBi();
+        }else {
+            this->decreaseHP(beHitCard, affectRecordArray.at(i)->hitValue);
+            this->addNuQi(beHitCard, 1);
+        }
+    }
+    this->decreaseNuQi(this, 3, true);
+}
 
-
-void HouYiCard::ultimateSkill() {
-//    int cellNum = AttackRule::Rule(this->cellIndex, this->hitRuleNum, this->forEnemy->fMap);
+void HouYiCard::recordUltimateSkill() {
     Vector<MapCell*> temp = this->forEnemy->fMap->hitNineCell(this->targetNum);
     for (int i = 0; i < temp.size(); i++) {
-        this->addNuQi((Card*)(temp.at(i))->obj, 1);
-//        if (((Card*)(temp.at(i))->obj)->fPro->nuqiPro->getPercentage() < 100) {
-//            ((Card*)(temp.at(i))->obj)->fPro->setNuQiProPrecent(100/3+((Card*)(temp.at(i))->obj)->fPro->nuqiPro->getPercentage());
-//        }
-        ((Card*)(temp.at(i))->obj)->didBeHit(this,"wuli");
+        this->recordAddNuqi((Card*)(temp.at(i))->obj, 1);
+//        auto oneRecord = OneRecord::create();
+//        oneRecord->enemyNuQiChange = 1;
+       // RecordFight::GetInstance()->addItemOfNuqiBuff(RecordFight::GetInstance()->currentRecordIndex, oneRecord);
+        ((Card*)(temp.at(i))->obj)->recordDidBeHit(this, "wuli");
     }
-    this->decreaseNuQi(this, 3,true);
-    //this->fPro->setNuQiProPrecent(0);
+    this->recordDecreaseNuqi(this, 3, true);
+   // this->decreaseNuQi(this, 3,true);
 }
+
+void HouYiCard::runZhanLiAnimation() {
+    Animate* zhanli = NULL;
+    if (this->playerName.compare("enemyPlayer") == 0) {
+        zhanli = CommonFunc::creatAnimation("xiaohei_stand_r%d.png", 5, animationFactor*5, 1);
+    }else {
+        zhanli = CommonFunc::creatAnimation("xiaohei_stand_l%d.png", 5, animationFactor*5, 1);
+    }
+   // auto zhanli = CommonFunc::creatAnimation("xiaohei_stand_%d.png", 5, 0.5f, 1);
+    //zhanli->setTag(10);
+    this->standAction = RepeatForever::create(zhanli);
+    this->standAction->retain();
+    this->standAction->setTag(10);
+    this->cardSprite->runAction(this->standAction);
+}
+//void HouYiCard::ultimateSkill() {
+////    int cellNum = AttackRule::Rule(this->cellIndex, this->hitRuleNum, this->forEnemy->fMap);
+//    Vector<MapCell*> temp = this->forEnemy->fMap->hitNineCell(this->targetNum);
+//    for (int i = 0; i < temp.size(); i++) {
+//        this->addNuQi((Card*)(temp.at(i))->obj, 1);
+////        if (((Card*)(temp.at(i))->obj)->fPro->nuqiPro->getPercentage() < 100) {
+////            ((Card*)(temp.at(i))->obj)->fPro->setNuQiProPrecent(100/3+((Card*)(temp.at(i))->obj)->fPro->nuqiPro->getPercentage());
+////        }
+//        ((Card*)(temp.at(i))->obj)->didBeHit(this,"wuli");
+//    }
+//    this->decreaseNuQi(this, 3,true);
+//    //this->fPro->setNuQiProPrecent(0);
+//}
