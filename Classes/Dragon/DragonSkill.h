@@ -18,6 +18,8 @@ public:
     CREATE_FUNC(DragonSkill);
     virtual bool init();
     virtual void runSkill(FightPlayer* player);
+    Sprite* dragonSkillSp;
+    std::string imageName;
     int skillLevel;
     std::string dargonName;
 };

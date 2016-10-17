@@ -27,7 +27,7 @@ public:
     Layer* fightLayer;
     FightPlayer* enemy;
     int xiangong;
-    void initMap(std::string imageName,std::string direction);
+    void initMap(std::string imageName,std::string direction, Size mapLayerSize);
     
     void setCardsPositon(Card *card, int index, int zPoint);
     void initCardStandArray();

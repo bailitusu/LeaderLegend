@@ -10,7 +10,7 @@
 #include "CommonFunc.h"
 #include "MapCell.h"
 #include "Card/Card.h"
-void FightMap::init(std::string imageName,std::string direction) {
+void FightMap::init(std::string imageName,std::string direction, Size mapLayerSize) {
 
     map = Sprite::create(imageName);
     map->setLocalZOrder(0);
@@ -19,7 +19,8 @@ void FightMap::init(std::string imageName,std::string direction) {
     
     this->addChild(map);
    // CommonFunc::setSpriteSize(map, Director::getInstance()->getVisibleSize().width*0.405);
-    CommonFunc::setSpriteSize(map, 270);
+    this->mapScale = mapLayerSize.width/270;
+    CommonFunc::setSpriteSize(map, mapLayerSize.width);
     this->setContentSize(Size(map->getBoundingBox().size.width, map->getBoundingBox().size.width));
 
     this->creatMap(direction);
@@ -82,10 +83,10 @@ void FightMap::creatMap(std::string direction) {
 
     for (int i = 0; i < 4;  i++) {
         
-        this->initMapCell(i*4, 187.2, i,direction);
-        this->initMapCell(i*4+1, 138.6, i,direction);
-        this->initMapCell(i*4+2, 86.4, i,direction);
-        this->initMapCell(i*4+3, 30.6, i,direction);
+        this->initMapCell(i*4, 187.2*this->mapScale, i,direction);
+        this->initMapCell(i*4+1, 138.6*this->mapScale, i,direction);
+        this->initMapCell(i*4+2, 86.4*this->mapScale, i,direction);
+        this->initMapCell(i*4+3, 30.6*this->mapScale, i,direction);
     }
 //    this->initMapCell(0, 30.6, 1);
 //    this->initMapCell(1, 86.4, 1);
@@ -101,33 +102,33 @@ void FightMap::initMapCell(int id, float orginY, int lineNum, std::string direct
     switch (lineNum) {
         case 3:
             if (direction.compare("left") == 0) {
-                cell->initCell(Vec2(MapOneLineFun(orginY), orginY+10), id);
+                cell->initCell(Vec2(MapOneLineFun(orginY)*this->mapScale, orginY+10), id);
             }else if (direction.compare("right") == 0) {
-                cell->initCell(Vec2(this->getBoundingBox().size.width-MapOneLineFun(orginY), orginY+10), id);
+                cell->initCell(Vec2(this->getBoundingBox().size.width-MapOneLineFun(orginY)*this->mapScale, orginY+10), id);
             }
             
             break;
         case 2:
             if (direction.compare("left") == 0) {
-                cell->initCell(Vec2(MapTwoLineFun(orginY), orginY+10), id);
+                cell->initCell(Vec2(MapTwoLineFun(orginY)*this->mapScale, orginY+10), id);
             }else if (direction.compare("right") == 0) {
-                cell->initCell(Vec2(this->getBoundingBox().size.width-MapTwoLineFun(orginY), orginY+10), id);
+                cell->initCell(Vec2(this->getBoundingBox().size.width-MapTwoLineFun(orginY)*this->mapScale, orginY+10), id);
             }
             //cell->initCell(Vec2(MapTwoLineFun(orginY), orginY-10), id);
             break;
         case 1:
             if (direction.compare("left") == 0) {
-                cell->initCell(Vec2(MapThirdLineFun(orginY), orginY+10), id);
+                cell->initCell(Vec2(MapThirdLineFun(orginY)*this->mapScale, orginY+10), id);
             }else if (direction.compare("right") == 0) {
-                cell->initCell(Vec2(this->getBoundingBox().size.width-MapThirdLineFun(orginY), orginY+10), id);
+                cell->initCell(Vec2(this->getBoundingBox().size.width-MapThirdLineFun(orginY)*this->mapScale, orginY+10), id);
             }
            // cell->initCell(Vec2(MapThirdLineFun(orginY), orginY-10), id);
             break;
         case 0:
             if (direction.compare("left") == 0) {
-                cell->initCell(Vec2(MapFourLineFun(orginY), orginY+10), id);
+                cell->initCell(Vec2(MapFourLineFun(orginY)*this->mapScale, orginY+10), id);
             }else if (direction.compare("right") == 0) {
-                cell->initCell(Vec2(this->getBoundingBox().size.width-MapFourLineFun(orginY), orginY+10), id);
+                cell->initCell(Vec2(this->getBoundingBox().size.width-MapFourLineFun(orginY)*this->mapScale, orginY+10), id);
             }
            // cell->initCell(Vec2(MapFourLineFun(orginY), orginY-10), id);
         default:

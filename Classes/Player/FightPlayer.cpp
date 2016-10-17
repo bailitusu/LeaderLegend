@@ -28,9 +28,9 @@ bool FightPlayer::init() {
     return true;
 }
 
-void FightPlayer::initMap(std::string imageName,std::string direction) {
+void FightPlayer::initMap(std::string imageName,std::string direction, Size mapLayerSize) {
     fMap = FightMap::create();
-    fMap->init(imageName, direction);
+    fMap->init(imageName, direction,mapLayerSize);
     fMap->map->setPosition(0,0);
     fightLayer->addChild(fMap,-10);
 
@@ -104,10 +104,13 @@ void FightPlayer::initTackCard(Card* card, std::string imageName, int standIndex
     card->retain();
        card->initHpLabel();
     
-    auto aa = card->magicGoods;
-    aa->initNuQi(card);
-//    card->magicGoods->initNuQi(card);
+//    auto aa = card->magicGoods;
+//    aa->initNuQi(card);
+    card->magicGoods->initNuQi(card);
+    card->preAddCardAnimationResource();
     card->runZhanLiAnimation();
+    
+  //  card->preCardAudio();
 }
 
 void FightPlayer::initDragon(std::string imageName) {

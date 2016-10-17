@@ -23,6 +23,7 @@ public:
     int cellIndex;
     Treasure* magicGoods;
     std::string imageName;
+    bool noBring;
 };
 
 class SetRoleFormatlayer : public cocos2d::Layer {
@@ -33,14 +34,26 @@ public:
     CREATE_FUNC(SetRoleFormatlayer);
     void initSetRoleFormatLayer();
     FightPlayer* player;
+    FightPlayer* enemyPlayer;
     Vector<SetRoleData*> roleData;
-    void initCardFormat(Card* card,std::string imageName, int standIndex,Treasure* treasure);
-    Vec2 countCardOrigonPoint(Card *card);
+    Vector<SetRoleData*> enemyRoleData;
+    Vector<SetRoleData*> removeRoleData;
+   // void initCardFormat(Card* card,std::string imageName, int standIndex,Treasure* treasure);
+    Vec2 countCardOrigonPoint(Card *card,FightPlayer* tempPlayer);
     virtual bool onTouchBegan(Touch *touch, Event *unused_event);
     virtual void onTouchMoved(Touch *touch, Event *unused_event);
     virtual void onTouchEnded(Touch *touch, Event *unused_event);
     Card* currentMoveCard;
     void startFightBtn(Ref* sender, ui::Widget::TouchEventType type);
+    void addFightBtnUI();
+    void addBackBtnUI();
+    void addEnemyBtnUI();
+    void backBtn(Ref* sender, ui::Widget::TouchEventType type);
+    Label* infoLabel;
+    void showInfo(float dur);
+    void disappearInfo();
+    std::string preLayerName;
+    Card* currentInfoCard;
 };
 
 

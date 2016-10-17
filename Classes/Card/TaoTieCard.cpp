@@ -48,6 +48,11 @@ bool TaoTieCard::init() {
     return true;
 }
 
+void TaoTieCard::preCardAudio() {
+    CocosDenshion::SimpleAudioEngine::getInstance()->preloadEffect("panda_attack.mp3");
+    CocosDenshion::SimpleAudioEngine::getInstance()->preloadEffect("pande_conjure.mp3");
+}
+
 void TaoTieCard::recordRuning(FightPlayer *enemyTemp) {
     this->forEnemy = enemyTemp;
     auto oneRecord = OneRecord::create();
@@ -127,6 +132,9 @@ void TaoTieCard::recordRuning(FightPlayer *enemyTemp) {
 //    
 //
 //}
+void TaoTieCard::xiaoHitMusic() {
+    CocosDenshion::SimpleAudioEngine::getInstance()->playEffect("panda_attack.mp3",false);
+}
 
 void TaoTieCard::xiaoSkll(OneRecord *info) {
     this->stopStandAnimation();
@@ -155,14 +163,19 @@ void TaoTieCard::xiaoSkll(OneRecord *info) {
     auto hit = CallFunc::create(CC_CALLBACK_0(TaoTieCard::hitBlock,this,info->affectRecordArray));
     auto addNuqi = CallFunc::create(CC_CALLBACK_0(TaoTieCard::nuQiManage, this));
     auto recordBlock = CallFunc::create(CC_CALLBACK_0(ReadRecordFight::readNextFightRecord, this->readRecordFight));
-
+    auto gongMusic = CallFunc::create(CC_CALLBACK_0(TaoTieCard::xiaoHitMusic, this));
     this->cardSprite->runAction(Sequence::create(move,moveWait,gong,hit,wait,movaFanhui,moveWait,addNuqi,appear,recordBlock,NULL));
-
+    
+    this->cardSprite->runAction(Sequence::create(moveWait,gongMusic,NULL));
     this->fPro->hpPro->setVisible(false);
     this->fPro->hpProBg->setVisible(false);
     this->fPro->nuqiPro->setVisible(false);
     this->fPro->nuqiProBg->setVisible(false);
 
+}
+
+void TaoTieCard::daHitMusic() {
+    CocosDenshion::SimpleAudioEngine::getInstance()->playEffect("panda_conjure.mp3",false);
 }
 
 void TaoTieCard::daSkill(OneRecord *info) {
@@ -195,9 +208,9 @@ void TaoTieCard::daSkill(OneRecord *info) {
     auto maxHit = CallFunc::create(CC_CALLBACK_0(TaoTieCard::daHitBlock, this, info->affectRecordArray));
    // auto addNuqi = CallFunc::create(CC_CALLBACK_0(TaoTieCard::nuQiManage, this));
     auto recordBlock = CallFunc::create(CC_CALLBACK_0(ReadRecordFight::readNextFightRecord, this->readRecordFight));
-    
+    auto dazhaoMusic = CallFunc::create(CC_CALLBACK_0(TaoTieCard::daHitMusic, this));
     this->cardSprite->runAction(Sequence::create(move,moveWait,dazhao,maxHit,dazhaoWait,movaFanhui,moveWait,appear,recordBlock,NULL));
-    
+    this->cardSprite->runAction(Sequence::create(moveWait,dazhaoMusic,NULL));
     this->fPro->hpPro->setVisible(false);
     this->fPro->hpProBg->setVisible(false);
     this->fPro->nuqiPro->setVisible(false);
@@ -220,10 +233,14 @@ void TaoTieCard::daHitBlock(Vector<OneRecord *> affectRecordArray) {
 
 void TaoTieCard::appearUI() {
     this->cardSprite->runAction(this->standAction);
+    CommonFunc::removeAnimation();
     this->fPro->hpPro->setVisible(true);
     this->fPro->hpProBg->setVisible(true);
     this->fPro->nuqiPro->setVisible(true);
     this->fPro->nuqiProBg->setVisible(true);
+    
+    CocosDenshion::SimpleAudioEngine::getInstance()->unloadEffect("panda_attack.mp3");
+    CocosDenshion::SimpleAudioEngine::getInstance()->unloadEffect("pande_conjure.mp3");
 }
 void TaoTieCard::moveAnimation(Vec2 target) {
     Animate* animateActionWalk = NULL;

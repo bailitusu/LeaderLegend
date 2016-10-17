@@ -54,6 +54,11 @@ bool SuanYuCard::init() {
     return true;
 }
 
+
+void SuanYuCard::preCardAudio() {
+    CocosDenshion::SimpleAudioEngine::getInstance()->preloadEffect("fengxing_attack.mp3");
+    CocosDenshion::SimpleAudioEngine::getInstance()->preloadEffect("fengxing_conjure.mp3");
+}
 //void SuanYuCard::didBeHit(Card* fromCard, std::string hitKinds) {
 //    float hartValue = CommonFunc::reckonHitValue(fromCard, this, hitKinds);
 //    if (CommonFunc::isInPercent(CommonFunc::reckonBaoJiPercent(fromCard, this))) {
@@ -245,6 +250,10 @@ void SuanYuCard::recordUltimateSkill() {
     }
 }
 
+void SuanYuCard::xiaoHitMusic() {
+    CocosDenshion::SimpleAudioEngine::getInstance()->playEffect("fengxing_attack.mp3",false);
+}
+
 void SuanYuCard::xiaoSkll(OneRecord *info) {
     this->stopStandAnimation();
     auto defaultPosition = this->cardSprite->getPosition();
@@ -273,9 +282,9 @@ void SuanYuCard::xiaoSkll(OneRecord *info) {
     auto hit = CallFunc::create(CC_CALLBACK_0(SuanYuCard::hitBlock,this,info->affectRecordArray));
     auto addNuqi = CallFunc::create(CC_CALLBACK_0(SuanYuCard::nuQiManage, this));
     auto recordBlock = CallFunc::create(CC_CALLBACK_0(ReadRecordFight::readNextFightRecord, this->readRecordFight));
-    
+    auto gongMusic = CallFunc::create(CC_CALLBACK_0(SuanYuCard::xiaoHitMusic, this));
     this->cardSprite->runAction(Sequence::create(move,moveWait,gong,hit,wait,movaFanhui,moveWait,addNuqi,appear,recordBlock,NULL));
-    
+    this->cardSprite->runAction(Sequence::create(moveWait,gongMusic, NULL));
     this->fPro->hpPro->setVisible(false);
     this->fPro->hpProBg->setVisible(false);
     this->fPro->nuqiPro->setVisible(false);
@@ -299,10 +308,14 @@ void SuanYuCard::moveAnimation(Vec2 target) {
 
 void SuanYuCard::appearUI() {
     this->cardSprite->runAction(this->standAction);
+    CommonFunc::removeAnimation();
     this->fPro->hpPro->setVisible(true);
     this->fPro->hpProBg->setVisible(true);
     this->fPro->nuqiPro->setVisible(true);
     this->fPro->nuqiProBg->setVisible(true);
+    
+    CocosDenshion::SimpleAudioEngine::getInstance()->unloadEffect("fengxing_attack.mp3");
+    CocosDenshion::SimpleAudioEngine::getInstance()->unloadEffect("fengxing_conjure.mp3");
 }
 
 void SuanYuCard::hitBlock(Vector<OneRecord *> affectRecordArray) {
@@ -322,6 +335,10 @@ void SuanYuCard::hitBlock(Vector<OneRecord *> affectRecordArray) {
     }
 }
 
+void SuanYuCard::daHitMusic() {
+    CocosDenshion::SimpleAudioEngine::getInstance()->playEffect("fengxing_conjure.mp3",false);
+}
+
 void SuanYuCard::daSkill(OneRecord *info) {
     this->stopStandAnimation();
     auto defaultPosition = this->cardSprite->getPosition();
@@ -336,9 +353,9 @@ void SuanYuCard::daSkill(OneRecord *info) {
     
     Animate* dazhao = NULL;
     if (this->playerName.compare("enemyPlayer") == 0) {
-        dazhao = CommonFunc::creatAnimation("fengxing_conjure_r%d.png", 6, animationFactor*6, 1);
+        dazhao = CommonFunc::creatAnimation("fengxing_conjure_r%d.png", 6, animationFactor*6*2, 1);
     }else {
-        dazhao = CommonFunc::creatAnimation("fengxing_conjure_l%d.png", 6, animationFactor*6, 1);
+        dazhao = CommonFunc::creatAnimation("fengxing_conjure_l%d.png", 6, animationFactor*6*2, 1);
     }
     
     //auto dazhao = CommonFunc::creatAnimation("fengxing_conjure_%d.png", 6, 0.5f, 2);
@@ -352,8 +369,14 @@ void SuanYuCard::daSkill(OneRecord *info) {
     // auto addNuqi = CallFunc::create(CC_CALLBACK_0(TaoTieCard::nuQiManage, this));
     auto recordBlock = CallFunc::create(CC_CALLBACK_0(ReadRecordFight::readNextFightRecord, this->readRecordFight));
     
+    auto dazhaoMusic = CallFunc::create(CC_CALLBACK_0(SuanYuCard::daHitMusic, this));
     this->cardSprite->runAction(Sequence::create(move,moveWait,dazhao,maxHit,wait,movaFanhui,moveWait,appear,recordBlock,NULL));
+    this->cardSprite->runAction(Sequence::create(moveWait,dazhaoMusic,NULL));
     
+    this->fPro->hpPro->setVisible(false);
+    this->fPro->hpProBg->setVisible(false);
+    this->fPro->nuqiPro->setVisible(false);
+    this->fPro->nuqiProBg->setVisible(false);
 }
 
 void SuanYuCard::daHitBlock(Vector<OneRecord*> affectRecordArray) {

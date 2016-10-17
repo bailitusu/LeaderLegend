@@ -15,6 +15,7 @@
 #include "OneRecord.h"
 #include "RecordFight.h"
 #include "ReadRecordFight.h"
+
 bool HouYiCard::init() {
     this->cellIndex = 0;
     this->HP = 18000;
@@ -49,8 +50,22 @@ bool HouYiCard::init() {
     return true;
 }
 
+void HouYiCard::preCardAudio() {
+    CocosDenshion::SimpleAudioEngine::getInstance()->preloadEffect("xiaohei_attack.mp3");
+    CocosDenshion::SimpleAudioEngine::getInstance()->preloadEffect("xiaohei_conjure.mp3");
+}
 
-
+void HouYiCard::preAddCardAnimationResource() {
+//    if (this->playerName.compare("enemyPlayer") == 0) {
+//        this->gong = CommonFunc::creatAnimation("xiaohei_attack_r%d.png", 12, animationFactor*12, 1);
+//        this->dazhao = CommonFunc::creatAnimation("xiaohei_conjure_r%d.png", 16, animationFactor*16, 1);
+//    }else {
+//        this->gong = CommonFunc::creatAnimation("xiaohei_attack_l%d.png", 12, animationFactor*12, 1);
+//        this->dazhao = CommonFunc::creatAnimation("xiaohei_conjure_l%d.png", 16, animationFactor*16, 1);
+//    }
+//    this->gong->retain();
+//    this->dazhao->retain();
+}
 //void HouYiCard::running(FightPlayer *enemyTemp) {
 //    this->forEnemy = enemyTemp;
 //    
@@ -102,23 +117,30 @@ void HouYiCard::xiaoSkll(OneRecord *info) {
     
     Animate* gong = NULL;
     if (this->playerName.compare("enemyPlayer") == 0) {
-        gong = CommonFunc::creatAnimation("xiaohei_attack_r%d.png", 12, animationFactor*12, 1);
+        gong = CommonFunc::creatAnimation("xiaohei_attack_r%d.png", 12, animationFactor*12, 0);
     }else {
-        gong = CommonFunc::creatAnimation("xiaohei_attack_l%d.png", 12, animationFactor*12, 1);
+        gong = CommonFunc::creatAnimation("xiaohei_attack_l%d.png", 12, animationFactor*12, 0);
     }
     
     auto wait = ActionWait::create(1.0);
     
     auto addNuqi = CallFunc::create(CC_CALLBACK_0(HouYiCard::nuQiManage, this));
-    auto appear = CallFunc::create(CC_CALLBACK_0(HouYiCard::appearUI, this));
+    auto appear = CallFunc::create(CC_CALLBACK_0(HouYiCard::appearUI, this, gong));
     auto hit = CallFunc::create(CC_CALLBACK_0(HouYiCard::hitBlock,this,info->affectRecordArray));
     auto recordBlock = CallFunc::create(CC_CALLBACK_0(ReadRecordFight::readNextFightRecord, this->readRecordFight));
+    
+    auto gongMusic = CallFunc::create(CC_CALLBACK_0(HouYiCard::xiaoHitMusic, this));
+    auto waitMusic = ActionWait::create(1.2);
     if (info->isLianJi == true) {
         auto sequence = Sequence::create(gong,hit,wait,gong,hit,wait,addNuqi,appear,recordBlock,NULL);
         sequence->setTag(1);
         this->cardSprite->runAction(sequence);
+        auto sequeceMusic = Sequence::create(gongMusic,waitMusic,gongMusic,NULL);
+        this->cardSprite->runAction(sequeceMusic);
     }else {
+    
         this->cardSprite->runAction(Sequence::create(gong,hit,wait,addNuqi,appear,recordBlock,NULL));
+        this->cardSprite->runAction(gongMusic);
     }
     this->fPro->hpPro->setVisible(false);
     this->fPro->hpProBg->setVisible(false);
@@ -126,28 +148,43 @@ void HouYiCard::xiaoSkll(OneRecord *info) {
     this->fPro->nuqiProBg->setVisible(false);
 }
 
-void HouYiCard::appearUI() {
+void HouYiCard::xiaoHitMusic() {
+    CocosDenshion::SimpleAudioEngine::getInstance()->playEffect("xiaohei_attack.mp3",false);
+}
+
+void HouYiCard::appearUI(Animate* tempAnimate) {
+ //   this->runZhanLiAnimation();
+
+    
     this->cardSprite->runAction(this->standAction);
+    CommonFunc::removeAnimation();
+
+    
     this->fPro->hpPro->setVisible(true);
     this->fPro->hpProBg->setVisible(true);
     this->fPro->nuqiPro->setVisible(true);
     this->fPro->nuqiProBg->setVisible(true);
+
+    CocosDenshion::SimpleAudioEngine::getInstance()->unloadEffect("xiaohei_attack.mp3");
+    CocosDenshion::SimpleAudioEngine::getInstance()->unloadEffect("xiaohei_conjure.mp3");
+    
 }
 
 void HouYiCard::daSkill(OneRecord *info) {
     this->stopStandAnimation();
     Animate* dazhao = NULL;
     if (this->playerName.compare("enemyPlayer") == 0) {
-        dazhao = CommonFunc::creatAnimation("xiaohei_conjure_r%d.png", 16, animationFactor*16, 1);
+        dazhao = CommonFunc::creatAnimation("xiaohei_conjure_r%d.png", 16, animationFactor*16, 0);
     }else {
-        dazhao = CommonFunc::creatAnimation("xiaohei_conjure_l%d.png", 16, animationFactor*16, 1);
+        dazhao = CommonFunc::creatAnimation("xiaohei_conjure_l%d.png", 16, animationFactor*16, 0);
     }
   //  auto dazhao = CommonFunc::creatAnimation("xiaohei_conjure_%d.png", 22, 2.0f, 1);
     auto wait = ActionWait::create(1.0);
-    auto appear = CallFunc::create(CC_CALLBACK_0(HouYiCard::appearUI, this));
+    auto appear = CallFunc::create(CC_CALLBACK_0(HouYiCard::appearUI, this, dazhao));
     auto maxHit = CallFunc::create(CC_CALLBACK_0(HouYiCard::daHitBlock, this, info->affectRecordArray));
     auto recordBlock = CallFunc::create(CC_CALLBACK_0(ReadRecordFight::readNextFightRecord, this->readRecordFight));
     this->cardSprite->runAction(Sequence::create(dazhao,maxHit,wait,appear,recordBlock,NULL));
+    CocosDenshion::SimpleAudioEngine::getInstance()->playEffect("xiaohei_conjure.mp3");
     this->fPro->hpPro->setVisible(false);
     this->fPro->hpProBg->setVisible(false);
     this->fPro->nuqiPro->setVisible(false);

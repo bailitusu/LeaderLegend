@@ -48,7 +48,7 @@ Scene* FightLayer::createScene() {
 //    FightLayer* layer = FightLayer::create();
 //    
 //    scene->addChild(layer);
-   // layer->initFightLayer();
+//    layer->initFightLayer();
     return scene;
 }
 
@@ -73,16 +73,16 @@ void FightLayer::initFightLayer() {
     this->player = FightPlayer::create();
     this->player->fpName = "player";
     this->player->fightLayer = this;
-    this->player->initMap("leftmap.png", "left");
-    this->player->fMap->setPosition(20+origin.x, 80+origin.y);
+    this->player->initMap("leftmap.png", "left", Size(300,300));
+    this->player->fMap->setPosition(10+origin.x, 40+origin.y);
     this->player->initDragon("dragon_left.png");
     this->player->fDragon->dragonSprite->setPosition(150+origin.x,screenSize.height+origin.y);
     
     this->enemyPlay = FightPlayer::create();
     this->enemyPlay->fpName = "enemyPlayer";
     this->enemyPlay->fightLayer = this;
-    this->enemyPlay->initMap("rightmap.png", "right");
-    this->enemyPlay->fMap->setPosition(screenSize.width-(enemyPlay->fMap->getBoundingBox().size.width+20+origin.x),80+origin.y);
+    this->enemyPlay->initMap("rightmap.png", "right", Size(300,300));
+    this->enemyPlay->fMap->setPosition(screenSize.width-(enemyPlay->fMap->getBoundingBox().size.width+10+origin.x),40+origin.y);
     this->enemyPlay->initDragon("dragon_right.png");
     this->enemyPlay->fDragon->dragonSprite->setPosition(screenSize.width-150+origin.x,screenSize.height+origin.y);
     
@@ -94,26 +94,7 @@ void FightLayer::initFightLayer() {
     this->player->retain();
     this->enemyPlay->retain();
     this->startFight = false;
-//    this->player->initTackCard(XingTianCard::create(), "jianshengwalk_0.png", 0, "player",HuFuTreasure::create());
-//    this->player->initTackCard(XuanWuCard::create(), "xingtian_left1.png", 3, "player",YiBingBuDao::create());
-//    this->player->initTackCard(FengHouCard::create(), "fengbo_left1.png", 5, "player",HuFuTreasure::create());
-//    this->player->initTackCard(HouYiCard::create(), "xiaoheiZhanLi_0.png", 6, "player",HuFuTreasure::create());
-//    this->player->initTackCard(SuanYuCard::create(), "fenghou_left1.png", 9, "player",HuFuTreasure::create());
-//    this->player->initTackCard(TaoTieCard::create(), "suanyu_left1.png", 10, "player",HuFuTreasure::create());
-//    this->player->initTackCard(ChangECard::create(), "taotie_left1.png", 12, "player",HuFuTreasure::create());
-//    this->player->initTackCard(FengBoCard::create(), "houyi_left1.png", 15, "player",HuFuTreasure::create());
-//
-//    this->player->initCardStandArray();
-//
-//    this->enemyPlay->initTackCard(XingTianCard::create(), "jianshengwalk_0.png", 0, "enemyPlayer",HuFuTreasure::create());
-//    this->enemyPlay->initTackCard(XuanWuCard::create(), "xingtian_right1.png", 3, "enemyPlayer",YiBingBuDao::create());
-//    this->enemyPlay->initTackCard(FengHouCard::create(),"fengbo_right1.png" , 5, "enemyPlayer",HuFuTreasure::create());
-//    this->enemyPlay->initTackCard(HouYiCard::create(), "xiaoheiZhanLi_0.png", 6, "enemyPlayer",HuFuTreasure::create());
-//    this->enemyPlay->initTackCard(SuanYuCard::create(), "fenghou_right1.png", 9, "enemyPlayer",HuFuTreasure::create());
-//    this->enemyPlay->initTackCard(TaoTieCard::create(), "suanyu_right1.png", 10, "enemyPlayer",HuFuTreasure::create());
-//    this->enemyPlay->initTackCard(ChangECard::create(), "taotie_right1.png", 12, "enemyPlayer",HuFuTreasure::create());
-//    this->enemyPlay->initTackCard(FengBoCard::create(), "houyi_right1.png", 15, "enemyPlayer",HuFuTreasure::create());
-//    this->enemyPlay->initCardStandArray();
+
     
   //  printf("%d",this->roleData->at(0)->cellIndex);
     for (int i = 0; i < this->roleData.size(); i++) {
@@ -144,7 +125,7 @@ void FightLayer::initFightLayer() {
     this->enemyPlay->initCardStandArray();
     
     
-    background = Sprite::create("begin.jpg");
+    background = Sprite::create("bbg_arena.png");
     CommonFunc::setSpriteSize(background, screenSize.width);
     background->setPosition(Vec2(screenSize.width/2+origin.x, screenSize.height/2+origin.y));
     background->setLocalZOrder(-100);
@@ -164,6 +145,7 @@ void FightLayer::initFightLayer() {
     
     this->addChild(background);
     
+ //   CocosDenshion::SimpleAudioEngine::getInstance()->preloadBackgroundMusic("battle_bgm.mp3");
 //    auto rff = RecordFight::GetInstance();
 //    rff->createRecord(1, 2, 3);
 //    OneRecord* one = OneRecord::create();
@@ -223,6 +205,7 @@ bool FightLayer::onTouchBegan(cocos2d::Touch *touch, cocos2d::Event *unused_even
     touchLocation = Director::getInstance()->convertToGL(touchLocation);
     
     if (this->startFight == false) {
+       
         this->startFight = true;
         auto field = FightField::create();
         field->player = this->player;

@@ -32,6 +32,9 @@ public:
     virtual void runZhanLiAnimation();
     void moveAnimation(Vec2 target);
     void appearUI();
+    virtual void preCardAudio();
+    void xiaoHitMusic();
+    void daHitMusic();
 //    void actionBlock();
 };
 

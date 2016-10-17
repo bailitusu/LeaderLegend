@@ -33,7 +33,11 @@ public:
     virtual void recordRuning(FightPlayer* enemyTemp);
     virtual void runZhanLiAnimation();
     int hitTimes;
-    void appearUI();
+    void appearUI(Animate* tempAnimate);
+    virtual void preCardAudio();
+    virtual void preAddCardAnimationResource();
+    void xiaoHitMusic();
+
    // void actionBlock();
     
     

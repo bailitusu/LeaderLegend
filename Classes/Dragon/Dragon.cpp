@@ -31,3 +31,12 @@ void Dragon::runNextDragonSkill(FightPlayer* player) {
 void Dragon::addDragonSkill(DragonSkill *skill,int index) {
     this->dragonSkillArray.insert(index, skill);
 }
+
+void Dragon::initDragonShuXing() {
+    this->bingLi = 10;
+    this->mianBao = 10;
+    this->baoJi = 10;
+    this->fangYu = 10;
+    this->gongJi = 10;
+    this->faLI = 10;
+}

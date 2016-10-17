@@ -1,7 +1,8 @@
 #include "AppDelegate.h"
 #include "FightLayer.h"
 #include "SetRoleFormatLayer.h"
-
+#include "GameBeginLayer.h"
+#include "HelloWorldScene.h"
 USING_NS_CC;
 
 static cocos2d::Size designResolutionSize = cocos2d::Size(667, 375);
@@ -62,7 +63,7 @@ bool AppDelegate::applicationDidFinishLaunching() {
     auto frameSize = glview->getFrameSize();
     
     // if the frame's height is larger than the height of medium size.
-//    director->setContentScaleFactor(MIN(frameSize.height/designResolutionSize.height, frameSize.width/designResolutionSize.width));
+    director->setContentScaleFactor(MIN(frameSize.height/designResolutionSize.height, frameSize.width/designResolutionSize.width));
     if (frameSize.height > mediumResolutionSize.height)
     {        
         director->setContentScaleFactor(MIN(largeResolutionSize.height/designResolutionSize.height, largeResolutionSize.width/designResolutionSize.width));
@@ -77,12 +78,12 @@ bool AppDelegate::applicationDidFinishLaunching() {
     {        
         director->setContentScaleFactor(MIN(smallResolutionSize.height/designResolutionSize.height, smallResolutionSize.width/designResolutionSize.width));
     }
-
+    Director::getInstance()->getVisibleOrigin();
     register_all_packages();
 
     // create a scene. it's an autorelease object
-    //Scene* scene = FightLayer::createScene();
-    Scene* scene = SetRoleFormatlayer::createScene();
+  //  Scene* scene = FightLayer::createScene();
+    Scene* scene = GameBeginLayer::createScene();
     // run
     director->runWithScene(scene);
 

@@ -81,6 +81,12 @@ bool ChangECard::init() {
 //    this->fPro->nuqiProBg->setVisible(false);
 //
 //}
+
+void ChangECard::preCardAudio() {
+    CocosDenshion::SimpleAudioEngine::getInstance()->preloadEffect("bingnv_attack.mp3");
+    CocosDenshion::SimpleAudioEngine::getInstance()->preloadEffect("bingnv_conjure.mp3");
+}
+
 void ChangECard::recordRuning(FightPlayer *enemyTemp) {
     this->forEnemy = enemyTemp;
     
@@ -128,12 +134,19 @@ void ChangECard::xiaoSkll(OneRecord *info) {
     auto recordBlock = CallFunc::create(CC_CALLBACK_0(ReadRecordFight::readNextFightRecord, this->readRecordFight));
 
     this->cardSprite->runAction(Sequence::create(gong,hit,wait,addNuqi,appear,recordBlock,NULL));
+    
+    CocosDenshion::SimpleAudioEngine::getInstance()->playEffect("bingnv_attack.mp3",false);
+    
     this->fPro->hpPro->setVisible(false);
     this->fPro->hpProBg->setVisible(false);
     this->fPro->nuqiPro->setVisible(false);
     this->fPro->nuqiProBg->setVisible(false);
     
 }
+
+//void ChangECard::xiaoHitMusic() {
+//    CocosDenshion::SimpleAudioEngine::getInstance()->playEffect("bingnv_attack.mp3",false);
+//}
 
 void ChangECard::daSkill(OneRecord *info) {
     this->stopStandAnimation();
@@ -144,12 +157,12 @@ void ChangECard::daSkill(OneRecord *info) {
         dazhao = CommonFunc::creatAnimation("bingnv_conjure_l%d.png", 16, animationFactor*16, 1);
     }
     //auto dazhao = CommonFunc::creatAnimation("bingnv_conjure_%d.png", 16, 1.0f, 1);
-    auto wait = ActionWait::create(1.0);
+    auto wait = ActionWait::create(1.4);
     auto appear = CallFunc::create(CC_CALLBACK_0(ChangECard::appearUI, this));
     auto maxHit = CallFunc::create(CC_CALLBACK_0(ChangECard::daHitBlock, this, info->affectRecordArray));
     auto recordBlock = CallFunc::create(CC_CALLBACK_0(ReadRecordFight::readNextFightRecord, this->readRecordFight));
     this->cardSprite->runAction(Sequence::create(dazhao,maxHit,wait,appear,recordBlock,NULL));
-    
+    CocosDenshion::SimpleAudioEngine::getInstance()->playEffect("bingnv_conjure.mp3",false);
     this->fPro->hpPro->setVisible(false);
     this->fPro->hpProBg->setVisible(false);
     this->fPro->nuqiPro->setVisible(false);
@@ -158,10 +171,14 @@ void ChangECard::daSkill(OneRecord *info) {
 
 void ChangECard::appearUI() {
     this->cardSprite->runAction(this->standAction);
+    CommonFunc::removeAnimation();
     this->fPro->hpPro->setVisible(true);
     this->fPro->hpProBg->setVisible(true);
     this->fPro->nuqiPro->setVisible(true);
     this->fPro->nuqiProBg->setVisible(true);
+    
+    CocosDenshion::SimpleAudioEngine::getInstance()->unloadEffect("bingnv_attack.mp3");
+    CocosDenshion::SimpleAudioEngine::getInstance()->unloadEffect("bingnv_conjure.mp3");
 }
 
 void ChangECard::nuQiManage() {

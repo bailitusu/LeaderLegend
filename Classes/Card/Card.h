@@ -70,7 +70,10 @@ public:
     virtual void runZhanLiAnimation();
     virtual void animationShanBi();
     virtual void stopStandAnimation();
+    virtual void preCardAudio();
+    virtual void preAddCardAnimationResource();
     RepeatForever* standAction;
+    
     Buff* fBuff;
     FightProgress* fPro;
     int nuQiNum;

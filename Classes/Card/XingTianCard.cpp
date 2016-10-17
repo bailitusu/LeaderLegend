@@ -101,6 +101,11 @@ bool XingTianCard::init() {
 //    }
 //}
 
+void XingTianCard::preCardAudio() {
+    CocosDenshion::SimpleAudioEngine::getInstance()->preloadEffect("jiansheng_attack.mp3");
+    CocosDenshion::SimpleAudioEngine::getInstance()->preloadEffect("jiansheng_conjure.mp3");
+}
+
 void XingTianCard::initCharacter() {
     this->geDang = 0.15;
 }
@@ -202,6 +207,10 @@ void XingTianCard::recordRuning(FightPlayer *enemyTemp) {
     
 }
 
+void XingTianCard::xiaoHitMusic() {
+    CocosDenshion::SimpleAudioEngine::getInstance()->playEffect("jiansheng_attack.mp3",false);
+}
+
 void XingTianCard::xiaoSkll(OneRecord *info) {
     this->stopStandAnimation();
     auto defaultPosition = this->cardSprite->getPosition();
@@ -232,13 +241,17 @@ void XingTianCard::xiaoSkll(OneRecord *info) {
     auto appear = CallFunc::create(CC_CALLBACK_0(XingTianCard::appearUI, this));
     auto hit = CallFunc::create(CC_CALLBACK_0(XingTianCard::hitBlock,this,info->affectRecordArray));
     auto recordBlock = CallFunc::create(CC_CALLBACK_0(ReadRecordFight::readNextFightRecord, this->readRecordFight));
-
+    auto gongMusic = CallFunc::create(CC_CALLBACK_0(XingTianCard::xiaoHitMusic, this));
     this->cardSprite->runAction(Sequence::create(move,moveWait,gong,hit,gongWait,movaFanhui,moveWait,addNuqi,appear,recordBlock,NULL));
-    
+    this->cardSprite->runAction(Sequence::create(moveWait,gongMusic, NULL));
     this->fPro->hpPro->setVisible(false);
     this->fPro->hpProBg->setVisible(false);
     this->fPro->nuqiPro->setVisible(false);
     this->fPro->nuqiProBg->setVisible(false);
+}
+
+void XingTianCard::daHitMusic() {
+    CocosDenshion::SimpleAudioEngine::getInstance()->playEffect("jiansheng_conjure.mp3",false);
 }
 
 void XingTianCard::daSkill(OneRecord *info) {
@@ -272,7 +285,10 @@ void XingTianCard::daSkill(OneRecord *info) {
     auto appear = CallFunc::create(CC_CALLBACK_0(XingTianCard::appearUI, this));
     auto maxHit = CallFunc::create(CC_CALLBACK_0(XingTianCard::daHitBlock, this, info->affectRecordArray));
     auto recordBlock = CallFunc::create(CC_CALLBACK_0(ReadRecordFight::readNextFightRecord, this->readRecordFight));
+    auto dazhaoMusic = CallFunc::create(CC_CALLBACK_0(XingTianCard::daHitMusic, this));
+    auto dazhaoMusicWait = ActionWait::create(2.5);
     this->cardSprite->runAction(Sequence::create(move,moveWait,gong,hit,gongWait,gong,hit,gongWait,gong,hit,gongWait,movaFanhui,moveWait,maxHit,appear,recordBlock,NULL));
+    this->cardSprite->runAction(Sequence::create(moveWait,dazhaoMusic,dazhaoMusicWait,dazhaoMusic,dazhaoMusicWait,dazhaoMusic,dazhaoMusicWait,NULL));
     this->fPro->hpPro->setVisible(false);
     this->fPro->hpProBg->setVisible(false);
     this->fPro->nuqiPro->setVisible(false);
@@ -328,10 +344,14 @@ void XingTianCard::moveAnimation(Vec2 target) {
 
 void XingTianCard::appearUI() {
     this->cardSprite->runAction(this->standAction);
+    CommonFunc::removeAnimation();
     this->fPro->hpPro->setVisible(true);
     this->fPro->hpProBg->setVisible(true);
     this->fPro->nuqiPro->setVisible(true);
     this->fPro->nuqiProBg->setVisible(true);
+    
+    CocosDenshion::SimpleAudioEngine::getInstance()->unloadEffect("jiansheng_attack.mp3");
+    CocosDenshion::SimpleAudioEngine::getInstance()->unloadEffect("jiansheng_conjure.mp3");
 }
 
 void XingTianCard::nuQiManage() {
@@ -364,9 +384,9 @@ void XingTianCard::recordUltimateSkill() {
 void XingTianCard::runZhanLiAnimation() {
     Animate* zhanli = NULL;
     if (this->playerName.compare("enemyPlayer") == 0) {
-        zhanli = CommonFunc::creatAnimation("jiansheng_stand_r%d.png", 3, animationFactor*3, 1);
+        zhanli = CommonFunc::creatAnimation("jiansheng_stand_r%d.png", 3, animationFactor*3*1.5, 1);
     }else {
-        zhanli = CommonFunc::creatAnimation("jiansheng_stand_l%d.png", 3, animationFactor*3, 1);
+        zhanli = CommonFunc::creatAnimation("jiansheng_stand_l%d.png", 3, animationFactor*3*1.5, 1);
     }
     
   //  auto zhanli = CommonFunc::creatAnimation("jiansheng_stand_%d.png", 3, 0.5f, 2);

@@ -21,16 +21,18 @@ public:
     
     
     int bingLi;
-    float mianBao;
-    float baoJi;
-    float fangYu;
-    float gongJi;
-    float faLI;
+    int mianBao;
+    int baoJi;
+    int fangYu;
+    int gongJi;
+    int faLI;
     Sprite* dragonSprite;
     Vector<DragonSkill*> dragonSkillArray;
+    Vector<DragonSkill*> allDragonSkillArray;
     int currentIndex;
     void runNextDragonSkill(FightPlayer* player);
     void addDragonSkill(DragonSkill* skill, int index);
+    void initDragonShuXing();
 };
 
 #endif /* Dragon_h */

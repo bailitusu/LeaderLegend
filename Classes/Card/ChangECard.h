@@ -27,6 +27,8 @@ public:
     virtual void recordRuning(FightPlayer* enemyTemp);
     virtual void runZhanLiAnimation();
     void appearUI();
+    virtual void preCardAudio();
+   // void xiaoHitMusic();
     //int hitTimes;
 };
 

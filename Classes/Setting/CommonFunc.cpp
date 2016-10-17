@@ -20,6 +20,23 @@ void CommonFunc::setSpriteSize(cocos2d::Sprite *sp, float width) {
 //   Rect r = sp->getBoundingBox();
 }
 
+void CommonFunc::setShowAllSpriteSize(cocos2d::Sprite *sp, float width, float height) {
+    Rect spRect = sp->getBoundingBox();
+    sp->setScale(width/spRect.size.width, height/spRect.size.height);
+}
+
+ui::Button* CommonFunc::initButton(ui::Button*btn, const cocos2d::ui::AbstractCheckButton::ccWidgetTouchCallback &callback, float width, cocos2d::Vec2 positon) {
+//    btn->setTitleText("Start Fight");
+//    btn->setTitleColor(Color3B(255, 255, 255));
+//    btn->setTitleFontSize(25);
+    btn->setPressedActionEnabled(true);
+   // btn->setContentSize(size);
+    btn->setPosition(positon);
+    btn->addTouchEventListener(callback);
+    btn->setScale(width/btn->getBoundingBox().size.width);
+    return btn;
+}
+
 bool CommonFunc::isInPercent(float percent) {
     int numUpArea = (int)100*percent;
     struct timeval now;
@@ -137,8 +154,21 @@ Animate* CommonFunc::creatAnimation(std::string onePic, int picSumNum, float tim
     if (loopTimes != 0) {
         animation->setLoops(loopTimes);
     }
+
     return Animate::create(animation);
     //  auto animateAction= ;
+    
+}
+
+Animate* CommonFunc::removeAnimation() {
+//    for (int i = 0; i < picSumNum; i++) {
+//        char tempName[50] = {0};
+//        sprintf(tempName, onePic.c_str(),i);
+//       
+//    }
+    SpriteFrameCache::getInstance()->removeSpriteFrames();
+
+    Director::getInstance()->getTextureCache()->removeAllTextures();
     
 }
 //void CommonFunc::showHitValue(Label* textLabel,int hitValue, std::string text) {

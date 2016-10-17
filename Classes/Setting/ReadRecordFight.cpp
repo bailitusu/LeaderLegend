@@ -9,7 +9,7 @@
 #include "ReadRecordFight.h"
 #include "RecordFight.h"
 #include "FightPlayer.h"
-
+#include "Setting.h"
 #include "HuangDiCard.h"
 #include "HouYiCard.h"
 #include "ChangECard.h"
@@ -57,13 +57,14 @@ void ReadRecordFight::readRecordFormMenmory() {
         }
     }
     
-//    this->player->initTackCard(XingTianCard::create(), "jiansheng_stand_0.png", 3, "player",DunJiaTianShu::create());
-//    this->player->initTackCard(ChangECard::create(), "bingnv_stand_0.png", 5, "player",DunJiaTianShu::create());
-//    this->player->initTackCard(TaoTieCard::create(), "panda_stand_0.png", 6, "player",DunJiaTianShu::create());
-//    this->player->initTackCard(FengHouCard::create(), "gugong_stand_0.png", 9, "player",DunJiaTianShu::create());
-//    this->player->initTackCard(FengBoCard::create(), "zhousi_stand_0.png", 10, "player",DunJiaTianShu::create());
-//    this->player->initTackCard(HouYiCard::create(), "xiaohei_stand_0.png", 12, "player",DunJiaTianShu::create());
-//    this->player->initTackCard(SuanYuCard::create(), "fengxing_stand_0.png", 15, "player",DunJiaTianShu::create());
+//    this->player->initTackCard(XuanWuCard::create(), "niutou_stand_l0.png", 0, "player",DunJiaTianShu::create());
+//    this->player->initTackCard(XingTianCard::create(), "jiansheng_stand_l0.png", 3, "player",DunJiaTianShu::create());
+//    this->player->initTackCard(ChangECard::create(), "bingnv_stand_l0.png", 5, "player",DunJiaTianShu::create());
+//    this->player->initTackCard(TaoTieCard::create(), "panda_stand_l0.png", 6, "player",DunJiaTianShu::create());
+//    this->player->initTackCard(FengHouCard::create(), "gugong_stand_l0.png", 9, "player",DunJiaTianShu::create());
+//    this->player->initTackCard(FengBoCard::create(), "zhousi_stand_l0.png", 10, "player",DunJiaTianShu::create());
+//    this->player->initTackCard(HouYiCard::create(), "xiaohei_stand_l0.png", 12, "player",DunJiaTianShu::create());
+//    this->player->initTackCard(SuanYuCard::create(), "fengxing_stand_l0.png", 15, "player",DunJiaTianShu::create());
 
     this->player->initCardStandArray();
 
@@ -78,11 +79,14 @@ void ReadRecordFight::readRecordFormMenmory() {
     this->playerEnemy->initCardStandArray();
     
     for (int i = 0; i < 8; i++) {
-        this->player->cardArray.at(i)->readRecordFight = this;
+        if (i < this->player->cardArray.size()) {
+            this->player->cardArray.at(i)->readRecordFight = this;
+        }
+        
         this->playerEnemy->cardArray.at(i)->readRecordFight = this;
     }
     
-    
+   //  CocosDenshion::SimpleAudioEngine::getInstance()->playBackgroundMusic("battle_bgm.mp3",true);
 }
 
 Card* ReadRecordFight::getCardFromIndex(int cardStandIndex, FightPlayer* fplayer) {
@@ -137,6 +141,7 @@ void ReadRecordFight::readNextFightRecord() {
     }
    // card->readRecordFight = this;
     card->willRun(card->forPlayer->enemy);
+    
     
     rapidjson::Value& affectArray = item["affectArray"];
     if (!affectArray.IsArray()) {

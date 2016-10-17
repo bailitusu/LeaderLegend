@@ -35,6 +35,10 @@ public:
     void appearUI();
     void recordUltimateSkill();
     void moveAnimation(Vec2 target);
+    
+    virtual void preCardAudio();
+    void xiaoHitMusic();
+    void daHitMusic();
    // void actionBlock();
 };
 

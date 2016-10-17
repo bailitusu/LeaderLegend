@@ -345,6 +345,7 @@ void Card::willRun(FightPlayer* enemyTemp) {
             
         }
     }
+    
     this->magicGoods->everyRoundAddHP(this);
     this->magicGoods->willRunAddNuQi(this);
     this->forPlayer->fMap->setLocalZOrder(1000);
@@ -533,9 +534,17 @@ void Card::stopStandAnimation() {
     this->cardSprite->stopActionByTag(10);
 }
 
+void Card::preCardAudio() {
+    
+}
+
+void Card::preAddCardAnimationResource() {
+    
+}
+
 void Card::initCardSprite(std::string imageName) {
     this->cardSprite = Sprite::create(imageName);
     this->cardSprite->setAnchorPoint(Vec2(0.5, 0.5));
     // player->setFlippedX(true);
-    CommonFunc::setSpriteSize(this->cardSprite, screenSize.width*0.25);
+    CommonFunc::setSpriteSize(this->cardSprite, screenSize.width*0.3);
 }

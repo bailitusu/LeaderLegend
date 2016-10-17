@@ -53,6 +53,12 @@ bool FengBoCard::init() {
     return true;
 }
 
+void FengBoCard::preCardAudio() {
+    CocosDenshion::SimpleAudioEngine::getInstance()->preloadEffect("zhousi_attack.mp3");
+    CocosDenshion::SimpleAudioEngine::getInstance()->preloadEffect("zhousi_conjure.mp3");
+}
+
+
 void FengBoCard::recordRuning(FightPlayer *enemyTemp) {
     this->forEnemy = enemyTemp;
     
@@ -159,6 +165,10 @@ void FengBoCard::recordUltimateSkill() {
 
 }
 
+void FengBoCard::xiaoHitMusic() {
+    CocosDenshion::SimpleAudioEngine::getInstance()->playEffect("zhousi_attack.mp3",false);
+}
+
 void FengBoCard::xiaoSkll(OneRecord *info) {
     this->stopStandAnimation();
     auto defaultPosition = this->cardSprite->getPosition();
@@ -187,9 +197,10 @@ void FengBoCard::xiaoSkll(OneRecord *info) {
     auto hit = CallFunc::create(CC_CALLBACK_0(FengBoCard::hitBlock,this,info->affectRecordArray));
     auto addNuqi = CallFunc::create(CC_CALLBACK_0(FengBoCard::nuQiManage, this));
     auto recordBlock = CallFunc::create(CC_CALLBACK_0(ReadRecordFight::readNextFightRecord, this->readRecordFight));
+    auto gongMusic = CallFunc::create(CC_CALLBACK_0(FengBoCard::xiaoHitMusic, this));
     
     this->cardSprite->runAction(Sequence::create(move,moveWait,gong,hit,wait,movaFanhui,moveWait,addNuqi,appear,recordBlock,NULL));
-    
+    this->cardSprite->runAction(Sequence::create(moveWait,gongMusic,NULL));
     this->fPro->hpPro->setVisible(false);
     this->fPro->hpProBg->setVisible(false);
     this->fPro->nuqiPro->setVisible(false);
@@ -213,10 +224,14 @@ void FengBoCard::moveAnimation(Vec2 target) {
 
 void FengBoCard::appearUI() {
     this->cardSprite->runAction(this->standAction);
+    CommonFunc::removeAnimation();
     this->fPro->hpPro->setVisible(true);
     this->fPro->hpProBg->setVisible(true);
     this->fPro->nuqiPro->setVisible(true);
     this->fPro->nuqiProBg->setVisible(true);
+    
+    CocosDenshion::SimpleAudioEngine::getInstance()->unloadEffect("zhousi_attack.mp3");
+    CocosDenshion::SimpleAudioEngine::getInstance()->unloadEffect("zhousi_conjure.mp3");
 }
 
 void FengBoCard::hitBlock(Vector<OneRecord *> affectRecordArray) {
@@ -230,6 +245,10 @@ void FengBoCard::hitBlock(Vector<OneRecord *> affectRecordArray) {
             this->addNuQi(beHitCard, 1);
         }
     }
+}
+
+void FengBoCard::daHitMusic() {
+    CocosDenshion::SimpleAudioEngine::getInstance()->playEffect("zhousi_conjure.mp3",false);
 }
 
 void FengBoCard::daSkill(OneRecord *info) {
@@ -260,9 +279,14 @@ void FengBoCard::daSkill(OneRecord *info) {
     auto maxHit = CallFunc::create(CC_CALLBACK_0(FengBoCard::daHitBlock, this, info->affectRecordArray));
     // auto addNuqi = CallFunc::create(CC_CALLBACK_0(TaoTieCard::nuQiManage, this));
     auto recordBlock = CallFunc::create(CC_CALLBACK_0(ReadRecordFight::readNextFightRecord, this->readRecordFight));
-    
+    auto dazhaoMusic = CallFunc::create(CC_CALLBACK_0(FengBoCard::daHitMusic, this));
     this->cardSprite->runAction(Sequence::create(move,moveWait,dazhao,maxHit,wait,movaFanhui,moveWait,appear,recordBlock,NULL));
+    this->cardSprite->runAction(Sequence::create(moveWait,dazhaoMusic, NULL));
     
+    this->fPro->hpPro->setVisible(false);
+    this->fPro->hpProBg->setVisible(false);
+    this->fPro->nuqiPro->setVisible(false);
+    this->fPro->nuqiProBg->setVisible(false);
 }
 
 void FengBoCard::daHitBlock(Vector<OneRecord*> affectRecordArray) {
@@ -289,9 +313,9 @@ void FengBoCard::daHitBlock(Vector<OneRecord*> affectRecordArray) {
 void FengBoCard::runZhanLiAnimation() {
     Animate* zhanli = NULL;
     if (this->playerName.compare("enemyPlayer") == 0) {
-        zhanli = CommonFunc::creatAnimation("zhousi_stand_r%d.png", 8, animationFactor*8, 1);
+        zhanli = CommonFunc::creatAnimation("zhousi_stand_r%d.png", 8, animationFactor*8*1.5, 1);
     }else {
-        zhanli = CommonFunc::creatAnimation("zhousi_stand_l%d.png", 8, animationFactor*8, 1);
+        zhanli = CommonFunc::creatAnimation("zhousi_stand_l%d.png", 8, animationFactor*8*1.5, 1);
     }
    // auto zhanli = CommonFunc::creatAnimation("zhousi_stand_%d.png", 8, 0.5f, 2);
     this->standAction = RepeatForever::create(zhanli);

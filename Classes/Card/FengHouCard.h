@@ -33,6 +33,9 @@ public:
     void appearUI();
     void recordUltimateSkill();
 
+    virtual void preCardAudio();
+    void xiaoHitMusic();
+    void daHitMusic();
 };
 
 

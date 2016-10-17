@@ -16,7 +16,7 @@ USING_NS_CC;
 class FightMap : public Layer{
   
 public:
-    void init(std::string imageName, std::string direction);
+    void init(std::string imageName, std::string direction, Size mapLayerSize);
    // float MapOneLineFun(float y);
     void initMapCell(int id, float orginY, int lineNum,std::string direction);
     
@@ -27,6 +27,7 @@ public:
     Vector<MapCell*> hitAllCell();
     Vector<MapCell*> hitNuQiMax();
     Sprite* map;
+    float mapScale;
     CREATE_FUNC(FightMap);
     virtual bool init();
 };
