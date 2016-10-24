@@ -26,7 +26,9 @@ bool SuanYuCard::init() {
 //    this->MaxHP = 20;
     this->hitRuleNum = hitRuleType.niao;
     this->cardName = "suanyu";
-    
+    this->cardSpriteImageName = "fengxing_stand";
+    this->xiaoZhaoInfo = "偷偷偷";
+    this->daZhaoInfo = "神偷";
     this->wuLi = 81;
     this->tongShuai = 78;
     this->zhiLi = 56;

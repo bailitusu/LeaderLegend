@@ -17,6 +17,7 @@ class Bag;
 class Dragon;
 class DragonSkill;
 class SkillScrollLayer;
+class LingShouInfoLayer;
 class SkillGezi : public Ref {
     
 public:
@@ -27,6 +28,7 @@ public:
     int index;
     Vec2 geziPositon;
 };
+
 
 class LingShoLayer : public Layer {
     
@@ -41,20 +43,21 @@ public:
     Vector<SkillGezi*> allSkillArray;
     void initTakeGezi();
     void initAllGezi();
-    void initLevelAndSkillBtn();
+    void initPeiYangBtn();
     void initShuXingLabel();
-    void initTaoZi();
+ //   void initTaoZi();
     Sprite* lingShouImage;
-    void levelUpBtn(Ref* sender, ui::Widget::TouchEventType type);
-    void skillBtn(Ref* sender, ui::Widget::TouchEventType type);
+    void peiYangBtn(Ref* sender, ui::Widget::TouchEventType type);
+  //  void skillBtn(Ref* sender, ui::Widget::TouchEventType type);
     
     virtual bool onTouchBegan(Touch *touch, Event *unused_event);
     virtual void onTouchMoved(Touch *touch, Event *unused_event);
     virtual void onTouchEnded(Touch *touch, Event *unused_event);
     
     Label* bingLiLabel;
-    Label* mianBaoLabel;
-    Label* baoJiLabel;
+//    Label* mianBaoLabel;
+//    Label* baoJiLabel;
+    Label* minJieLabel;
     Label* fangYuLabel;
     Label* gongJiLabel;
     Label* faLiLabel;
@@ -63,7 +66,13 @@ public:
     SkillScrollLayer* scrollLayer;
     void changeTakeSkill(DragonSkill* ds, bool isRemove);
     void changeAllSkill(DragonSkill* ds);
-    void taoZiBtn(Ref* sender, ui::Widget::TouchEventType type);
+    
+    DragonSkill* currentInfoDs;
+    bool isShowInfo;
+    void showInfo(float dur);
+    void disapperInfo();
+    LingShouInfoLayer* lsInfoLayer;
+  //  void taoZiBtn(Ref* sender, ui::Widget::TouchEventType type);
 };
 
 

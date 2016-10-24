@@ -171,10 +171,15 @@ Animate* CommonFunc::removeAnimation() {
     Director::getInstance()->getTextureCache()->removeAllTextures();
     
 }
-//void CommonFunc::showHitValue(Label* textLabel,int hitValue, std::string text) {
-//
-//
-//}
+
+Label* CommonFunc::createLabel(std::string text, cocos2d::Vec2 position) {
+    auto label = Label::createWithTTF(text, "fonts/楷体.ttf", 16);
+    label->setContentSize(Size(40, 20));
+    label->setTextColor(Color4B(0, 0, 0, 255));
+    label->setAlignment(TextHAlignment::LEFT);
+    label->setPosition(position);
+    return label;
+}
 
 
 

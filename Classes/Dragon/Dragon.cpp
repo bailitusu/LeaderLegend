@@ -33,10 +33,11 @@ void Dragon::addDragonSkill(DragonSkill *skill,int index) {
 }
 
 void Dragon::initDragonShuXing() {
-    this->bingLi = 10;
-    this->mianBao = 10;
-    this->baoJi = 10;
-    this->fangYu = 10;
-    this->gongJi = 10;
-    this->faLI = 10;
+    this->bingLi = 1000;
+//    this->mianBao = 10;
+//    this->baoJi = 10;
+    this->minJie = 2000;
+    this->fangYu = 3213;
+    this->gongJi = 1111;
+    this->faLI = 2666;
 }

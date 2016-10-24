@@ -7,12 +7,20 @@
 //
 
 #include "LingShoLayer.h"
-#include "Dragon.h"
+#include "Dragon/Dragon.h"
 #include "CommonFunc.h"
 #include "Setting.h"
 #include "SkillScrollLayer.h"
 #include "DragonSkill.h"
 #include "Bag/Bag.h"
+#include "LingShouInfoLayer.h"
+
+#include "AllArmyGuWu.h"
+#include "HuiMieBoDong.h"
+#include "JiuXiaoLongYin.h"
+#include "ZaiShengLongHou.h"
+#include "ZhanYiGaoAng.h"
+
 bool LingShoLayer::init() {
     return true;
 }
@@ -30,8 +38,8 @@ void LingShoLayer::initLingShoLayer() {
     this->addChild(background);
     
     lingShouImage = Sprite::create("DragonBaby.jpg");
-    CommonFunc::setSpriteSize(lingShouImage, screenSize.width*0.15);
-    lingShouImage->setPosition(70,screenSize.height-70);
+    CommonFunc::setSpriteSize(lingShouImage, screenSize.width*0.31);
+    lingShouImage->setPosition(20+this->lingShouImage->getBoundingBox().size.width/2,screenSize.height-this->lingShouImage->getBoundingBox().size.height/2-20);
     this->addChild(lingShouImage,100);
     
     auto dispatcher = Director::getInstance()->getEventDispatcher();
@@ -42,159 +50,161 @@ void LingShoLayer::initLingShoLayer() {
   //  liston->setSwallowTouches(true);
     dispatcher->addEventListenerWithSceneGraphPriority(liston, this);
     
-    this->initTaoZi();
-    this->initLevelAndSkillBtn();
+   // this->initTaoZi();
+    this->initPeiYangBtn();
     this->initShuXingLabel();
     this->initTakeGezi();
     this->initAllGezi();
 }
 
-void LingShoLayer::initTaoZi() {
-//    Sprite* taoZiSp = Sprite::create("taozi.jpg");
-//    CommonFunc::setSpriteSize(taoZiSp, 30);
-//    taoZiSp->setPosition(Vec2(this->lingShouImage->getPosition().x+screenSize.width*0.15-15, this->lingShouImage->getPosition().y+screenSize.height*0.075+5));
-//    this->addChild(taoZiSp, 100);
-    
-    ui::Button *taoZiBtn = ui::Button::create("taozi.jpg");
-    
-    taoZiBtn->setScale(30/taoZiBtn->getBoundingBox().size.width);
-    taoZiBtn->setPressedActionEnabled(true);
-    //    levelBtn->setContentSize(Size(60, 40));
-    taoZiBtn->setPosition(Vec2(this->lingShouImage->getPosition().x+screenSize.width*0.15-15, this->lingShouImage->getPosition().y+screenSize.height*0.075+5));
-    taoZiBtn->addTouchEventListener(CC_CALLBACK_2(LingShoLayer::taoZiBtn, this));
-    this->addChild(taoZiBtn,100);
-    
-    char temp[20] = {0};
-    sprintf(temp, "x%d", this->myBag->taoZiNum);
-    this->taoZiNumLabel = this->createLabel(temp, Vec2(taoZiBtn->getPosition().x+40,taoZiBtn->getPosition().y));
-    this->taoZiNumLabel->setAlignment(TextHAlignment::LEFT);
-    
-}
+//void LingShoLayer::initTaoZi() {
+////    Sprite* taoZiSp = Sprite::create("taozi.jpg");
+////    CommonFunc::setSpriteSize(taoZiSp, 30);
+////    taoZiSp->setPosition(Vec2(this->lingShouImage->getPosition().x+screenSize.width*0.15-15, this->lingShouImage->getPosition().y+screenSize.height*0.075+5));
+////    this->addChild(taoZiSp, 100);
+//    
+//    ui::Button *taoZiBtn = ui::Button::create("taozi.jpg");
+//    
+//    taoZiBtn->setScale(30/taoZiBtn->getBoundingBox().size.width);
+//    taoZiBtn->setPressedActionEnabled(true);
+//    //    levelBtn->setContentSize(Size(60, 40));
+//    taoZiBtn->setPosition(Vec2(this->lingShouImage->getPosition().x+screenSize.width*0.15-15, this->lingShouImage->getPosition().y+screenSize.height*0.075+5));
+//    taoZiBtn->addTouchEventListener(CC_CALLBACK_2(LingShoLayer::taoZiBtn, this));
+//    this->addChild(taoZiBtn,100);
+//    
+//    char temp[20] = {0};
+//    sprintf(temp, "x%d", this->myBag->taoZiNum);
+//    this->taoZiNumLabel = this->createLabel(temp, Vec2(taoZiBtn->getPosition().x+40,taoZiBtn->getPosition().y));
+//    this->taoZiNumLabel->setAlignment(TextHAlignment::LEFT);
+//    
+//}
 
-void LingShoLayer::taoZiBtn(cocos2d::Ref *sender, ui::Widget::TouchEventType type) {
-    if (type == ui::Widget::TouchEventType::ENDED) {
-        
-    
-        this->myBag->taoZiNum--;
-        char temp[20] = {0};
-        sprintf(temp, "x%d", this->myBag->taoZiNum);
-        this->taoZiNumLabel->setString(temp);
-        
-        struct timeval now;
-        gettimeofday(&now, NULL);
-        unsigned rand_seed = (unsigned)(now.tv_sec*1000 + now.tv_usec/1000);
-        srand(rand_seed);
-        
-        int randNum = rand()%6 + 1;
-        char tempVale[50] = {0};
+//void LingShoLayer::taoZiBtn(cocos2d::Ref *sender, ui::Widget::TouchEventType type) {
+//    if (type == ui::Widget::TouchEventType::ENDED) {
+//        
+//    
+//        this->myBag->taoZiNum--;
+//        char temp[20] = {0};
+//        sprintf(temp, "x%d", this->myBag->taoZiNum);
+//        this->taoZiNumLabel->setString(temp);
+//        
+//        struct timeval now;
+//        gettimeofday(&now, NULL);
+//        unsigned rand_seed = (unsigned)(now.tv_sec*1000 + now.tv_usec/1000);
+//        srand(rand_seed);
+//        
+//        int randNum = rand()%6 + 1;
+//        char tempVale[50] = {0};
+//
+//        switch (randNum) {
+//            case 1:
+//                this->myDragon->bingLi++;
+//                sprintf(tempVale, "%d",this->myDragon->bingLi);
+//                this->bingLiLabel->setString(tempVale);
+//                break;
+//            case 2:
+////                this->myDragon->mianBao++;
+////                sprintf(tempVale, "%d",this->myDragon->mianBao);
+////                this->mianBaoLabel->setString(tempVale);
+//                break;
+//            case 3:
+////                this->myDragon->baoJi++;
+////                sprintf(tempVale, "%d",this->myDragon->baoJi);
+////                this->baoJiLabel->setString(tempVale);
+//                break;
+//            case 4:
+//                this->myDragon->fangYu++;
+//                sprintf(tempVale, "%d",this->myDragon->fangYu);
+//                this->fangYuLabel->setString(tempVale);
+//                break;
+//            case 5:
+//                this->myDragon->gongJi++;
+//                sprintf(tempVale, "%d",this->myDragon->gongJi);
+//                this->gongJiLabel->setString(tempVale);
+//                break;
+//            case 6:
+//                this->myDragon->faLI++;
+//                sprintf(tempVale, "%d",this->myDragon->faLI);
+//                this->faLiLabel->setString(tempVale);
+//                break;
+//            default:
+//                break;
+//        }
+//    }
+//}
 
-        switch (randNum) {
-            case 1:
-                this->myDragon->bingLi++;
-                sprintf(tempVale, "%d",this->myDragon->bingLi);
-                this->bingLiLabel->setString(tempVale);
-                break;
-            case 2:
-                this->myDragon->mianBao++;
-                sprintf(tempVale, "%d",this->myDragon->mianBao);
-                this->mianBaoLabel->setString(tempVale);
-                break;
-            case 3:
-                this->myDragon->baoJi++;
-                sprintf(tempVale, "%d",this->myDragon->baoJi);
-                this->baoJiLabel->setString(tempVale);
-                break;
-            case 4:
-                this->myDragon->fangYu++;
-                sprintf(tempVale, "%d",this->myDragon->fangYu);
-                this->fangYuLabel->setString(tempVale);
-                break;
-            case 5:
-                this->myDragon->gongJi++;
-                sprintf(tempVale, "%d",this->myDragon->gongJi);
-                this->gongJiLabel->setString(tempVale);
-                break;
-            case 6:
-                this->myDragon->faLI++;
-                sprintf(tempVale, "%d",this->myDragon->faLI);
-                this->faLiLabel->setString(tempVale);
-                break;
-            default:
-                break;
-        }
-    }
-}
-
-void LingShoLayer::initLevelAndSkillBtn() {
-    ui::Button *levelBtn = ui::Button::create("classbtn.png");
-    levelBtn->setTitleText("升级");
-    levelBtn->setTitleColor(Color3B(255, 255, 255));
-    levelBtn->setTitleAlignment(TextHAlignment::CENTER);
-    levelBtn->setTitleFontSize(15);
-    levelBtn->setPressedActionEnabled(true);
+void LingShoLayer::initPeiYangBtn() {
+    ui::Button *peiYangBtn = ui::Button::create("classbtn.png");
+    peiYangBtn->setTitleText("培养");
+    peiYangBtn->setTitleColor(Color3B(255, 255, 255));
+    peiYangBtn->setTitleAlignment(TextHAlignment::CENTER);
+    peiYangBtn->setTitleFontSize(15);
+    peiYangBtn->setPressedActionEnabled(true);
 //    levelBtn->setContentSize(Size(60, 40));
-    levelBtn->setPosition(Vec2(this->lingShouImage->getPosition().x+screenSize.width*0.15-10,this->lingShouImage->getPosition().y-5));
-    levelBtn->addTouchEventListener(CC_CALLBACK_2(LingShoLayer::levelUpBtn, this));
-    this->addChild(levelBtn,100);
+    peiYangBtn->setScale(80/peiYangBtn->getBoundingBox().size.width);
+    peiYangBtn->setAnchorPoint(Vec2(0.5, 0.5));
+    peiYangBtn->setPosition(Vec2(this->lingShouImage->getPosition().x+this->lingShouImage->getBoundingBox().size.width/2+40,this->lingShouImage->getPosition().y+this->lingShouImage->getBoundingBox().size.height/2-170));
+    peiYangBtn->addTouchEventListener(CC_CALLBACK_2(LingShoLayer::peiYangBtn, this));
+    this->addChild(peiYangBtn,100);
     
-    ui::Button *skillBtn = ui::Button::create("classbtn.png");
-    skillBtn->setTitleText("技能");
-    skillBtn->setTitleColor(Color3B(255, 255, 255));
-    skillBtn->setTitleAlignment(TextHAlignment::CENTER);
-    skillBtn->setTitleFontSize(15);
-    skillBtn->setPressedActionEnabled(true);
-//    skillBtn->setContentSize(Size(60, 40));
-    skillBtn->setPosition(Vec2(this->lingShouImage->getPosition().x+screenSize.width*0.15-10,this->lingShouImage->getPosition().y-screenSize.width*0.075+12));
-    skillBtn->addTouchEventListener(CC_CALLBACK_2(LingShoLayer::levelUpBtn, this));
-    this->addChild(skillBtn,100);
+//    ui::Button *skillBtn = ui::Button::create("classbtn.png");
+//    skillBtn->setTitleText("技能");
+//    skillBtn->setTitleColor(Color3B(255, 255, 255));
+//    skillBtn->setTitleAlignment(TextHAlignment::CENTER);
+//    skillBtn->setTitleFontSize(15);
+//    skillBtn->setPressedActionEnabled(true);
+////    skillBtn->setContentSize(Size(60, 40));
+//    skillBtn->setPosition(Vec2(this->lingShouImage->getPosition().x+screenSize.width*0.15-10,this->lingShouImage->getPosition().y-screenSize.width*0.075+12));
+//    skillBtn->addTouchEventListener(CC_CALLBACK_2(LingShoLayer::levelUpBtn, this));
+//    this->addChild(skillBtn,100);
 }
 
-void LingShoLayer::levelUpBtn(cocos2d::Ref *sender, ui::Widget::TouchEventType type) {
+void LingShoLayer::peiYangBtn(cocos2d::Ref *sender, ui::Widget::TouchEventType type) {
     
 }
 
-void LingShoLayer::skillBtn(cocos2d::Ref *sender, ui::Widget::TouchEventType type) {
-    
-}
+//void LingShoLayer::skillBtn(cocos2d::Ref *sender, ui::Widget::TouchEventType type) {
+//    
+//}
 
 void LingShoLayer::initShuXingLabel() {
-    this->createLabel("兵力:", Vec2(35,this->lingShouImage->getPosition().y-screenSize.width*0.075-20));
-    this->createLabel("免爆:", Vec2(35,this->lingShouImage->getPosition().y-screenSize.width*0.075-40));
-    this->createLabel("暴击:", Vec2(35,this->lingShouImage->getPosition().y-screenSize.width*0.075-60));
-    this->createLabel("防御:", Vec2(35,this->lingShouImage->getPosition().y-screenSize.width*0.075-80));
-    this->createLabel("攻击:", Vec2(35,this->lingShouImage->getPosition().y-screenSize.width*0.075-100));
-    this->createLabel("法力:", Vec2(35,this->lingShouImage->getPosition().y-screenSize.width*0.075-120));
+    this->createLabel("兵力:", Vec2(this->lingShouImage->getPosition().x+this->lingShouImage->getBoundingBox().size.width/2+30,this->lingShouImage->getPosition().y+this->lingShouImage->getBoundingBox().size.height/2-20));
+    this->createLabel("攻击:", Vec2(this->lingShouImage->getPosition().x+this->lingShouImage->getBoundingBox().size.width/2+30,this->lingShouImage->getPosition().y+this->lingShouImage->getBoundingBox().size.height/2-45));
+    this->createLabel("防御:", Vec2(this->lingShouImage->getPosition().x+this->lingShouImage->getBoundingBox().size.width/2+30,this->lingShouImage->getPosition().y+this->lingShouImage->getBoundingBox().size.height/2-70));
+    this->createLabel("法力:", Vec2(this->lingShouImage->getPosition().x+this->lingShouImage->getBoundingBox().size.width/2+30,this->lingShouImage->getPosition().y+this->lingShouImage->getBoundingBox().size.height/2-95));
+    this->createLabel("敏捷:", Vec2(this->lingShouImage->getPosition().x+this->lingShouImage->getBoundingBox().size.width/2+30,this->lingShouImage->getPosition().y+this->lingShouImage->getBoundingBox().size.height/2-120));
+  //  this->createLabel(":", Vec2(35,this->lingShouImage->getPosition().y-screenSize.width*0.075-120));
     
     char tempVale[50] = {0};
 
     sprintf(tempVale, "%d",this->myDragon->bingLi);
-    this->bingLiLabel = this->createLabel(tempVale, Vec2(70,this->lingShouImage->getPosition().y-screenSize.width*0.075-20));
+    this->bingLiLabel = this->createLabel(tempVale, Vec2(this->lingShouImage->getPosition().x+this->lingShouImage->getBoundingBox().size.width/2+30+45,this->lingShouImage->getPosition().y+this->lingShouImage->getBoundingBox().size.height/2-20));
     this->bingLiLabel->setAlignment(TextHAlignment::LEFT);
     
-    sprintf(tempVale, "%d",this->myDragon->mianBao);
-    this->mianBaoLabel = this->createLabel(tempVale, Vec2(70,this->lingShouImage->getPosition().y-screenSize.width*0.075-40));
-    this->mianBaoLabel->setAlignment(TextHAlignment::LEFT);
-    
-    sprintf(tempVale, "%d",this->myDragon->baoJi);
-    this->baoJiLabel = this->createLabel(tempVale, Vec2(70,this->lingShouImage->getPosition().y-screenSize.width*0.075-60));
-    this->baoJiLabel->setAlignment(TextHAlignment::LEFT);
-    
-    sprintf(tempVale, "%d",this->myDragon->fangYu);
-    this->fangYuLabel = this->createLabel(tempVale, Vec2(70,this->lingShouImage->getPosition().y-screenSize.width*0.075-80));
-    this->fangYuLabel->setAlignment(TextHAlignment::LEFT);
-    
     sprintf(tempVale, "%d",this->myDragon->gongJi);
-    this->gongJiLabel = this->createLabel(tempVale, Vec2(70,this->lingShouImage->getPosition().y-screenSize.width*0.075-100));
+    this->gongJiLabel = this->createLabel(tempVale, Vec2(this->lingShouImage->getPosition().x+this->lingShouImage->getBoundingBox().size.width/2+30+45,this->lingShouImage->getPosition().y+this->lingShouImage->getBoundingBox().size.height/2-45));
     this->gongJiLabel->setAlignment(TextHAlignment::LEFT);
     
+    sprintf(tempVale, "%d",this->myDragon->fangYu);
+    this->fangYuLabel = this->createLabel(tempVale, Vec2(this->lingShouImage->getPosition().x+this->lingShouImage->getBoundingBox().size.width/2+30+45,this->lingShouImage->getPosition().y+this->lingShouImage->getBoundingBox().size.height/2-70));
+    this->fangYuLabel->setAlignment(TextHAlignment::LEFT);
+    
     sprintf(tempVale, "%d",this->myDragon->faLI);
-    this->faLiLabel = this->createLabel(tempVale, Vec2(70,this->lingShouImage->getPosition().y-screenSize.width*0.075-120));
+    this->faLiLabel = this->createLabel(tempVale, Vec2(this->lingShouImage->getPosition().x+this->lingShouImage->getBoundingBox().size.width/2+30+45,this->lingShouImage->getPosition().y+this->lingShouImage->getBoundingBox().size.height/2-95));
     this->faLiLabel->setAlignment(TextHAlignment::LEFT);
+    
+    sprintf(tempVale, "%d",this->myDragon->minJie);
+    this->minJieLabel = this->createLabel(tempVale, Vec2(this->lingShouImage->getPosition().x+this->lingShouImage->getBoundingBox().size.width/2+30+45,this->lingShouImage->getPosition().y+this->lingShouImage->getBoundingBox().size.height/2-120));
+    this->minJieLabel->setAlignment(TextHAlignment::LEFT);
+    
+//    sprintf(tempVale, "%d",this->myDragon->faLI);
+//    this->faLiLabel = this->createLabel(tempVale, Vec2(this->lingShouImage->getPosition().x+this->lingShouImage->getBoundingBox().size.width/2+30+35,this->lingShouImage->getPosition().y-screenSize.width*0.075-120));
+//    this->faLiLabel->setAlignment(TextHAlignment::LEFT);
 }
 
 Label* LingShoLayer::createLabel(std::string text,Vec2 positon) {
-    auto label = Label::createWithTTF(text, "fonts/楷体.ttf", 16);
-    label->setContentSize(Size(40, 20));
+    auto label = Label::createWithTTF(text, "fonts/楷体.ttf", 19);
+    label->setContentSize(Size(60, 20));
     label->setTextColor(Color4B(0, 0, 255, 255));
     label->setPosition(positon);
     this->addChild(label,100);
@@ -208,7 +218,8 @@ void LingShoLayer::initTakeGezi() {
         CommonFunc::setSpriteSize(gezi->geZiSp, screenSize.width*0.082);
         this->addChild(gezi->geZiSp,100);
         gezi->index = i;
-        gezi->geZiSp->setPosition(48+i*screenSize.width*0.082,this->lingShouImage->getPosition().y-screenSize.width*0.075-190);
+        gezi->geZiSp->setPosition(48+i*screenSize.width*0.082,65);
+       // printf("%f",gezi->geZiSp->getPosition().y);
         gezi->geziPositon = gezi->geZiSp->getPosition();
         this->takeSkillArray.pushBack(gezi);
     }
@@ -234,8 +245,36 @@ void LingShoLayer::initAllGezi() {
         
         char skillImageName[20] = {0};
         sprintf(skillImageName, "s_%d.jpg",i);
-        allGezi->obj = DragonSkill::create();
-        allGezi->obj->dragonSkillSp = Sprite::create(skillImageName);
+        switch (i) {
+            case 0:
+                allGezi->obj = AllArmyGuWu::create();
+                break;
+            case 1:
+                allGezi->obj = HuiMieBoDong::create();
+                break;
+            case 2:
+                allGezi->obj = JiuXiaoLongYin::create();
+                break;
+            case 3:
+                allGezi->obj = ZaiShengLongHou::create();
+                break;
+            case 4:
+                allGezi->obj = ZhanYiGaoAng::create();
+                break;
+            default:
+                allGezi->obj = DragonSkill::create();
+                allGezi->obj->dargonName = "super Skill";
+                break;
+        }
+//        allGezi->obj = DragonSkill::create();
+        if (i >= 8) {
+            allGezi->obj->dragonSkillSp = Sprite::create("s_noHave.jpg");
+            allGezi->obj->noHave = true;
+        }else {
+            allGezi->obj->dragonSkillSp = Sprite::create(skillImageName);
+            allGezi->obj->noHave = false;
+        }
+        
         allGezi->obj->imageName = skillImageName;
         CommonFunc::setSpriteSize(allGezi->obj->dragonSkillSp, allGezi->geZiSp->getBoundingBox().size.width-8);
         allGezi->obj->dragonSkillSp->setPosition(allGezi->geZiSp->getPosition());
@@ -249,6 +288,10 @@ void LingShoLayer::initAllGezi() {
 bool LingShoLayer::onTouchBegan(cocos2d::Touch *touch, cocos2d::Event *unused_event) {
     auto touchLocation = touch->getLocationInView();
     touchLocation = Director::getInstance()->convertToGL(touchLocation);
+    
+    this->isShowInfo = false;
+    
+    
     for (int i = 0 ; i < this->takeSkillArray.size(); i++) {
         Rect takeSkillRect = Rect(this->takeSkillArray.at(i)->geZiSp->getPosition().x-this->takeSkillArray.at(i)->geZiSp->getBoundingBox().size.width/2,this->takeSkillArray.at(i)->geZiSp->getPosition().y-this->takeSkillArray.at(i)->geZiSp->getBoundingBox().size.height/2,this->takeSkillArray.at(i)->geZiSp->getBoundingBox().size.width,this->takeSkillArray.at(i)->geZiSp->getBoundingBox().size.height);
         if (takeSkillRect.containsPoint(touchLocation)) {
@@ -257,9 +300,25 @@ bool LingShoLayer::onTouchBegan(cocos2d::Touch *touch, cocos2d::Event *unused_ev
                 this->takeSkillArray.at(i)->obj->dragonSkillSp->removeFromParent();
                 this->takeSkillArray.at(i)->obj->autorelease();
                 this->takeSkillArray.at(i)->obj = NULL;
+                break;
             }
         }
     }
+    
+    for (int i = 0; i < this->allSkillArray.size(); i++) {
+        auto oneSkillPoint = this->allSkillArray.at(i)->obj->dragonSkillSp->getPosition()+this->scrollLayer->continerLayer->getPosition()+this->scrollLayer->getPosition();
+        Rect rect = Rect(oneSkillPoint.x-24, oneSkillPoint.y-24, 48, 48);
+        if (rect.containsPoint(touchLocation)) {
+            if (this->allSkillArray.at(i)->obj->noHave == false) {
+                this->currentInfoDs = this->allSkillArray.at(i)->obj;
+                schedule(schedule_selector(LingShoLayer::showInfo), 0.5);
+                return true;
+            }
+        }
+    }
+    this->currentInfoDs = NULL;
+    
+
     return true;
 }
 
@@ -269,6 +328,17 @@ void LingShoLayer::onTouchMoved(cocos2d::Touch *touch, cocos2d::Event *unused_ev
 
 void LingShoLayer::onTouchEnded(cocos2d::Touch *touch, cocos2d::Event *unused_event) {
     if (this->scrollLayer->isMoved == false) {
+        if (this->currentInfoDs != NULL) {
+            unschedule(schedule_selector(LingShoLayer::showInfo));
+            if (this->isShowInfo == true) {
+                this->disapperInfo();
+                return;
+            }
+           
+        }
+        
+        
+        
         bool isMaxTake = true;
         for (int j = 0; j < this->takeSkillArray.size(); j++) {
             if (this->takeSkillArray.at(j)->obj == NULL ) {
@@ -286,17 +356,19 @@ void LingShoLayer::onTouchEnded(cocos2d::Touch *touch, cocos2d::Event *unused_ev
                 Rect rect = Rect(oneSkillPoint.x-24, oneSkillPoint.y-24, 48, 48);
                // printf("jinlaile-------\n");
                 if (rect.containsPoint(touchLocation)) {
-                    if (this->allSkillArray.at(i)->obj->dragonSkillSp->getOpacity() == 125) {
-                        this->allSkillArray.at(i)->obj->dragonSkillSp->setOpacity(255);
-                        this->changeTakeSkill(this->allSkillArray.at(i)->obj,true);
-                    }else {
-                        if (isMaxTake == false) {
-                            this->allSkillArray.at(i)->obj->dragonSkillSp->setOpacity(125);
-                            this->changeTakeSkill(this->allSkillArray.at(i)->obj,false);
+                    if (this->allSkillArray.at(i)->obj->noHave == false) {
+                        
+                        if (this->allSkillArray.at(i)->obj->dragonSkillSp->getOpacity() == 125) {
+                            this->allSkillArray.at(i)->obj->dragonSkillSp->setOpacity(255);
+                            this->changeTakeSkill(this->allSkillArray.at(i)->obj,true);
+                        }else {
+                            if (isMaxTake == false) {
+                                this->allSkillArray.at(i)->obj->dragonSkillSp->setOpacity(125);
+                                this->changeTakeSkill(this->allSkillArray.at(i)->obj,false);
+                            }
                         }
-                    }
 
-                    
+                    }
                     break;
                 }
                 
@@ -306,6 +378,29 @@ void LingShoLayer::onTouchEnded(cocos2d::Touch *touch, cocos2d::Event *unused_ev
         this->scrollLayer->isMoved = false;
     }
 
+}
+
+
+void LingShoLayer::showInfo(float dur) {
+    unschedule(schedule_selector(LingShoLayer::showInfo));
+    this->isShowInfo = true;
+    if (this->lsInfoLayer == NULL) {
+        this->lsInfoLayer = LingShouInfoLayer::create();
+        this->lsInfoLayer->setContentSize(Size(100, 100));
+        this->lsInfoLayer->dSkill = this->currentInfoDs;
+        this->lsInfoLayer->initLingShouInfoLayer();
+        this->lsInfoLayer->setAnchorPoint(Vec2(0.5, 0.5));
+        auto position = this->currentInfoDs->dragonSkillSp->getPosition()+this->scrollLayer->continerLayer->getPosition()+this->scrollLayer->getPosition();
+        this->lsInfoLayer->setPosition(Vec2(position.x-100, position.y));
+        this->addChild(this->lsInfoLayer,200);
+    }
+
+    
+}
+
+void LingShoLayer::disapperInfo() {
+    this->lsInfoLayer->removeFromParentAndCleanup(true);
+    this->lsInfoLayer = NULL;
 }
 
 void LingShoLayer::changeTakeSkill(DragonSkill* ds, bool isRemove) {

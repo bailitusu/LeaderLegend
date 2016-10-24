@@ -26,7 +26,9 @@ bool FengBoCard::init() {
 //    this->MaxHP = 20;
     this->hitRuleNum = hitRuleType.faShi;
     this->cardName = "fengbo";
-    
+    this->cardSpriteImageName = "zhousi_stand";
+    this->xiaoZhaoInfo = "横扫千军";
+    this->daZhaoInfo = "暴风雪";
     this->wuLi = 71;
     this->tongShuai = 84;
     this->zhiLi = 92;

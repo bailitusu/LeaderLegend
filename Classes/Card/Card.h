@@ -24,6 +24,9 @@ class Card: public Ref, public StandMapCellInterface  {
 public:
     std::string cardName;
     std::string playerName;
+    std::string cardSpriteImageName;
+    std::string xiaoZhaoInfo;
+    std::string daZhaoInfo;
     Sprite* cardSprite;
     Vec2 cardPosition;
     int cellIndex;

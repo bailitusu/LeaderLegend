@@ -22,6 +22,9 @@ bool TaoTieCard::init() {
     this->hitRuleNum = hitRuleType.jinZhan;
     this->cardName = "taotie";
     
+    this->cardSpriteImageName = "panda_stand";
+    this->xiaoZhaoInfo = "恐吓";
+    this->daZhaoInfo = "刺C吧內";
     this->wuLi = 87;
     this->tongShuai = 81;
     this->zhiLi = 62;

@@ -28,5 +28,6 @@ public:
     static ui::Button* initButton(ui::Button*btn,const cocos2d::ui::AbstractCheckButton::ccWidgetTouchCallback& callback,float width,Vec2 positon);
    // static void  showHitValue(Label* hpLabel,int hitValue,std::string text);
     //static void setSpriteSizeHeight(cocos2d::Sprite* sp, float width);
+    static Label* createLabel(std::string text, Vec2 position);
 };
 #endif /* CommonFunc_h */

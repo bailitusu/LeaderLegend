@@ -26,7 +26,9 @@ bool FengHouCard::init() {
 //    this->MaxHP = 20;
     this->hitRuleNum = hitRuleType.jinZhan;
     this->cardName = "fenghou";
-    
+    this->cardSpriteImageName = "gugong_stand";
+    this->xiaoZhaoInfo = "一即当前";
+    this->daZhaoInfo = "统帅天下";
     this->wuLi = 72;
     this->tongShuai = 92;
     this->zhiLi = 88;

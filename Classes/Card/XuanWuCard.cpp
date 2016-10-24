@@ -24,7 +24,9 @@ bool XuanWuCard::init() {
 //    this->MaxHP = 20;
     this->hitRuleNum = hitRuleType.jinZhan;
     this->cardName = "xuanwu";
-    
+    this->cardSpriteImageName = "niutou_stand";
+    this->xiaoZhaoInfo = "鸠抓";
+    this->daZhaoInfo = "滚筒洗衣机";
     this->wuLi = 72;
     this->tongShuai = 97;
     this->zhiLi = 85;

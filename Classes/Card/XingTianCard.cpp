@@ -26,7 +26,9 @@ bool XingTianCard::init() {
     
     this->hitRuleNum = hitRuleType.jinZhan;
     this->cardName = "xingtian";
-    
+    this->cardSpriteImageName = "jiansheng_stand";
+    this->xiaoZhaoInfo = "盾击";
+    this->daZhaoInfo = "无双乱舞";
     this->wuLi = 90;
     this->tongShuai = 88;
     this->zhiLi = 66;

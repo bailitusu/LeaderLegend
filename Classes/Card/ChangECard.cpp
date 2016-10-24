@@ -21,7 +21,9 @@ bool ChangECard::init() {
 //    this->MaxHP = 20;
     this->hitRuleNum = hitRuleType.faShi;
     this->cardName = "change";
-    
+    this->cardSpriteImageName = "bingnv_stand";
+    this->xiaoZhaoInfo = "加怒";
+    this->daZhaoInfo = "苦尽甘来";
     this->wuLi = 60;
     this->tongShuai = 72;
     this->zhiLi = 78;

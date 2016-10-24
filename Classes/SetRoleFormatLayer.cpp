@@ -23,6 +23,7 @@
 #include "DunJiaTianShu.h"
 #include "FightLayer.h"
 
+#include "JuanZhouLayer.h"
 bool SetRoleFormatlayer::init() {
     if (!Layer::init()) {
         return false;
@@ -48,8 +49,9 @@ void SetRoleFormatlayer::initSetRoleFormatLayer() {
     liston->setSwallowTouches(true);
     dispatcher->addEventListenerWithSceneGraphPriority(liston, this);
     
-    Sprite* background = Sprite::create("背景1.png");
-    CommonFunc::setSpriteSize(background, this->getBoundingBox().size.width);
+    Sprite* background = Sprite::create("buzhenBg.jpg");
+    CommonFunc::setShowAllSpriteSize(background, this->getBoundingBox().size.width, this->getBoundingBox().size.height);
+   // CommonFunc::setSpriteSize(background, this->getBoundingBox().size.width);
     background->setPosition(Vec2(this->getBoundingBox().size.width/2+origin.x, this->getBoundingBox().size.height/2+origin.y));
     background->setLocalZOrder(-100);
     this->addChild(background);
@@ -58,12 +60,18 @@ void SetRoleFormatlayer::initSetRoleFormatLayer() {
     this->player->fpName = "player";
     this->player->fightLayer = this;
     this->player->initMap("leftmap.png", "left", Size(this->getBoundingBox().size.width*0.449,this->getBoundingBox().size.width*0.449));
-    this->player->fMap->setPosition(this->getBoundingBox().size.width*0.015+origin.x, this->getBoundingBox().size.height*0.16+origin.y);
+    this->player->fMap->setPosition(this->getBoundingBox().size.width*0.015+origin.x, this->getBoundingBox().size.height*0.266+origin.y);
     
     for (int i = 0; i < this->roleData.size(); i++) {
-        this->roleData.at(i)->card->initCardSprite(this->roleData.at(i)->imageName);
-        this->player->setCardsPositon(this->roleData.at(i)->card, this->roleData.at(i)->cellIndex,50);
+        if (this->roleData.at(i)->card->cardSprite != NULL) {
+            printf("i =%d\n", i);
+        }
     }
+    
+//    for (int i = 0; i < this->roleData.size(); i++) {
+//        this->roleData.at(i)->card->initCardSprite(this->roleData.at(i)->imageName);
+//        this->player->setCardsPositon(this->roleData.at(i)->card, this->roleData.at(i)->cellIndex,50);
+//    }
 //    this->initCardFormat(HouYiCard::create(),"xiaohei_stand_l0.png", 0, DunJiaTianShu::create());
 //    this->initCardFormat(XuanWuCard::create(),"niutou_stand_l0.png", 1, DunJiaTianShu::create());
 //    this->initCardFormat(XingTianCard::create(),"jiansheng_stand_l0.png", 2, DunJiaTianShu::create());
@@ -78,6 +86,7 @@ void SetRoleFormatlayer::initSetRoleFormatLayer() {
         this->addFightBtnUI();
         this->addEnemyBtnUI();
     }
+    this->initJzLayer();
     this->addBackBtnUI();
    // this->addFightBtnUI();
     this->infoLabel = Label::createWithTTF("0", "fonts/Marker Felt.ttf", 16);
@@ -85,6 +94,18 @@ void SetRoleFormatlayer::initSetRoleFormatLayer() {
     this->infoLabel->setOpacity(0);
     this->addChild(this->infoLabel,500);
 }
+
+void SetRoleFormatlayer::initJzLayer() {
+    this->jzLayer = JuanZhouLayer::create();
+    for (int i = 0; i < this->roleData.size(); i++) {
+        this->jzLayer->psRoleData.pushBack(this->roleData.at(i));
+    }
+    this->jzLayer->setContentSize(Size(this->getBoundingBox().size.width*0.9, this->getBoundingBox().size.height*0.22));
+    this->jzLayer->initJuanZhou();
+    this->jzLayer->setPosition(this->getBoundingBox().size.width/2-jzLayer->getBoundingBox().size.width/2,10);
+    this->addChild(this->jzLayer,-50);
+}
+
 
 void SetRoleFormatlayer::addBackBtnUI() {
 
@@ -94,19 +115,19 @@ void SetRoleFormatlayer::addBackBtnUI() {
 }
 
 void SetRoleFormatlayer::backBtn(cocos2d::Ref *sender, ui::Widget::TouchEventType type) {
-    if (this->preLayerName.compare("buzhen") == 0) {
-        Director::getInstance()->popScene();
-    }else if(this->preLayerName.compare("fuben") == 0) {
-        if (this->enemyPlayer != NULL) {
-            this->enemyPlayer->release();
+    if (type == ui::Widget::TouchEventType::BEGAN) {
+        if (this->preLayerName.compare("buzhen") == 0) {
+            Director::getInstance()->popScene();
+        }else if(this->preLayerName.compare("fuben") == 0) {
+            if (this->enemyPlayer != NULL) {
+                this->enemyPlayer->release();
+            }
+            this->player->release();
+            this->roleData.clear();
+            this->enemyRoleData.clear();
+            this->removeFromParent();
         }
-        this->player->release();
-        this->roleData.clear();
-        this->enemyRoleData.clear();
-        this->removeFromParent();
     }
-    
-
 }
 
 void SetRoleFormatlayer::addFightBtnUI() {
@@ -116,7 +137,7 @@ void SetRoleFormatlayer::addFightBtnUI() {
     btn->setTitleFontSize(15);
     btn->setPressedActionEnabled(true);
     btn->setContentSize(Size(100, 40));
-    btn->setPosition(Vec2(this->getBoundingBox().size.width/2+origin.x,this->getBoundingBox().size.width*0.053+origin.y));
+    btn->setPosition(Vec2(this->getBoundingBox().size.width/2+origin.x,this->getBoundingBox().size.height/2+origin.y));
     btn->addTouchEventListener(CC_CALLBACK_2(SetRoleFormatlayer::startFightBtn, this));
     this->addChild(btn,500);
 }
@@ -126,7 +147,7 @@ void SetRoleFormatlayer::addEnemyBtnUI() {
     this->enemyPlayer->fpName = "enemyPlayer";
     this->enemyPlayer->fightLayer = this;
     this->enemyPlayer->initMap("rightmap.png", "right",Size(this->getBoundingBox().size.width*0.449,this->getBoundingBox().size.width*0.449));
-    this->enemyPlayer->fMap->setPosition(this->getBoundingBox().size.width-(this->getBoundingBox().size.width*0.015+this->enemyPlayer->fMap->getBoundingBox().size.width+origin.x), this->getBoundingBox().size.height*0.16+origin.y);
+    this->enemyPlayer->fMap->setPosition(this->getBoundingBox().size.width-(this->getBoundingBox().size.width*0.015+this->enemyPlayer->fMap->getBoundingBox().size.width+origin.x), this->getBoundingBox().size.height*0.266+origin.y);
     this->enemyPlayer->retain();
     for (int i = 0; i < this->enemyRoleData.size(); i++) {
         this->enemyRoleData.at(i)->card->initCardSprite(this->enemyRoleData.at(i)->imageName);
@@ -136,36 +157,41 @@ void SetRoleFormatlayer::addEnemyBtnUI() {
 }
 
 void SetRoleFormatlayer::startFightBtn(cocos2d::Ref *sender, ui::Widget::TouchEventType type) {
-    auto nextScene = FightLayer::createScene();
-    //auto nextLayer = (FightLayer*)nextScene->getChildren().at(0);
-    FightLayer* layer = FightLayer::create();
-    for (int k = 0; k < this->removeRoleData.size(); k++) {
-        this->roleData.eraseObject(this->removeRoleData.at(k));
+    if (type == ui::Widget::TouchEventType::BEGAN) {
+        auto nextScene = FightLayer::createScene();
+        //auto nextLayer = (FightLayer*)nextScene->getChildren().at(0);
+        FightLayer* layer = FightLayer::create();
+        for (int k = 0; k < this->removeRoleData.size(); k++) {
+            this->roleData.eraseObject(this->removeRoleData.at(k));
+        }
+        nextScene->addChild(layer);
+        for (int i = 0; i < this->roleData.size(); i++) {
+            if (this->roleData.at(i)->card->cardSprite != NULL) {
+                CC_SAFE_RETAIN(this->roleData.at(i)->card->cardSprite);
+                this->roleData.at(i)->card->cardSprite->removeFromParentAndCleanup(true);
+                auto tempData = SetRoleData::create();
+                tempData->imageName = this->roleData.at(i)->imageName;
+                tempData->cellIndex = this->roleData.at(i)->cellIndex;
+                tempData->card = this->roleData.at(i)->card;
+                tempData->magicGoods = this->roleData.at(i)->magicGoods;
+                layer->roleData.pushBack(tempData);
+            }
+            //  nextLayer->roleData->pushBack(this->roleData.at(i));
+        }
+        //  layer->roleData = &this->roleData;
+        
+        layer->initFightLayer();
+        // nextLayer->ID = 10;
+        CC_SAFE_RETAIN(this->player);
+        this->player->release();
+        if (this->enemyPlayer != NULL) {
+            CC_SAFE_RETAIN(this->enemyPlayer);
+            this->enemyPlayer->release();
+        }
+        Director::getInstance()->replaceScene(TransitionFade::create(1.0f, nextScene));
+        // Director::getInstance()->replaceScene(nextScene);
+
     }
-    nextScene->addChild(layer);
-    for (int i = 0; i < this->roleData.size(); i++) {
-        CC_SAFE_RETAIN(this->roleData.at(i)->card->cardSprite);
-        this->roleData.at(i)->card->cardSprite->removeFromParent();
-        auto tempData = SetRoleData::create();
-        tempData->imageName = this->roleData.at(i)->imageName;
-        tempData->cellIndex = this->roleData.at(i)->cellIndex;
-        tempData->card = this->roleData.at(i)->card;
-        tempData->magicGoods = this->roleData.at(i)->magicGoods;
-        layer->roleData.pushBack(tempData);
-      //  nextLayer->roleData->pushBack(this->roleData.at(i));
-    }
-  //  layer->roleData = &this->roleData;
-    
-    layer->initFightLayer();
-   // nextLayer->ID = 10;
-    CC_SAFE_RETAIN(this->player);
-    this->player->release();
-    if (this->enemyPlayer != NULL) {
-        CC_SAFE_RETAIN(this->enemyPlayer);
-        this->enemyPlayer->release();
-    }
-    Director::getInstance()->replaceScene(TransitionFade::create(1.0f, nextScene));
-   // Director::getInstance()->replaceScene(nextScene);
 }
 
 //void SetRoleFormatlayer::initCardFormat(Card* card,std::string imageName, int standIndex,Treasure* treasure) {
@@ -188,13 +214,36 @@ bool SetRoleFormatlayer::onTouchBegan(cocos2d::Touch *touch, cocos2d::Event *unu
  //      printf("%f------%f\n",this->getPosition().x,this->getPosition().y);
     auto touchLocation = touch->getLocationInView();
     touchLocation = Director::getInstance()->convertToGL(touchLocation);
+    
     for (int i = 0; i < this->roleData.size(); i++) {
-        auto tempPoint = this->countCardOrigonPoint(this->roleData.at(i)->card,this->player);
-        Rect rect = Rect(tempPoint.x, tempPoint.y, this->player->fMap->getBoundingBox().size.width/4, this->player->fMap->getBoundingBox().size.width/4);
+        auto xiaoCardPoint = Vec2( (this->roleData.at(i)->xiaoSp->getPosition().x-this->roleData.at(i)->xiaoSp->getBoundingBox().size.width/2)*this->jzLayer->backgroundSp->getScaleX(), (this->roleData.at(i)->xiaoSp->getPosition().y-this->roleData.at(i)->xiaoSp->getBoundingBox().size.height/2)*this->jzLayer->backgroundSp->getScaleY());
+        xiaoCardPoint = xiaoCardPoint+this->jzLayer->getPosition();
+        Rect rect = Rect(xiaoCardPoint.x, xiaoCardPoint.y, this->roleData.at(i)->xiaoSp->getBoundingBox().size.width*this->jzLayer->backgroundSp->getScaleX(), this->roleData.at(i)->xiaoSp->getBoundingBox().size.height*this->jzLayer->backgroundSp->getScaleY());
         if (rect.containsPoint(touchLocation)) {
-            this->currentMoveCard = this->roleData.at(i)->card;
-           // schedule(schedule_selector(SetRoleFormatlayer::showInfo), 1.0);
-            return true;
+            if (this->roleData.at(i)->xiaoSp->getOpacity() > 125 ) {
+                this->roleData.at(i)->card->initCardSprite(this->roleData.at(i)->imageName);
+                auto point = Vec2(xiaoCardPoint.x+this->roleData.at(i)->xiaoSp->getBoundingBox().size.width/2*this->jzLayer->backgroundSp->getScaleX(),xiaoCardPoint.y+this->roleData.at(i)->xiaoSp->getBoundingBox().size.height/2*this->jzLayer->backgroundSp->getScaleY());
+                this->roleData.at(i)->card->cardSprite->setPosition(point-this->player->fMap->getPosition());
+                this->player->fMap->addChild(this->roleData.at(i)->card->cardSprite,150);
+                this->roleData.at(i)->xiaoSp->setOpacity(125);
+                //this->currentTakeCard = this->roleData.at(i)->card;
+                break;
+            }
+        }
+    }
+    
+    
+    for (int i = 0; i < this->roleData.size(); i++) {
+        if (this->roleData.at(i)->card->cardSprite != NULL) {
+            auto tempPoint = this->countCardOrigonPoint(this->roleData.at(i)->card,this->player);
+            Rect rect = Rect(tempPoint.x, tempPoint.y, this->player->fMap->getBoundingBox().size.width/4, this->player->fMap->getBoundingBox().size.width/4);
+            if (rect.containsPoint(touchLocation)) {
+                
+                this->currentMoveCard = this->roleData.at(i)->card;
+           //     printf("%s",this->currentMoveCard->cardName.c_str());
+               // schedule(schedule_selector(SetRoleFormatlayer::showInfo), 1.0);
+                return true;
+            }
         }
     }
     this->currentMoveCard = NULL;
@@ -289,9 +338,28 @@ void SetRoleFormatlayer::onTouchEnded(cocos2d::Touch *touch, cocos2d::Event *unu
                     }
                 }
                 if (this->player->fMap->mapCellArray.at(i)->obj != NULL) {
-                    ((Card*)this->player->fMap->mapCellArray.at(i)->obj)->cardSprite->setPosition(defaultCardPoint);
-                    ((Card*)this->player->fMap->mapCellArray.at(i)->obj)->cellIndex = this->currentMoveCard->cellIndex;
-                    this->player->fMap->mapCellArray.at(this->currentMoveCard->cellIndex)->obj = ((Card*)this->player->fMap->mapCellArray.at(i)->obj);
+                    if (defaultCardPoint == Vec2(0, 0)) {
+
+                        
+                        for (int n = 0; n < this->roleData.size(); n++) {
+                            if (this->roleData.at(n)->card->cardName.compare(((Card*)this->player->fMap->mapCellArray.at(i)->obj)->cardName) == 0) {
+                                if (this->removeRoleData.contains(this->roleData.at(n)) == false) {
+                                    this->removeRoleData.pushBack(this->roleData.at(n));
+                                }
+                                
+                                this->roleData.at(n)->xiaoSp->setOpacity(255);
+                                ((Card*)this->player->fMap->mapCellArray.at(i)->obj)->cardSprite->removeFromParentAndCleanup(true);
+                                ((Card*)this->player->fMap->mapCellArray.at(i)->obj)->cardSprite = NULL;
+                                break;
+                            }
+
+                        }
+                    }else {
+                        ((Card*)this->player->fMap->mapCellArray.at(i)->obj)->cardSprite->setPosition(defaultCardPoint);
+                        ((Card*)this->player->fMap->mapCellArray.at(i)->obj)->cellIndex = this->currentMoveCard->cellIndex;
+                        this->player->fMap->mapCellArray.at(this->currentMoveCard->cellIndex)->obj = ((Card*)this->player->fMap->mapCellArray.at(i)->obj);
+                    }
+
                 }
                 this->currentMoveCard->cardSprite->setPosition(this->player->fMap->mapCellArray.at(i)->position);
                 this->player->fMap->mapCellArray.at(i)->obj = this->currentMoveCard;
@@ -311,9 +379,18 @@ void SetRoleFormatlayer::onTouchEnded(cocos2d::Touch *touch, cocos2d::Event *unu
                 }
             }
            // SetRoleData* temp;
+
+            
             for (int i = 0; i < this->roleData.size(); i++) {
                 if (this->roleData.at(i)->card->cardName.compare(this->currentMoveCard->cardName) == 0) {
-                    this->removeRoleData.pushBack(this->roleData.at(i));
+                    this->currentMoveCard->cardSprite->removeFromParentAndCleanup(true);
+                    this->currentMoveCard->cardSprite = NULL;
+                    if (this->removeRoleData.contains(this->roleData.at(i)) == false) {
+                        this->removeRoleData.pushBack(this->roleData.at(i));
+                    }
+
+                    this->roleData.at(i)->xiaoSp->setOpacity(255);
+                    break;
                 }
             }
            // this->roleData.eraseObject(temp);

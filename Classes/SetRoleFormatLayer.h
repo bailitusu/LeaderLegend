@@ -24,8 +24,12 @@ public:
     Treasure* magicGoods;
     std::string imageName;
     bool noBring;
+    std::string xiaoImageName;
+    Sprite* xiaoSp;
+    
 };
 
+class JuanZhouLayer;
 class SetRoleFormatlayer : public cocos2d::Layer {
     
 public:
@@ -54,6 +58,9 @@ public:
     void disappearInfo();
     std::string preLayerName;
     Card* currentInfoCard;
+    void initJzLayer();
+    JuanZhouLayer* jzLayer;
+    Card* currentTakeCard;
 };
 
 

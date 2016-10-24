@@ -59,8 +59,10 @@ void FuBenLayer::backBtnUI() {
 }
 
 void FuBenLayer::backBtn(cocos2d::Ref *sender, ui::Widget::TouchEventType type) {
-
-        Director::getInstance()->popScene();
+    if (type == ui::Widget::TouchEventType::ENDED) {
+         Director::getInstance()->popScene();
+    }
+    
    
 }
 
@@ -69,7 +71,7 @@ void FuBenLayer::enemyOneBtn(cocos2d::Ref *sender, ui::Widget::TouchEventType ty
     
     
     this->roleFormatLayer = SetRoleFormatlayer::create();
-    this->roleFormatLayer->setContentSize(screenSize/5*4);
+    this->roleFormatLayer->setContentSize(screenSize);
     this->addChild(this->roleFormatLayer,100);
     this->roleFormatLayer->setPosition(Vec2(screenSize.width/2-this->roleFormatLayer->getBoundingBox().size.width/2, screenSize.height/2-this->roleFormatLayer->getBoundingBox().size.height/2));
    // this->roleFormatLayer->setPosition(0,0);

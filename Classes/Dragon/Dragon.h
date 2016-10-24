@@ -21,8 +21,9 @@ public:
     
     
     int bingLi;
-    int mianBao;
-    int baoJi;
+//    int mianBao;
+//    int baoJi;
+    int minJie;
     int fangYu;
     int gongJi;
     int faLI;

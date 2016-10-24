@@ -22,6 +22,7 @@ public:
     std::string imageName;
     int skillLevel;
     std::string dargonName;
+    bool noHave;
 };
 
 #endif /* DragonSkill_h */

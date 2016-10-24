@@ -24,6 +24,7 @@
 #include "FuBenLayer.h"
 #include "LingShoLayer.h"
 #include "Bag/Bag.h"
+#include "TuJianLayer.h"
 bool GameBeginLayer::init() {
     if (!Layer::init()) {
         return  false;
@@ -143,6 +144,7 @@ void GameBeginLayer::cardFormatJJC(Card* card,std::string imageName, int standIn
   //  this->player->setCardsPositon(card, standIndex,50);
     card->retain();
     auto jjcData = SetRoleData::create();
+    jjcData->xiaoImageName = card->cardName+"_tx.jpg";
     jjcData->imageName = imageName;
     jjcData->cellIndex = standIndex;
     jjcData->magicGoods = treasure;
@@ -154,11 +156,12 @@ void GameBeginLayer::cardFormatJJC(Card* card,std::string imageName, int standIn
 }
 
 void GameBeginLayer::cardFormatPVE(Card* card,std::string imageName, int standIndex,Treasure* treasure) {
-    card->initCardSprite(imageName);
+  //  card->initCardSprite(imageName);
     //  this->player->setCardsPositon(card, standIndex,50);
     card->retain();
     
     auto pveData = SetRoleData::create();
+    pveData->xiaoImageName = card->cardName+"_tx.jpg";
     pveData->imageName = imageName;
     pveData->cellIndex = standIndex;
     pveData->magicGoods = treasure;
@@ -207,7 +210,14 @@ void GameBeginLayer::lingShouBtn(cocos2d::Ref *sender, ui::Widget::TouchEventTyp
 }
 
 void GameBeginLayer::renWuBtn(cocos2d::Ref *sender, ui::Widget::TouchEventType type) {
+    auto tuJianScene = TuJianLayer::createScene();
+    TuJianLayer* layer = TuJianLayer::create();
+    layer->setContentSize(screenSize);
     
+    tuJianScene->addChild(layer);
+
+    layer->initTuJianLayer();
+    Director::getInstance()->pushScene(TransitionFade::create(1.0f, tuJianScene));
 }
 
 void GameBeginLayer::tianFuBtn(cocos2d::Ref *sender, ui::Widget::TouchEventType type) {

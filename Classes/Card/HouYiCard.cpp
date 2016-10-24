@@ -22,7 +22,9 @@ bool HouYiCard::init() {
     
     this->hitRuleNum = hitRuleType.gongJian;
     this->cardName = "houyi";
-    
+    this->cardSpriteImageName = "xiaohei_stand";
+    this->xiaoZhaoInfo = "连击";
+    this->daZhaoInfo = "万箭齐发";
     this->wuLi = 92;
     this->tongShuai = 70;
     this->zhiLi = 65;
