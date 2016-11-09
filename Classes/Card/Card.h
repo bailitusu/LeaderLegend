@@ -49,6 +49,9 @@ public:
     virtual void addNuQi(Card* card,int num);
     virtual void decreaseNuQi(Card* card,int num, bool isDaZhao);
     
+    virtual void nuQiAppear(Card* card, int num);
+    virtual void hpAppear(Card *card, int hitValue, int hp);
+    
     virtual void recordAddHP(Card *card, float hpValue);
     virtual void recordCardDead();
     virtual void recordDecreaseHP(Card* card,float hpValue);
@@ -75,6 +78,9 @@ public:
     virtual void stopStandAnimation();
     virtual void preCardAudio();
     virtual void preAddCardAnimationResource();
+    
+    virtual void beforeAnimation(OneRecord *info,Card* card);
+    virtual void afterAnimation(OneRecord *info, Card* card);
     RepeatForever* standAction;
     
     Buff* fBuff;

@@ -16,7 +16,7 @@ void FightMap::init(std::string imageName,std::string direction, Size mapLayerSi
     map->setLocalZOrder(0);
     map->setAnchorPoint(Vec2(0, 0));
    // mapCellArray = CCArray::create();
-    
+    map->setOpacity(0);
     this->addChild(map);
    // CommonFunc::setSpriteSize(map, Director::getInstance()->getVisibleSize().width*0.405);
     this->mapScale = mapLayerSize.width/270;

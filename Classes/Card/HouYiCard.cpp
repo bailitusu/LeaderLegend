@@ -114,6 +114,14 @@ void HouYiCard::preAddCardAnimationResource() {
 //
 //}
 
+//void HouYiCard::beforeAnimation(OneRecord *info) {
+//
+//}
+
+//void HouYiCard::afterAnimation(OneRecord *info) {
+//    
+//}
+
 void HouYiCard::xiaoSkll(OneRecord *info) {
     this->stopStandAnimation();
     
@@ -126,22 +134,28 @@ void HouYiCard::xiaoSkll(OneRecord *info) {
     
     auto wait = ActionWait::create(1.0);
     
-    auto addNuqi = CallFunc::create(CC_CALLBACK_0(HouYiCard::nuQiManage, this));
+    auto addNuqi = CallFunc::create(CC_CALLBACK_0(HouYiCard::nuQiManage, this,info));
     auto appear = CallFunc::create(CC_CALLBACK_0(HouYiCard::appearUI, this, gong));
     auto hit = CallFunc::create(CC_CALLBACK_0(HouYiCard::hitBlock,this,info->affectRecordArray));
     auto recordBlock = CallFunc::create(CC_CALLBACK_0(ReadRecordFight::readNextFightRecord, this->readRecordFight));
-    
+    auto afterAction = CallFunc::create(CC_CALLBACK_0(Card::afterAnimation,this,info,this));
     auto gongMusic = CallFunc::create(CC_CALLBACK_0(HouYiCard::xiaoHitMusic, this));
     auto waitMusic = ActionWait::create(1.2);
     if (info->isLianJi == true) {
-        auto sequence = Sequence::create(gong,hit,wait,gong,hit,wait,addNuqi,appear,recordBlock,NULL);
+        Sequence* sequence;
+        if (info->affectRecordArray.size() == 2) {
+           sequence = Sequence::create(gong,hit,wait,gong,hit,wait,addNuqi,afterAction,appear,recordBlock,NULL);
+        }else {
+           sequence = Sequence::create(gong,hit,wait,addNuqi,afterAction,appear,recordBlock,NULL);
+        }
+        
         sequence->setTag(1);
         this->cardSprite->runAction(sequence);
         auto sequeceMusic = Sequence::create(gongMusic,waitMusic,gongMusic,NULL);
         this->cardSprite->runAction(sequeceMusic);
     }else {
     
-        this->cardSprite->runAction(Sequence::create(gong,hit,wait,addNuqi,appear,recordBlock,NULL));
+        this->cardSprite->runAction(Sequence::create(gong,hit,wait,addNuqi,afterAction,appear,recordBlock,NULL));
         this->cardSprite->runAction(gongMusic);
     }
     this->fPro->hpPro->setVisible(false);
@@ -184,8 +198,11 @@ void HouYiCard::daSkill(OneRecord *info) {
     auto wait = ActionWait::create(1.0);
     auto appear = CallFunc::create(CC_CALLBACK_0(HouYiCard::appearUI, this, dazhao));
     auto maxHit = CallFunc::create(CC_CALLBACK_0(HouYiCard::daHitBlock, this, info->affectRecordArray));
+    auto nuqi = CallFunc::create(CC_CALLBACK_0(HouYiCard::nuQiManage, this,info));
     auto recordBlock = CallFunc::create(CC_CALLBACK_0(ReadRecordFight::readNextFightRecord, this->readRecordFight));
-    this->cardSprite->runAction(Sequence::create(dazhao,maxHit,wait,appear,recordBlock,NULL));
+    auto afterAction = CallFunc::create(CC_CALLBACK_0(Card::afterAnimation,this,info,this));
+    
+    this->cardSprite->runAction(Sequence::create(dazhao,maxHit,wait,nuqi,afterAction,wait,appear,recordBlock,NULL));
     CocosDenshion::SimpleAudioEngine::getInstance()->playEffect("xiaohei_conjure.mp3");
     this->fPro->hpPro->setVisible(false);
     this->fPro->hpProBg->setVisible(false);
@@ -256,11 +273,11 @@ void HouYiCard::recordHit() {
 }
 
 
-void HouYiCard::nuQiManage() {
+void HouYiCard::nuQiManage(OneRecord *info) {
 //    if (this->fPro->nuqiPro->getPercentage() < 100) {
 //        this->fPro->setNuQiProPrecent(34+this->fPro->nuqiPro->getPercentage());
 //    }
-    this->addNuQi(this, 1);
+    this->nuQiAppear(this, info->nuQiChange);
 }
 
 void HouYiCard::hitBlock( Vector<OneRecord*> affectRecordArray) {
@@ -285,8 +302,8 @@ void HouYiCard::hitBlock( Vector<OneRecord*> affectRecordArray) {
     }else {
         if (beHitCardRecord->card->HP > 0) {
             
-        
-            this->decreaseHP(beHitCardRecord->card, beHitCardRecord->hitValue);
+            
+            this->hpAppear(beHitCardRecord->card, beHitCardRecord->hitValue, beHitCardRecord->currentHP);
 //            if (beHitCardRecord->card->HP < 0) {
 //                this->cardSprite->stopActionByTag(1);
 //                auto wait = ActionWait::create(1.0);
@@ -295,7 +312,8 @@ void HouYiCard::hitBlock( Vector<OneRecord*> affectRecordArray) {
 //                
 //                this->cardSprite->runAction(Sequence::create(wait,addNuqi,recordBlock,NULL));
 //            }
-            this->addNuQi(beHitCardRecord->card, 1);
+            this->nuQiAppear(beHitCardRecord->card, beHitCardRecord->nuQiChange);
+            
             
         }
     }
@@ -310,11 +328,11 @@ void HouYiCard::daHitBlock(Vector<OneRecord*> affectRecordArray) {
         if (affectRecordArray.at(i)->isShanBi == true) {
             beHitCard->animationShanBi();
         }else {
-            this->decreaseHP(beHitCard, affectRecordArray.at(i)->hitValue);
-            this->addNuQi(beHitCard, 1);
+            this->hpAppear(beHitCard, affectRecordArray.at(i)->hitValue, affectRecordArray.at(i)->currentHP);
+            this->nuQiAppear(beHitCard, affectRecordArray.at(i)->nuQiChange);
         }
     }
-    this->decreaseNuQi(this, 3, true);
+   // this->decreaseNuQi(this, 3, true);
 }
 
 void HouYiCard::recordUltimateSkill() {

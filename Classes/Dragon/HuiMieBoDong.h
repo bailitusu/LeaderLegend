@@ -16,7 +16,9 @@ class HuiMieBoDong : public DragonSkill{
 public:
     CREATE_FUNC(HuiMieBoDong);
     virtual bool init();
-    virtual void runSkill(FightPlayer* player);
+    virtual void runSkill(FightPlayer* player, DragonData* data);
+    virtual void runSkillAnimation(Sprite* sprite,FightPlayer* player, DragonData* data);
+    void animationOver(Sprite* sprite,FightPlayer* player, DragonData* data);
 };
 
 

@@ -15,15 +15,20 @@ bool JuanZhouLayer::init() {
 }
 
 void JuanZhouLayer::initJuanZhou() {
+    
     this->backgroundSp = Sprite::create("juanzhouBg.jpg");
     CommonFunc::setShowAllSpriteSize(this->backgroundSp,this->getBoundingBox().size.width, this->getBoundingBox().size.height);
     this->backgroundSp->setAnchorPoint(Vec2(0, 0));
     this->backgroundSp->setPosition(0,0);
     this->addChild(this->backgroundSp, -100);
     this->initRole();
+    
+//    this->srollView = ScrollView::create();
+//    this->continerLayer = Layer::create();
 }
 
 void JuanZhouLayer::initRole() {
+    
     auto scaleX = this->backgroundSp->getScaleX();
     auto scaleY = this->backgroundSp->getScaleY();
     for (int i = 0; i < this->psRoleData.size(); i++) {

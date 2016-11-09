@@ -15,6 +15,12 @@
 #define origin Director::getInstance()->getVisibleOrigin()
 #define winSize Director::getInstance()->getWinSize()
 #define animationFactor 0.1
+
+
+#define dragonFontColor Color4B(225, 225, 225, 255)
+#define dragonSkillInfoColor Color4B(137, 87, 39, 255)
+
+static std::string myKey = "yzq";
 struct CardRuleType {
     int jinZhan = 1;
     int gongJian = 2;

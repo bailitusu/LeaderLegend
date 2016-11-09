@@ -188,7 +188,6 @@ ssize_t TuJianLayer::numberOfCellsInTableView(cocos2d::extension::TableView *tab
 void TuJianLayer::initOneCardData(std::string cardName, std::string bigImage) {
     TuJianData* tjData = TuJianData::create();
    // tjData->tuJianSp = Sprite::create("smallImage");
-    
     tjData->bigImage = bigImage;
     tjData->cardName = cardName;
     tjData->xiaoZhaoImage = cardName+"_ss.jpg";
@@ -219,7 +218,7 @@ void TuJianLayer::changeDetailUIInfo(TuJianData *data) {
     }else if(data->cardName.compare("fengbo") == 0) {
         card = FengBoCard::create();
     }else if(data->cardName.compare("fenghou") == 0) {
-        card = FengBoCard::create();
+        card = FengHouCard::create();
     }else if(data->cardName.compare("suanyu") == 0) {
         card = SuanYuCard::create();
     }
@@ -232,6 +231,9 @@ void TuJianLayer::changeDetailUIInfo(TuJianData *data) {
     }
     
     card->cardSprite->setPosition(this->appearCard->cardSprite->getPosition());
+    
+    this->xiaoZhaoLabel->setString(card->xiaoZhaoInfo);
+    this->daZhaoLabel->setString(card->daZhaoInfo);
     
     this->appearCard->standAction->release();
     this->appearCard->cardSprite->stopAllActions();
@@ -258,7 +260,7 @@ void TuJianLayer::changeDetailUIInfo(TuJianData *data) {
     this->daZhaoSp->removeFromParentAndCleanup(true);
     this->infoLayer->addChild(daZSp,150);
     this->daZhaoSp = daZSp;
-        CommonFunc::removeAnimation();
+    CommonFunc::removeAnimation();
     
 }
 
@@ -313,6 +315,14 @@ void TuJianLayer::initDetailUI(TuJianData* data) {
     CommonFunc::setSpriteSize(this->daZhaoSp, 40);
     this->daZhaoSp->setPosition(this->xiaoZhaoSp->getPosition().x,this->xiaoZhaoSp->getPosition().y-50);
     infoLayer->addChild(this->daZhaoSp,150);
+    
+    this->xiaoZhaoLabel = CommonFunc::createLabel("", Vec2(xiaoZhaoSp->getPosition().x+80,xiaoZhaoSp->getPosition().y));
+  //  this->xiaoZhaoLabel->setContentSize(Size(60, 20));
+    infoLayer->addChild(this->xiaoZhaoLabel,100);
+    
+    this->daZhaoLabel = CommonFunc::createLabel("", Vec2(daZhaoSp->getPosition().x+80,daZhaoSp->getPosition().y));
+    infoLayer->addChild(this->daZhaoLabel,100);
+    
 }
 
 void TuJianLayer::initShuXingLabel() {
@@ -351,6 +361,9 @@ void TuJianLayer::changeLabelText() {
         
         sprintf(tempText, "%d",(int)this->appearCard->yunQi);
         this->yunQiLabel->setString(tempText);
+        
+        this->xiaoZhaoLabel->setString(this->appearCard->xiaoZhaoInfo);
+        this->daZhaoLabel->setString(this->appearCard->daZhaoInfo);
         
     }
 }

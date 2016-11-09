@@ -24,6 +24,10 @@
 #include "FightLayer.h"
 
 #include "JuanZhouLayer.h"
+
+#include "json/document.h"
+#include "json/writer.h"
+#include "json/stringbuffer.h"
 bool SetRoleFormatlayer::init() {
     if (!Layer::init()) {
         return false;
@@ -49,7 +53,7 @@ void SetRoleFormatlayer::initSetRoleFormatLayer() {
     liston->setSwallowTouches(true);
     dispatcher->addEventListenerWithSceneGraphPriority(liston, this);
     
-    Sprite* background = Sprite::create("buzhenBg.jpg");
+    Sprite* background = Sprite::create("buzhenbg11.jpg");
     CommonFunc::setShowAllSpriteSize(background, this->getBoundingBox().size.width, this->getBoundingBox().size.height);
    // CommonFunc::setSpriteSize(background, this->getBoundingBox().size.width);
     background->setPosition(Vec2(this->getBoundingBox().size.width/2+origin.x, this->getBoundingBox().size.height/2+origin.y));
@@ -64,6 +68,7 @@ void SetRoleFormatlayer::initSetRoleFormatLayer() {
     
     for (int i = 0; i < this->roleData.size(); i++) {
         if (this->roleData.at(i)->card->cardSprite != NULL) {
+            this->roleData.at(i)->card->cardSprite->removeFromParentAndCleanup(true);
             printf("i =%d\n", i);
         }
     }
@@ -83,6 +88,10 @@ void SetRoleFormatlayer::initSetRoleFormatLayer() {
     this->player->retain();
     
     if(this->preLayerName.compare("fuben") == 0) {
+        for (int i = 0; i < this->roleData.size(); i++) {
+            this->removeRoleData.pushBack(this->roleData.at(i));
+        }
+        
         this->addFightBtnUI();
         this->addEnemyBtnUI();
     }
@@ -156,30 +165,54 @@ void SetRoleFormatlayer::addEnemyBtnUI() {
 
 }
 
-void SetRoleFormatlayer::startFightBtn(cocos2d::Ref *sender, ui::Widget::TouchEventType type) {
-    if (type == ui::Widget::TouchEventType::BEGAN) {
+void SetRoleFormatlayer::upServerTakeRoleInfo() {
+    FightNetwork* net = FightNetwork::GetInstance();
+    
+    rapidjson::Document doc;
+    doc.SetObject();
+    rapidjson::Document::AllocatorType& allocator = doc.GetAllocator();
+    rapidjson::Value cardsArray(rapidjson::kArrayType);
+    rapidjson::Value cellsArray(rapidjson::kArrayType);
+    rapidjson::Value tempKey;
+    tempKey.SetString(myKey.c_str(), (unsigned int)strlen(myKey.c_str()));
+    doc.AddMember("playerkey", tempKey, allocator);
+    int battleid = 123;
+    doc.AddMember("battleid", battleid, allocator);
+    for (int i = 0; i < this->roleData.size(); i++) {
+        rapidjson::Value tempname;
+        const char* aaa = this->roleData.at(i)->card->cardName.c_str();
+        tempname.SetString(aaa, ((unsigned int)strlen(aaa)));
+//        tempname = this->roleData.at(i)->card->cardName;
+        cardsArray.PushBack(tempname, allocator);
+        cellsArray.PushBack(this->roleData.at(i)->cellIndex, allocator);
+    }
+    doc.AddMember("cards", cardsArray, allocator);
+    doc.AddMember("cells", cellsArray, allocator);
+    
+    rapidjson::StringBuffer buffer;
+    rapidjson::Writer<rapidjson::StringBuffer> writer(buffer);
+    doc.Accept(writer);
+    
+    net->createPostHttp(PveUpdataMyInfoPostUrl, this, httpresponse_selector(SetRoleFormatlayer::upServerResponse), buffer.GetString());
+}
+
+void SetRoleFormatlayer::upServerResponse(cocos2d::network::HttpClient *sender, cocos2d::network::HttpResponse *response) {
+    if (response->isSucceed()) {
+        std::vector<char>* info = response->getResponseData();
+        std::string infoStr  = std::string(info->begin(),info->end());
         auto nextScene = FightLayer::createScene();
-        //auto nextLayer = (FightLayer*)nextScene->getChildren().at(0);
         FightLayer* layer = FightLayer::create();
-        for (int k = 0; k < this->removeRoleData.size(); k++) {
-            this->roleData.eraseObject(this->removeRoleData.at(k));
-        }
         nextScene->addChild(layer);
+        
         for (int i = 0; i < this->roleData.size(); i++) {
             if (this->roleData.at(i)->card->cardSprite != NULL) {
                 CC_SAFE_RETAIN(this->roleData.at(i)->card->cardSprite);
                 this->roleData.at(i)->card->cardSprite->removeFromParentAndCleanup(true);
-                auto tempData = SetRoleData::create();
-                tempData->imageName = this->roleData.at(i)->imageName;
-                tempData->cellIndex = this->roleData.at(i)->cellIndex;
-                tempData->card = this->roleData.at(i)->card;
-                tempData->magicGoods = this->roleData.at(i)->magicGoods;
-                layer->roleData.pushBack(tempData);
             }
+            this->roleData.at(i)->card->release();
             //  nextLayer->roleData->pushBack(this->roleData.at(i));
         }
-        //  layer->roleData = &this->roleData;
-        
+        layer->fightInfo = infoStr;
         layer->initFightLayer();
         // nextLayer->ID = 10;
         CC_SAFE_RETAIN(this->player);
@@ -188,8 +221,46 @@ void SetRoleFormatlayer::startFightBtn(cocos2d::Ref *sender, ui::Widget::TouchEv
             CC_SAFE_RETAIN(this->enemyPlayer);
             this->enemyPlayer->release();
         }
+        
         Director::getInstance()->replaceScene(TransitionFade::create(1.0f, nextScene));
-        // Director::getInstance()->replaceScene(nextScene);
+
+    }
+}
+void SetRoleFormatlayer::startFightBtn(cocos2d::Ref *sender, ui::Widget::TouchEventType type) {
+    if (type == ui::Widget::TouchEventType::BEGAN) {
+//        auto nextScene = FightLayer::createScene();
+//        //auto nextLayer = (FightLayer*)nextScene->getChildren().at(0);
+//        FightLayer* layer = FightLayer::create();
+        for (int k = 0; k < this->removeRoleData.size(); k++) {
+            this->roleData.eraseObject(this->removeRoleData.at(k));
+        }
+        this->upServerTakeRoleInfo();
+//        nextScene->addChild(layer);
+//        for (int i = 0; i < this->roleData.size(); i++) {
+//            if (this->roleData.at(i)->card->cardSprite != NULL) {
+//                CC_SAFE_RETAIN(this->roleData.at(i)->card->cardSprite);
+//                this->roleData.at(i)->card->cardSprite->removeFromParentAndCleanup(true);
+//                auto tempData = SetRoleData::create();
+//                tempData->imageName = this->roleData.at(i)->imageName;
+//                tempData->cellIndex = this->roleData.at(i)->cellIndex;
+//                tempData->card = this->roleData.at(i)->card;
+//                tempData->magicGoods = this->roleData.at(i)->magicGoods;
+//                layer->roleData.pushBack(tempData);
+//            }
+//            //  nextLayer->roleData->pushBack(this->roleData.at(i));
+//        }
+//        //  layer->roleData = &this->roleData;
+//        
+//        layer->initFightLayer();
+//        // nextLayer->ID = 10;
+//        CC_SAFE_RETAIN(this->player);
+//        this->player->release();
+//        if (this->enemyPlayer != NULL) {
+//            CC_SAFE_RETAIN(this->enemyPlayer);
+//            this->enemyPlayer->release();
+//        }
+//        Director::getInstance()->replaceScene(TransitionFade::create(1.0f, nextScene));
+//        // Director::getInstance()->replaceScene(nextScene);
 
     }
 }

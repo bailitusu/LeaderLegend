@@ -100,7 +100,7 @@ void ChangECard::recordRuning(FightPlayer *enemyTemp) {
     if (this->nuQiNum < this->nuQiNumMax) {
         oneRecord->isXiaoZhao = true;
         oneRecord->isDaZhao = false;
-        oneRecord->enemyNuQiChange = 1;
+        oneRecord->nuQiChange = 1;
         RecordFight::GetInstance()->addItemToRecord(oneRecord);
  
         this->recordHit();
@@ -130,12 +130,13 @@ void ChangECard::xiaoSkll(OneRecord *info) {
    // auto gong = CommonFunc::creatAnimation("bingnv_attack_%d.png", 11, 0.5f, 2);
     auto wait = ActionWait::create(1.0);
     
-    auto addNuqi = CallFunc::create(CC_CALLBACK_0(ChangECard::nuQiManage, this));
+    auto addNuqi = CallFunc::create(CC_CALLBACK_0(ChangECard::nuQiManage, this,info));
     auto hit = CallFunc::create(CC_CALLBACK_0(ChangECard::hitBlock,this,info->affectRecordArray));
     auto appear = CallFunc::create(CC_CALLBACK_0(ChangECard::appearUI, this));
     auto recordBlock = CallFunc::create(CC_CALLBACK_0(ReadRecordFight::readNextFightRecord, this->readRecordFight));
 
-    this->cardSprite->runAction(Sequence::create(gong,hit,wait,addNuqi,appear,recordBlock,NULL));
+    auto afterAction = CallFunc::create(CC_CALLBACK_0(Card::afterAnimation,this,info,this));
+    this->cardSprite->runAction(Sequence::create(gong,hit,wait,addNuqi,afterAction,appear,recordBlock,NULL));
     
     CocosDenshion::SimpleAudioEngine::getInstance()->playEffect("bingnv_attack.mp3",false);
     
@@ -160,10 +161,14 @@ void ChangECard::daSkill(OneRecord *info) {
     }
     //auto dazhao = CommonFunc::creatAnimation("bingnv_conjure_%d.png", 16, 1.0f, 1);
     auto wait = ActionWait::create(1.4);
+    auto nuqi = CallFunc::create(CC_CALLBACK_0(ChangECard::nuQiManage, this,info));
     auto appear = CallFunc::create(CC_CALLBACK_0(ChangECard::appearUI, this));
     auto maxHit = CallFunc::create(CC_CALLBACK_0(ChangECard::daHitBlock, this, info->affectRecordArray));
     auto recordBlock = CallFunc::create(CC_CALLBACK_0(ReadRecordFight::readNextFightRecord, this->readRecordFight));
-    this->cardSprite->runAction(Sequence::create(dazhao,maxHit,wait,appear,recordBlock,NULL));
+    
+    auto afterAction = CallFunc::create(CC_CALLBACK_0(Card::afterAnimation,this,info,this));
+    
+    this->cardSprite->runAction(Sequence::create(dazhao,maxHit,wait,nuqi,afterAction,appear,recordBlock,NULL));
     CocosDenshion::SimpleAudioEngine::getInstance()->playEffect("bingnv_conjure.mp3",false);
     this->fPro->hpPro->setVisible(false);
     this->fPro->hpProBg->setVisible(false);
@@ -183,29 +188,34 @@ void ChangECard::appearUI() {
     CocosDenshion::SimpleAudioEngine::getInstance()->unloadEffect("bingnv_conjure.mp3");
 }
 
-void ChangECard::nuQiManage() {
-   this->addNuQi(this, 1);
+void ChangECard::nuQiManage(OneRecord *info) {
+   this->nuQiAppear(this, info->nuQiChange);
 }
 
 void ChangECard::hitBlock(Vector<OneRecord *> affectRecordArray) {
     
-    for (int i = 0; i < this->forPlayer->cardArray.size(); i++) {
-        if (this->forPlayer->cardArray.at(i)->cellIndex != this->cellIndex && this->forPlayer->cardArray.at(i)->nuQiNum < this->forPlayer->cardArray.at(i)->nuQiNumMax) {
-            
-            this->addNuQi(this->forPlayer->cardArray.at(i), 1);
-        }
+    for(int i = 0; i < affectRecordArray.size(); i++) {
+        auto affectCard = affectRecordArray.at(i)->card;
+    //    this->hpAppear(affectCard, affectRecordArray.at(i)->hitValue, affectRecordArray.at(i)->currentHP);
+        this->nuQiAppear(affectCard, affectRecordArray.at(i)->nuQiChange);
     }
+//    for (int i = 0; i < this->forPlayer->cardArray.size(); i++) {
+//        if (this->forPlayer->cardArray.at(i)->cellIndex != this->cellIndex && this->forPlayer->cardArray.at(i)->nuQiNum < this->forPlayer->cardArray.at(i)->nuQiNumMax) {
+//            
+//            this->addNuQi(this->forPlayer->cardArray.at(i), 1);
+//        }
+//    }
 }
 
 void ChangECard::daHitBlock(Vector<OneRecord *> affectRecordArray) {
     for (int i = 0 ; i < affectRecordArray.size(); i++) {
         auto beHitCard = affectRecordArray.at(i)->card;
 
-        this->addHP(beHitCard, affectRecordArray.at(i)->zhiLiao);
-        this->addNuQi(beHitCard, 1);
+        this->hpAppear(beHitCard, affectRecordArray.at(i)->hitValue, affectRecordArray.at(i)->currentHP);
+        this->nuQiAppear(beHitCard, affectRecordArray.at(i)->nuQiChange);
         
     }
-    this->decreaseNuQi(this, 3, true);
+  //  this->decreaseNuQi(this, 3, true);
 }
 
 void ChangECard::recordHit() {

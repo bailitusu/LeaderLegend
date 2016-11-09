@@ -14,10 +14,11 @@
 bool ZhanYiGaoAng::init() {
     this->skillLevel = 9;
     this->dargonName = "zhanyigaoang";
+    this->dargonInfoName = "战役高昂";
     return true;
 }
 
-void ZhanYiGaoAng::runSkill(FightPlayer* player) {
+void ZhanYiGaoAng::runSkill(FightPlayer* player, DragonData* data) {
     for (int i = 0 ; i < player->fMap->mapCellArray.size(); i++) {
         if (player->fMap->mapCellArray.at(i)->obj != NULL) {
             auto zhenFenBuff = ZhenFenBuff::create();

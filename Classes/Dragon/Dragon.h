@@ -11,7 +11,9 @@
 
 #include "cocos2d.h"
 #include "DragonSkill.h"
+class ReadRecordFight;
 class FightPlayer;
+class DragonData;
 USING_NS_CC;
 class Dragon : public  Ref{
     
@@ -34,6 +36,10 @@ public:
     void runNextDragonSkill(FightPlayer* player);
     void addDragonSkill(DragonSkill* skill, int index);
     void initDragonShuXing();
+    void runDragonAnimation(DragonData* dragonData,FightPlayer* player);
+    ReadRecordFight* readRecordFight;
+    void dragonAnimationBlock(DragonData* dragonData, FightPlayer* player);
+    void runBlock(DragonData* dragonData);
 };
 
 #endif /* Dragon_h */

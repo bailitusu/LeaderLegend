@@ -22,6 +22,8 @@ public:
     Label* dragonNameLabel;
     void initLingShouInfoLayer();
     DragonSkill* dSkill;
+    Sprite* skillSp;
+    std::string skillImageName;
 };
 
 #endif /* LingShouInfoLayer_h */

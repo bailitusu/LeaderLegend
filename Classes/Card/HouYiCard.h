@@ -24,7 +24,7 @@ public:
     void recordUltimateSkill();
   //  virtual void cardDead();
   //  virtual void running(FightPlayer* enemyTemp);
-    void nuQiManage();
+    void nuQiManage(OneRecord *info);
     void hitBlock(Vector<OneRecord*> affectRecordArray);
     void daHitBlock(Vector<OneRecord*> affectRecordArray);
     void recordHit();
@@ -38,6 +38,8 @@ public:
     virtual void preAddCardAnimationResource();
     void xiaoHitMusic();
 
+//    virtual void beforeAnimation(OneRecord *info);
+//    virtual void afterAnimation(OneRecord *info);
    // void actionBlock();
     
     

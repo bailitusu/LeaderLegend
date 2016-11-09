@@ -12,10 +12,11 @@
 bool ZaiShengLongHou::init() {
     this->skillLevel = 9;
     this->dargonName = "zaishenglonghou";
+    this->dargonInfoName = "再生龙吼";
     return true;
 }
 
-void ZaiShengLongHou::runSkill(FightPlayer* player) {
+void ZaiShengLongHou::runSkill(FightPlayer* player, DragonData* data) {
     for (int i = 0 ; i < player->fMap->mapCellArray.size(); i++) {
         if (player->fMap->mapCellArray.at(i)->obj != NULL) {
             ((Card*)player->fMap->mapCellArray.at(i)->obj)->addHP(((Card*)player->fMap->mapCellArray.at(i)->obj), this->skillLevel*200);

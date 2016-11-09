@@ -18,7 +18,7 @@ public:
     virtual bool init();
     
     void recordUltimateSkill();
-    void nuQiManage();
+    void nuQiManage(OneRecord *info);
     void hitBlock(Vector<OneRecord*> affectRecordArray);
     void daHitBlock(Vector<OneRecord*> affectRecordArray);
     void recordHit();

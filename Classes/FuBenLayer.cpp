@@ -18,8 +18,9 @@
 #include "FengBoCard.h"
 #include "FengHouCard.h"
 #include "SuanYuCard.h"
-
+#include "FightNetwork.h"
 #include "DunJiaTianShu.h"
+#include "PveGuaiWu.h"
 Scene* FuBenLayer::createScene() {
     Scene* scene = Scene::create();
 //    FuBenLayer* layer = FuBenLayer::create();
@@ -43,10 +44,16 @@ void FuBenLayer::initFuBenLayer() {
     this->addChild(background);
     
     this->backBtnUI();
+    PveGuaiWu* pveGuaiWu = PveGuaiWu::create();
     
-    this->enemyOne = ui::Button::create("shushi.png");
-    CommonFunc::initButton(this->enemyOne, CC_CALLBACK_2(FuBenLayer::enemyOneBtn, this), screenSize.width/3, Vec2(screenSize.width/10*7, screenSize.height/2));
-    this->addChild(this->enemyOne,50);
+    pveGuaiWu->index = 1;
+    pveGuaiWu->createGuaiWu(this, "shushi.png", Vec2(screenSize.width/10*7, screenSize.height/2));
+  //  pveGuaiWu->myData = &this->myRoleData;
+    pveGuaiWu->retain();
+
+//    this->enemyOne = ui::Button::create("shushi.png");
+//    CommonFunc::initButton(this->enemyOne, CC_CALLBACK_2(FuBenLayer::enemyOneBtn, this), screenSize.width/3, Vec2(screenSize.width/10*7, screenSize.height/2));
+//    this->addChild(this->enemyOne,50);
     this->readEnemyData();
     
 }
@@ -67,25 +74,24 @@ void FuBenLayer::backBtn(cocos2d::Ref *sender, ui::Widget::TouchEventType type) 
 }
 
 
-void FuBenLayer::enemyOneBtn(cocos2d::Ref *sender, ui::Widget::TouchEventType typr) {
-    
-    
-    this->roleFormatLayer = SetRoleFormatlayer::create();
-    this->roleFormatLayer->setContentSize(screenSize);
-    this->addChild(this->roleFormatLayer,100);
-    this->roleFormatLayer->setPosition(Vec2(screenSize.width/2-this->roleFormatLayer->getBoundingBox().size.width/2, screenSize.height/2-this->roleFormatLayer->getBoundingBox().size.height/2));
-   // this->roleFormatLayer->setPosition(0,0);
-    this->roleFormatLayer->preLayerName = "fuben";
-    
-    for (int i = 0; i < this->myRoleData.size(); i++) {
-        this->roleFormatLayer->roleData.pushBack(this->myRoleData.at(i));
-    }
-    
-    for (int j = 0; j < this->enemyRoleData.size(); j++) {
-        this->roleFormatLayer->enemyRoleData.pushBack(this->enemyRoleData.at(j));
-    }
-    this->roleFormatLayer->initSetRoleFormatLayer();
-}
+//void FuBenLayer::enemyOneBtn(cocos2d::Ref *sender, ui::Widget::TouchEventType typr) {
+//    
+//    this->roleFormatLayer = SetRoleFormatlayer::create();
+//    this->roleFormatLayer->setContentSize(screenSize);
+//    this->addChild(this->roleFormatLayer,100);
+//    this->roleFormatLayer->setPosition(Vec2(screenSize.width/2-this->roleFormatLayer->getBoundingBox().size.width/2, screenSize.height/2-this->roleFormatLayer->getBoundingBox().size.height/2));
+//   // this->roleFormatLayer->setPosition(0,0);
+//    this->roleFormatLayer->preLayerName = "fuben";
+//    
+//    for (int i = 0; i < this->myRoleData.size(); i++) {
+//        this->roleFormatLayer->roleData.pushBack(this->myRoleData.at(i));
+//    }
+//    
+//    for (int j = 0; j < this->enemyRoleData.size(); j++) {
+//        this->roleFormatLayer->enemyRoleData.pushBack(this->enemyRoleData.at(j));
+//    }
+//    this->roleFormatLayer->initSetRoleFormatLayer();
+//}
 
 void FuBenLayer::cardFormatEnemy(Card* card,std::string imageName, int standIndex,Treasure* treasure) {
     card->initCardSprite(imageName);

@@ -12,6 +12,10 @@
 #include "cocos2d.h"
 #include "FightPlayer.h"
 #include "ui/CocosGUI.h"
+//#include "network/HttpClient.h"
+//#include "network/HttpRequest.h"
+//#include "network/HttpResponse.h"
+#include "FightNetwork.h"
 USING_NS_CC;
 class Treasure;
 class SetRoleData : public Ref {
@@ -26,6 +30,7 @@ public:
     bool noBring;
     std::string xiaoImageName;
     Sprite* xiaoSp;
+    bool isPvpBuShu;
     
 };
 
@@ -61,6 +66,9 @@ public:
     void initJzLayer();
     JuanZhouLayer* jzLayer;
     Card* currentTakeCard;
+    
+    void upServerTakeRoleInfo();
+    void upServerResponse(cocos2d::network::HttpClient *sender, cocos2d::network::HttpResponse *response);
 };
 
 

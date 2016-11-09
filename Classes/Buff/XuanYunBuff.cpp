@@ -16,13 +16,14 @@ bool XuanYunBuff::init() {
 }
 
 void XuanYunBuff::addBuff(Card *card,float value) {
-    if (card->isHaveThisBuff("xuanyun")) {
-        //  printf("-------------%d--------------",card->isHaveThisBuff("gedang")->huiHeNum);
-       // card->isHaveThisBuff("xuanyun")->huiHeNum = 2;
-        return;
-    }
-    
-    card->buffArray.pushBack(this);
+//    if (card->isHaveThisBuff("xuanyun")) {
+//        //  printf("-------------%d--------------",card->isHaveThisBuff("gedang")->huiHeNum);
+//       // card->isHaveThisBuff("xuanyun")->huiHeNum = 2;
+//        return;
+//    }
+//    
+//    card->buffArray.pushBack(this);
+    printf("xuanyun-------------------------------");
 }
 
 void XuanYunBuff::decreaseBuff(Card *card,float value) {

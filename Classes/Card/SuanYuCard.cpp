@@ -217,8 +217,8 @@ void SuanYuCard::recordRuning(FightPlayer *enemyTemp) {
     }
 }
 
-void SuanYuCard::nuQiManage() {
-    this->addNuQi(this, 1);
+void SuanYuCard::nuQiManage(OneRecord *info) {
+    this->nuQiAppear(this, info->nuQiChange);
 }
 
 void SuanYuCard::recordHit() {
@@ -282,10 +282,13 @@ void SuanYuCard::xiaoSkll(OneRecord *info) {
     auto movaFanhui = CallFunc::create(CC_CALLBACK_0(SuanYuCard::moveAnimation, this, defaultPosition));
     auto appear = CallFunc::create(CC_CALLBACK_0(SuanYuCard::appearUI, this));
     auto hit = CallFunc::create(CC_CALLBACK_0(SuanYuCard::hitBlock,this,info->affectRecordArray));
-    auto addNuqi = CallFunc::create(CC_CALLBACK_0(SuanYuCard::nuQiManage, this));
+    auto addNuqi = CallFunc::create(CC_CALLBACK_0(SuanYuCard::nuQiManage, this,info));
     auto recordBlock = CallFunc::create(CC_CALLBACK_0(ReadRecordFight::readNextFightRecord, this->readRecordFight));
     auto gongMusic = CallFunc::create(CC_CALLBACK_0(SuanYuCard::xiaoHitMusic, this));
-    this->cardSprite->runAction(Sequence::create(move,moveWait,gong,hit,wait,movaFanhui,moveWait,addNuqi,appear,recordBlock,NULL));
+    
+    auto afterAction = CallFunc::create(CC_CALLBACK_0(Card::afterAnimation,this,info,this));
+    
+    this->cardSprite->runAction(Sequence::create(move,moveWait,gong,hit,wait,movaFanhui,moveWait,addNuqi,afterAction,appear,recordBlock,NULL));
     this->cardSprite->runAction(Sequence::create(moveWait,gongMusic, NULL));
     this->fPro->hpPro->setVisible(false);
     this->fPro->hpProBg->setVisible(false);
@@ -321,20 +324,31 @@ void SuanYuCard::appearUI() {
 }
 
 void SuanYuCard::hitBlock(Vector<OneRecord *> affectRecordArray) {
-    auto beHitCardRecord = affectRecordArray.at(0);
-    if (beHitCardRecord->isShanBi == true) {
-        
-        beHitCardRecord->card->animationShanBi();
-    }else {
-        if (beHitCardRecord->card->HP > 0) {
+    for (int i = 0 ; i < affectRecordArray.size(); i++) {
+        auto beHitCard = affectRecordArray.at(i)->card;
+        if (affectRecordArray.at(i)->isShanBi == true) {
+            beHitCard->animationShanBi();
+        }else {
             
-            
-            this->decreaseHP(beHitCardRecord->card, beHitCardRecord->hitValue);
-            
-            this->addNuQi(beHitCardRecord->card,1);
-            
+            this->hpAppear(beHitCard, affectRecordArray.at(i)->hitValue, affectRecordArray.at(i)->currentHP);
+
+            this->nuQiAppear(beHitCard, affectRecordArray.at(i)->nuQiChange);
         }
     }
+//    auto beHitCardRecord = affectRecordArray.at(0);
+//    if (beHitCardRecord->isShanBi == true) {
+//        
+//        beHitCardRecord->card->animationShanBi();
+//    }else {
+//        if (beHitCardRecord->card->HP > 0) {
+//            
+//            
+//            this->decreaseHP(beHitCardRecord->card, beHitCardRecord->hitValue);
+//            
+//            this->addNuQi(beHitCardRecord->card,1);
+//            
+//        }
+//    }
 }
 
 void SuanYuCard::daHitMusic() {
@@ -368,11 +382,13 @@ void SuanYuCard::daSkill(OneRecord *info) {
     auto movaFanhui = CallFunc::create(CC_CALLBACK_0(SuanYuCard::moveAnimation, this, defaultPosition));
     auto appear = CallFunc::create(CC_CALLBACK_0(SuanYuCard::appearUI, this));
     auto maxHit = CallFunc::create(CC_CALLBACK_0(SuanYuCard::daHitBlock, this, info->affectRecordArray));
-    // auto addNuqi = CallFunc::create(CC_CALLBACK_0(TaoTieCard::nuQiManage, this));
+    auto nuqi = CallFunc::create(CC_CALLBACK_0(SuanYuCard::nuQiManage, this,info));
     auto recordBlock = CallFunc::create(CC_CALLBACK_0(ReadRecordFight::readNextFightRecord, this->readRecordFight));
     
     auto dazhaoMusic = CallFunc::create(CC_CALLBACK_0(SuanYuCard::daHitMusic, this));
-    this->cardSprite->runAction(Sequence::create(move,moveWait,dazhao,maxHit,wait,movaFanhui,moveWait,appear,recordBlock,NULL));
+    
+    auto afterAction = CallFunc::create(CC_CALLBACK_0(Card::afterAnimation,this,info,this));
+    this->cardSprite->runAction(Sequence::create(move,moveWait,dazhao,maxHit,wait,movaFanhui,moveWait,nuqi,afterAction,appear,recordBlock,NULL));
     this->cardSprite->runAction(Sequence::create(moveWait,dazhaoMusic,NULL));
     
     this->fPro->hpPro->setVisible(false);
@@ -387,17 +403,20 @@ void SuanYuCard::daHitBlock(Vector<OneRecord*> affectRecordArray) {
         if (affectRecordArray.at(i)->isShanBi == true) {
             beHitCard->animationShanBi();
         }else {
-            this->decreaseHP(beHitCard, affectRecordArray.at(i)->hitValue);
+            this->hpAppear(beHitCard, affectRecordArray.at(i)->hitValue, affectRecordArray.at(i)->currentHP);
             if (beHitCard != NULL) {
-                auto xuanYunBuff = XuanYunBuff::create();
-                xuanYunBuff->addBuff(beHitCard,0);
+                if (affectRecordArray.at(i)->addbuffName.compare("xuanyun") == 0) {
+                    auto xuanYunBuff = XuanYunBuff::create();
+                    xuanYunBuff->addBuff(beHitCard,0);
+                }
+
             }
-            this->decreaseNuQi(beHitCard, 1,false);
+            this->nuQiAppear(beHitCard, affectRecordArray.at(i)->nuQiChange);
         }
     }
     
 
-    this->decreaseNuQi(this, 3, true);
+  //  this->decreaseNuQi(this, 3, true);
 }
 
 void SuanYuCard::runZhanLiAnimation() {

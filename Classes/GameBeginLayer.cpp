@@ -25,6 +25,8 @@
 #include "LingShoLayer.h"
 #include "Bag/Bag.h"
 #include "TuJianLayer.h"
+
+#include "PvpMatchLayer.h"
 bool GameBeginLayer::init() {
     if (!Layer::init()) {
         return  false;
@@ -190,7 +192,12 @@ void GameBeginLayer::faBaoBtn(cocos2d::Ref *sender, ui::Widget::TouchEventType t
 }
 
 void GameBeginLayer::jingJiChangBtn(cocos2d::Ref *sender, ui::Widget::TouchEventType type) {
-    
+    auto matchScene = PvpMatchLayer::createScene();
+    PvpMatchLayer* layer = PvpMatchLayer::create();
+    layer->setContentSize(screenSize);
+    matchScene->addChild(layer);
+    layer->initMatchLayer();
+    Director::getInstance()->pushScene(TransitionFade::create(1.0f, matchScene));
 }
 
 void GameBeginLayer::juHunBtn(cocos2d::Ref *sender, ui::Widget::TouchEventType type) {

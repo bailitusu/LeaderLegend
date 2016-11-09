@@ -239,12 +239,16 @@ void XingTianCard::xiaoSkll(OneRecord *info) {
    // auto gong = CommonFunc::creatAnimation("jiansheng_attack_%d.png", 15, 1.0f, 1);
     auto gongWait = ActionWait::create(1.0);
     auto moveWait = ActionWait::create(animationFactor*14);
-    auto addNuqi = CallFunc::create(CC_CALLBACK_0(XingTianCard::nuQiManage, this));
+    auto addNuqi = CallFunc::create(CC_CALLBACK_0(XingTianCard::nuQiManage, this,info));
     auto appear = CallFunc::create(CC_CALLBACK_0(XingTianCard::appearUI, this));
     auto hit = CallFunc::create(CC_CALLBACK_0(XingTianCard::hitBlock,this,info->affectRecordArray));
     auto recordBlock = CallFunc::create(CC_CALLBACK_0(ReadRecordFight::readNextFightRecord, this->readRecordFight));
     auto gongMusic = CallFunc::create(CC_CALLBACK_0(XingTianCard::xiaoHitMusic, this));
-    this->cardSprite->runAction(Sequence::create(move,moveWait,gong,hit,gongWait,movaFanhui,moveWait,addNuqi,appear,recordBlock,NULL));
+    
+    auto afterAction = CallFunc::create(CC_CALLBACK_0(Card::afterAnimation,this,info,this));
+    
+    this->hitTimes = 0;
+    this->cardSprite->runAction(Sequence::create(move,moveWait,gong,hit,gongWait,movaFanhui,moveWait,addNuqi,afterAction,appear,recordBlock,NULL));
     this->cardSprite->runAction(Sequence::create(moveWait,gongMusic, NULL));
     this->fPro->hpPro->setVisible(false);
     this->fPro->hpProBg->setVisible(false);
@@ -287,9 +291,27 @@ void XingTianCard::daSkill(OneRecord *info) {
     auto appear = CallFunc::create(CC_CALLBACK_0(XingTianCard::appearUI, this));
     auto maxHit = CallFunc::create(CC_CALLBACK_0(XingTianCard::daHitBlock, this, info->affectRecordArray));
     auto recordBlock = CallFunc::create(CC_CALLBACK_0(ReadRecordFight::readNextFightRecord, this->readRecordFight));
+    
+    auto nuqi = CallFunc::create(CC_CALLBACK_0(XingTianCard::nuQiManage, this,info));
     auto dazhaoMusic = CallFunc::create(CC_CALLBACK_0(XingTianCard::daHitMusic, this));
+    
     auto dazhaoMusicWait = ActionWait::create(2.5);
-    this->cardSprite->runAction(Sequence::create(move,moveWait,gong,hit,gongWait,gong,hit,gongWait,gong,hit,gongWait,movaFanhui,moveWait,maxHit,appear,recordBlock,NULL));
+    
+    auto afterAction = CallFunc::create(CC_CALLBACK_0(Card::afterAnimation,this,info,this));
+    this->hitTimes = 0;
+    switch (info->affectRecordArray.size()) {
+        case 1:
+            this->cardSprite->runAction(Sequence::create(move,moveWait,gong,hit,gongWait,movaFanhui,moveWait,nuqi,afterAction,appear,recordBlock,NULL));
+            break;
+        case 2:
+            this->cardSprite->runAction(Sequence::create(move,moveWait,gong,hit,gongWait,gong,hit,gongWait,movaFanhui,moveWait,nuqi,afterAction,appear,recordBlock,NULL));
+            break;
+        case 3:
+            this->cardSprite->runAction(Sequence::create(move,moveWait,gong,hit,gongWait,gong,hit,gongWait,gong,hit,gongWait,movaFanhui,moveWait,nuqi,afterAction,appear,recordBlock,NULL));
+            break;
+
+    }
+ //   this->cardSprite->runAction(Sequence::create(move,moveWait,gong,hit,gongWait,gong,hit,gongWait,gong,hit,gongWait,movaFanhui,moveWait,maxHit,nuqi,afterAction,appear,recordBlock,NULL));
     this->cardSprite->runAction(Sequence::create(moveWait,dazhaoMusic,dazhaoMusicWait,dazhaoMusic,dazhaoMusicWait,dazhaoMusic,dazhaoMusicWait,NULL));
     this->fPro->hpPro->setVisible(false);
     this->fPro->hpProBg->setVisible(false);
@@ -298,36 +320,37 @@ void XingTianCard::daSkill(OneRecord *info) {
 }
 
 void XingTianCard::hitBlock(Vector<OneRecord *> affectRecordArray) {
-    if (affectRecordArray.size() == 3) {
-        if (this->hitTimes > 2 ) {
-            this->hitTimes = 0;
-        }
-    }else {
-        this->hitTimes = 0;
-    }
+//    if (affectRecordArray.size() >= 2) {
+//        if (this->hitTimes > 2 ) {
+//            this->hitTimes = 0;
+//        }
+//    }else {
+//        this->hitTimes = 0;
+//    }
     
     auto beHitCardRecord = affectRecordArray.at(this->hitTimes);
     if (beHitCardRecord->isShanBi == true) {
         
         beHitCardRecord->card->animationShanBi();
     }else {
-        if (beHitCardRecord->card->HP > 0) {
+     //   if (beHitCardRecord->card->HP > 0) {
             
-            
-            this->decreaseHP(beHitCardRecord->card, beHitCardRecord->hitValue);
+        beHitCardRecord->card->MaxHP = beHitCardRecord->maxHP;
+        beHitCardRecord->card->HP = beHitCardRecord->currentHP;
+        this->hpAppear(beHitCardRecord->card, beHitCardRecord->hitValue, beHitCardRecord->currentHP);
 
-            this->addNuQi(beHitCardRecord->card, 1);
+        this->nuQiAppear(beHitCardRecord->card, beHitCardRecord->nuQiChange);
             
-        }
+       // }
     }
     this->hitTimes++;
 }
 
 void XingTianCard::daHitBlock(Vector<OneRecord *> affectRecordArray) {
-        auto geDangBuff = GeDangBuff::create();
-        geDangBuff->addBuff(this,0.5);
-
-        this->decreaseNuQi(this, 3,true);
+//        auto geDangBuff = GeDangBuff::create();
+//        geDangBuff->addBuff(this,0.5);
+//
+//        this->decreaseNuQi(this, 3,true);
 }
 
 void XingTianCard::moveAnimation(Vec2 target) {
@@ -356,8 +379,8 @@ void XingTianCard::appearUI() {
     CocosDenshion::SimpleAudioEngine::getInstance()->unloadEffect("jiansheng_conjure.mp3");
 }
 
-void XingTianCard::nuQiManage() {
-    this->addNuQi(this, 1);
+void XingTianCard::nuQiManage(OneRecord *info) {
+    this->nuQiAppear(this, info->nuQiChange);
 }
 
 void XingTianCard::recordHit() {

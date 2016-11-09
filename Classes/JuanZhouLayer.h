@@ -10,6 +10,7 @@
 #define JuanZhouLayer_h
 
 #include "cocos2d.h"
+#include "cocos-ext.h"
 USING_NS_CC;
 
 class SetRoleData;
@@ -22,6 +23,8 @@ public:
     Sprite* backgroundSp;
     Vector<SetRoleData*> psRoleData;
     void initRole();
+    cocos2d::extension::ScrollView* srollView;
+    Layer* continerLayer;
 };
 
 #endif /* JuanZhouLayer_h */

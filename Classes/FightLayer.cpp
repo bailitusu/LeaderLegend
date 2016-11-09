@@ -41,6 +41,9 @@
 #include "Setting/RecordFight.h"
 #include "OneRecord.h"
 
+#include "ReadRecordFight.h"
+#include "AnalysisJson.h"
+//#include "FightNetwork.h"
 Scene* FightLayer::createScene() {
     
     Scene* scene = Scene::create();
@@ -95,13 +98,15 @@ void FightLayer::initFightLayer() {
     this->enemyPlay->retain();
     this->startFight = false;
 
+
+
     
   //  printf("%d",this->roleData->at(0)->cellIndex);
-    for (int i = 0; i < this->roleData.size(); i++) {
-        this->player->initRecordTackCard(this->roleData.at(i)->card, this->roleData.at(i)->cellIndex, "player",this->roleData.at(i)->magicGoods);
-    }
-
-    this->player->initCardStandArray();
+//    for (int i = 0; i < this->roleData.size(); i++) {
+//        this->player->initRecordTackCard(this->roleData.at(i)->card, this->roleData.at(i)->cellIndex, "player",this->roleData.at(i)->magicGoods);
+//    }
+//
+//    this->player->initCardStandArray();
     
 //    this->player->initRecordTackCard(XuanWuCard::create(), 0, "player",DunJiaTianShu::create());
 //    this->player->initRecordTackCard(XingTianCard::create(), 3, "player",DunJiaTianShu::create());
@@ -114,32 +119,23 @@ void FightLayer::initFightLayer() {
 //    
 //    this->player->initCardStandArray();
 
-    this->enemyPlay->initRecordTackCard(XuanWuCard::create(), 0, "enemyPlayer",DunJiaTianShu::create());
-    this->enemyPlay->initRecordTackCard(XingTianCard::create(), 3, "enemyPlayer",DunJiaTianShu::create());
-    this->enemyPlay->initRecordTackCard(ChangECard::create(), 5, "enemyPlayer",DunJiaTianShu::create());
-    this->enemyPlay->initRecordTackCard(TaoTieCard::create(), 6, "enemyPlayer",DunJiaTianShu::create());
-    this->enemyPlay->initRecordTackCard(FengHouCard::create(), 9, "enemyPlayer",DunJiaTianShu::create());
-    this->enemyPlay->initRecordTackCard(FengBoCard::create(), 10, "enemyPlayer",DunJiaTianShu::create());
-    this->enemyPlay->initRecordTackCard(HouYiCard::create(), 12, "enemyPlayer",DunJiaTianShu::create());
-    this->enemyPlay->initRecordTackCard(SuanYuCard::create(), 15, "enemyPlayer",DunJiaTianShu::create());
-    this->enemyPlay->initCardStandArray();
+//    this->enemyPlay->initRecordTackCard(XuanWuCard::create(), 0, "enemyPlayer",DunJiaTianShu::create());
+//    this->enemyPlay->initRecordTackCard(XingTianCard::create(), 3, "enemyPlayer",DunJiaTianShu::create());
+//    this->enemyPlay->initRecordTackCard(ChangECard::create(), 5, "enemyPlayer",DunJiaTianShu::create());
+//    this->enemyPlay->initRecordTackCard(TaoTieCard::create(), 6, "enemyPlayer",DunJiaTianShu::create());
+//    this->enemyPlay->initRecordTackCard(FengHouCard::create(), 9, "enemyPlayer",DunJiaTianShu::create());
+//    this->enemyPlay->initRecordTackCard(FengBoCard::create(), 10, "enemyPlayer",DunJiaTianShu::create());
+//    this->enemyPlay->initRecordTackCard(HouYiCard::create(), 12, "enemyPlayer",DunJiaTianShu::create());
+//    this->enemyPlay->initRecordTackCard(SuanYuCard::create(), 15, "enemyPlayer",DunJiaTianShu::create());
+//    this->enemyPlay->initCardStandArray();
     
     
-    background = Sprite::create("bbg_arena.png");
+    background = Sprite::create("uv界面测试(1).png");//bbg_arena.png
     CommonFunc::setSpriteSize(background, screenSize.width);
     background->setPosition(Vec2(screenSize.width/2+origin.x, screenSize.height/2+origin.y));
     background->setLocalZOrder(-100);
     
-//    auto bbbb= Sprite::create("longRight.png");
-//    bbbb->setPosition(screenSize.width/2+origin.x,screenSize.height/2+origin.y);
-//    CommonFunc::setSpriteSize(bbbb, 50);
-//    this->addChild(bbbb);
-//    auto aaa = Label::createWithTTF("1111111", "fonts/Marker Felt.ttf", 16);
-////    aaa->setOpacity(255);
-//    aaa->setString("eeeeeee");
-//    aaa->setTextColor(Color4B(0, 0, 240, 255));
-//    aaa->setPosition(screenSize.width/2+origin.x,screenSize.height/2+origin.y);
-//    this->addChild(aaa,100);
+
     
 
     
@@ -152,41 +148,19 @@ void FightLayer::initFightLayer() {
 //    one->hitTarget = 10;
 //    rff->addItemToRecord(one);
 
-    
-//    rapidjson::Document writedoc;
-//    writedoc.SetObject();
-//    rapidjson::Document::AllocatorType& allocator = writedoc.GetAllocator();
-//    rapidjson::Value array(rapidjson::kArrayType);
-//    rapidjson::Value object(rapidjson::kObjectType);
-//    
-//    // json object 格式添加 “名称/值” 对
-//    object.AddMember("inttag", 1, allocator);
-//    object.AddMember("doubletag", 1.0, allocator);
-//    object.AddMember("booltag", true, allocator);
-//    object.AddMember("hellotag", "helloworld", allocator);
-//    
-//    // json 加入数组
-//    array.PushBack(object, allocator);
-//    
-//    // json object 格式添加 “名称/值” 对
-//    writedoc.AddMember("json", "json string", allocator);
-//    writedoc.AddMember("array", array, allocator);
-//    
-//    rapidjson::StringBuffer buffer;
-//    rapidjson::Writer<rapidjson::StringBuffer> writer(buffer);
-//    writedoc.Accept(writer);
-//    
-//    auto path = FileUtils::getInstance()->getWritablePath();
-//    path.append("myhero.json");
-//    printf("%s",path.c_str());
-//    FILE* file = fopen(path.c_str(), "wb");
-//    if(file)
-//    {
-//        fputs(buffer.GetString(), file);
-//        fclose(file);
-//    }
-//  //  CCLOG("%s",buffer.GetString());
+    scheduleOnce(schedule_selector(FightLayer::startGame), 1.0);
 
+}
+
+
+void FightLayer::startGame(float dur) {
+    ReadRecordFight* rf = ReadRecordFight::create();
+    rf->player = this->player;
+    rf->playerEnemy = this->enemyPlay;
+    rf->currentJson = this->fightInfo.c_str();
+    rf->readPlayerInfo();
+    rf->retain();
+    rf->readBigNextRecord();
 }
 
 void shifang() {
@@ -204,45 +178,47 @@ bool FightLayer::onTouchBegan(cocos2d::Touch *touch, cocos2d::Event *unused_even
     auto touchLocation = touch->getLocationInView();
     touchLocation = Director::getInstance()->convertToGL(touchLocation);
     
-    if (this->startFight == false) {
-       
-        this->startFight = true;
-        auto field = FightField::create();
-        field->player = this->player;
-        field->enemyPlayer = this->enemyPlay;
-        // field->startFight();
-        for (int i = 0; i < this->roleData.size() ; i++) {
-            auto data = SetRoleData::create();
-            data->card = this->roleData.at(i)->card;
-            data->cellIndex = this->roleData.at(i)->cellIndex;
-            data->magicGoods = this->roleData.at(i)->magicGoods;
-            data->imageName = this->roleData.at(i)->imageName;
-            field->roleData.pushBack(data);
-        }
-        field->retain();
-        auto record = RecordFight::GetInstance();
-        record->createRecord(1, 2, 3);
-        record->currentRecordIndex= 0;
-        //    if (this->player->fDragon->dragonSkillArray.size() == 0 && ) {
-        //        <#statements#>
-        //    }
-        if (this->player->xiangong > this->enemyPlay->xiangong) {
-            auto wait = ActionWait::create(1.0);
-            auto apper = FadeTo::create(0.5, 255);
-            auto disapper = FadeTo::create(0.5, 0);
-            auto run = CallFunc::create(CC_CALLBACK_0(FightField::dragonRun,field,"player"));
-            auto block = CallFunc::create(CC_CALLBACK_0(FightField::dragonBlock,field,"player"));
-            this->player->fDragon->dragonSprite->runAction(Sequence::create(run,block, NULL));
-        }else {
-            auto wait = ActionWait::create(1.0);
-            auto apper = FadeTo::create(0.5, 255);
-            auto disapper = FadeTo::create(0.5, 0);
-            auto run = CallFunc::create(CC_CALLBACK_0(FightField::dragonRun,field,"enemy"));
-            auto block = CallFunc::create(CC_CALLBACK_0(FightField::dragonBlock,field,"enemy"));
-            this->enemyPlay->fDragon->dragonSprite->runAction(Sequence::create(run,block, NULL));
-        }
 
-    }
+
+//    if (this->startFight == false) {
+//       
+//        this->startFight = true;
+//        auto field = FightField::create();
+//        field->player = this->player;
+//        field->enemyPlayer = this->enemyPlay;
+//        // field->startFight();
+//        for (int i = 0; i < this->roleData.size() ; i++) {
+//            auto data = SetRoleData::create();
+//            data->card = this->roleData.at(i)->card;
+//            data->cellIndex = this->roleData.at(i)->cellIndex;
+//            data->magicGoods = this->roleData.at(i)->magicGoods;
+//            data->imageName = this->roleData.at(i)->imageName;
+//            field->roleData.pushBack(data);
+//        }
+//        field->retain();
+//        auto record = RecordFight::GetInstance();
+//        record->createRecord(1, 2, 3);
+//        record->currentRecordIndex= 0;
+//        //    if (this->player->fDragon->dragonSkillArray.size() == 0 && ) {
+//        //        <#statements#>
+//        //    }
+//        if (this->player->xiangong > this->enemyPlay->xiangong) {
+//            auto wait = ActionWait::create(1.0);
+//            auto apper = FadeTo::create(0.5, 255);
+//            auto disapper = FadeTo::create(0.5, 0);
+//            auto run = CallFunc::create(CC_CALLBACK_0(FightField::dragonRun,field,"player"));
+//            auto block = CallFunc::create(CC_CALLBACK_0(FightField::dragonBlock,field,"player"));
+//            this->player->fDragon->dragonSprite->runAction(Sequence::create(run,block, NULL));
+//        }else {
+//            auto wait = ActionWait::create(1.0);
+//            auto apper = FadeTo::create(0.5, 255);
+//            auto disapper = FadeTo::create(0.5, 0);
+//            auto run = CallFunc::create(CC_CALLBACK_0(FightField::dragonRun,field,"enemy"));
+//            auto block = CallFunc::create(CC_CALLBACK_0(FightField::dragonBlock,field,"enemy"));
+//            this->enemyPlay->fDragon->dragonSprite->runAction(Sequence::create(run,block, NULL));
+//        }
+//
+//    }
     
     return true;
 }

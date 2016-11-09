@@ -40,7 +40,8 @@ public:
     Sprite* bigSprite;
     Sprite* xiaoZhaoSp;
     Sprite* daZhaoSp;
-    
+    Label* xiaoZhaoLabel;
+    Label* daZhaoLabel;
     Card* appearCard;
     void initDetailUI(TuJianData* data);
     void changeDetailUIInfo(TuJianData* data);

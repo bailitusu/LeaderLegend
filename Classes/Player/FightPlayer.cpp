@@ -47,7 +47,10 @@ void FightPlayer::setCardsPositon(Card *card, int index, int zPoint) {
 void FightPlayer::initCardStandArray() {
     for (int i = 0; i < fMap->mapCellArray.size(); i++) {
         if ((fMap->mapCellArray.at(i))->obj != NULL) {
-            this->cardArray.pushBack((Card*)(((MapCell*)fMap->mapCellArray.at(i))->obj));
+            if (this->cardArray.contains((Card*)(((MapCell*)fMap->mapCellArray.at(i))->obj)) == false) {
+                this->cardArray.pushBack((Card*)(((MapCell*)fMap->mapCellArray.at(i))->obj));
+            }
+            
         }
     }
 }
@@ -77,6 +80,7 @@ void FightPlayer::initTackCard(Card* card, std::string imageName, int standIndex
    // printf("%d", this->xiangong);
     this->setCardsPositon(card, standIndex,standIndex*10+5);
     card->forPlayer = this;
+  //  card->forPlayer->enemy = this->enemy;
     card->fPro = FightProgress::create();
     card->fPro->hpProBg->setPosition(card->cardSprite->getPosition().x,card->cardSprite->getPosition().y+40);
     this->fMap->addChild(card->fPro->hpProBg,standIndex*10+10);
@@ -94,9 +98,9 @@ void FightPlayer::initTackCard(Card* card, std::string imageName, int standIndex
     this->fMap->addChild(card->fPro->nuqiPro,standIndex*10+20);
     
     card->magicGoods = treasure;
-    if (playerName.compare("enemyPlayer") == 0) {
-        card->magicGoods->retain();
-    }
+   // if (playerName.compare("enemyPlayer") == 0) {
+   //     card->magicGoods->retain();
+   // }
     
     
     card->initFightShuXing();
@@ -106,8 +110,11 @@ void FightPlayer::initTackCard(Card* card, std::string imageName, int standIndex
     
 //    auto aa = card->magicGoods;
 //    aa->initNuQi(card);
-    card->magicGoods->initNuQi(card);
-    card->preAddCardAnimationResource();
+    if (card->magicGoods != NULL ) {
+        card->magicGoods->initNuQi(card);
+    }
+    
+  //  card->preAddCardAnimationResource();
     card->runZhanLiAnimation();
     
   //  card->preCardAudio();

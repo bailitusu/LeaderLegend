@@ -20,7 +20,7 @@ public:
 //    virtual void ultimateSkill();
 //    virtual void running(FightPlayer* enemyTemp);
 
-    void nuQiManage();
+    void nuQiManage(OneRecord *info);
    // void hitAction();
     void hitBlock(Vector<OneRecord*> affectRecordArray);
     void daHitBlock(Vector<OneRecord*> affectRecordArray);

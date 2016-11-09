@@ -21,7 +21,7 @@ public:
     CREATE_FUNC(FuBenLayer);
     void initFuBenLayer();
     ui::Button* enemyOne;
-    void enemyOneBtn(Ref* sender, ui::Widget::TouchEventType typr);
+   // void enemyOneBtn(Ref* sender, ui::Widget::TouchEventType typr);
     Vector<SetRoleData*> myRoleData;
     Vector<SetRoleData*> enemyRoleData;
     SetRoleFormatlayer* roleFormatLayer;

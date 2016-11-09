@@ -54,6 +54,11 @@ bool SkillScrollLayer::onTouchBegan(cocos2d::Touch *touch, cocos2d::Event *unuse
 }
 
 void SkillScrollLayer::onTouchMoved(cocos2d::Touch *touch, cocos2d::Event *unused_event) {
+    auto point = Director::getInstance()->convertToGL(touch->getLocationInView());
+    auto oldPoint = Director::getInstance()->convertToGL(touch->getPreviousLocationInView());
+    if (point == oldPoint) {
+        return;
+    }
     this->isMoved = true;
 }
 

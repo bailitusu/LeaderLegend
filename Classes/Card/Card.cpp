@@ -189,12 +189,28 @@ void Card::recordDecreaseHP(Card *card, float hpValue) {
 
 }
 
+void Card::hpAppear(Card *card, int hitValue, int hp) {
+    if (card != NULL) {
+        if (hitValue < 0) {
+            hitValue = -hitValue;
+            card->textLabel->setTextColor(Color4B(0, 240, 0, 255));
+        }else {
+            card->textLabel->setTextColor(Color4B(240, 0, 0, 255));
+        }
+        
+        card->showLabelText(card->textLabel, hitValue, "");
+       // card->HP = card->HP - hpValue;
+        card->fPro->hpPro->setPercentage((1-(float)hp/card->MaxHP)*100);
+        if (hp <= 0) {
+            
+            card->cardDead();
+        }
+    }
+}
+
 void Card::decreaseHP(Card* card,float hpValue) {
     if (card != NULL) {
-        //float percent = (1 - (card->HP-hpValue)/card->MaxHP) * 100;
-        //  float aaa = this->fPro->hpPro->getPercentage();
-//        ProgressFromTo* ac = ProgressFromTo::create(1.0, card->fPro->hpPro->getPercentage(), percent);
-//        card->fPro->hpPro->runAction(ac);
+
         card->textLabel->setTextColor(Color4B(240, 0, 0, 255));
       //  CommonFunc::showHitValue(card->textLabel, (int)hpValue);
         card->showLabelText(card->textLabel, (int)hpValue, "");
@@ -227,7 +243,6 @@ void Card::showLabelText(cocos2d::Label *label, int hpValue, std::string text) {
         label->setString(ss.str());
     }
 
-    
     auto appear = FadeTo::create(0.5, 255);
     auto disappear = FadeTo::create(0.5, 0);
     auto block = CallFunc::create(CC_CALLBACK_0(Card::textLabelDisappearBlock,this));
@@ -265,6 +280,74 @@ void Card::addNuQi(Card* card,int num) {
         }
     }
 
+}
+
+void Card::nuQiAppear(Card *card, int num) {
+    if (card != NULL) {
+        switch (num) {
+            case 0:
+                card->fPro->setNuQiProPrecent(0);
+                break;
+            case 1:
+                
+                card->fPro->setNuQiProPrecent(34);
+                break;
+            case 2:
+                
+                card->fPro->setNuQiProPrecent(66);
+                break;
+            case 3:
+                
+                card->fPro->setNuQiProPrecent(100);
+                break;
+            default:
+                card->fPro->setNuQiProPrecent(100);
+                break;
+        }
+    }
+}
+
+void Card::beforeAnimation(OneRecord *info, Card* card) {
+    info->retain();
+    if (info->beforeArray.size() > 0) {
+
+    
+        for (int i = 0; i < info->beforeArray.size(); i++) {
+            if (info->beforeArray.at(i)->reason.compare("changehp") == 0) {
+                info->beforeArray.at(i)->card->MaxHP = info->beforeArray.at(i)->maxHP;
+                this->hpAppear(info->beforeArray.at(i)->card, -info->beforeArray.at(i)->offsetHP, info->beforeArray.at(i)->currentHP);
+            }else if (info->beforeArray.at(i)->reason.compare("changesp") == 0) {
+                this->nuQiAppear(info->beforeArray.at(i)->card, info->beforeArray.at(i)->nuQiChange);
+            }else if(info->beforeArray.at(i)->reason.compare("addbuff") == 0) {
+                printf("%s",info->beforeArray.at(i)->buffName.c_str());
+            }
+        }
+
+    }
+    if (info->skillId == 1) {
+        card->xiaoSkll(info);
+    }else if(info->skillId == 2) {
+        card->daSkill(info);
+    }
+}
+
+void Card::afterAnimation(OneRecord *info, Card* card) {
+    if (info->afterArray.size() == 0) {
+        info->release();
+        return;
+    }else {
+        for (int i = 0; i < info->afterArray.size(); i++) {
+            if (info->afterArray.at(i)->reason.compare("changehp") == 0) {
+                info->afterArray.at(i)->card->MaxHP = info->afterArray.at(i)->maxHP;
+                this->hpAppear(info->afterArray.at(i)->card, -info->afterArray.at(i)->offsetHP, info->afterArray.at(i)->currentHP);
+            }else if (info->afterArray.at(i)->reason.compare("changesp") == 0) {
+                this->nuQiAppear(info->afterArray.at(i)->card, info->afterArray.at(i)->nuQiChange);
+            }else if(info->afterArray.at(i)->reason.compare("addbuff") == 0) {
+                printf("%s",info->afterArray.at(i)->buffName.c_str());
+            }
+        }
+        info->release();
+    }
 }
 
 void Card::recordAddNuqi(Card *card, int num) {
@@ -338,16 +421,16 @@ void Card::decreaseNuQi(Card* card,int num, bool isDaZhao) {
 
 void Card::willRun(FightPlayer* enemyTemp) {
     this->forEnemy = enemyTemp;
-    if (this->isHaveThisBuff("gedang")) {
-        if(this->isHaveThisBuff("gedang")->thisBuffisEffect() == false) {
-            this->geDang = this->isHaveThisBuff("gedang")->defaultValue;
-            this->buffArray.eraseObject(this->isHaveThisBuff("gedang"));
-            
-        }
-    }
-    
-    this->magicGoods->everyRoundAddHP(this);
-    this->magicGoods->willRunAddNuQi(this);
+//    if (this->isHaveThisBuff("gedang")) {
+//        if(this->isHaveThisBuff("gedang")->thisBuffisEffect() == false) {
+//            this->geDang = this->isHaveThisBuff("gedang")->defaultValue;
+//            this->buffArray.eraseObject(this->isHaveThisBuff("gedang"));
+//            
+//        }
+//    }
+//    
+//    this->magicGoods->everyRoundAddHP(this);
+//    this->magicGoods->willRunAddNuQi(this);
     this->forPlayer->fMap->setLocalZOrder(1000);
 }
 
@@ -467,7 +550,7 @@ void Card::recordCardDead() {
 void Card::cardDead() {
     this->forPlayer->fMap->mapCellArray.at(this->cellIndex)->obj = NULL;
     
-    this->magicGoods->bingFaHuiFuHp(this->forPlayer);
+   // this->magicGoods->bingFaHuiFuHp(this->forPlayer);
     
     this->fPro->hpPro->setVisible(false);
     this->fPro->hpProBg->setVisible(false);
@@ -492,14 +575,16 @@ void Card::initFightShuXing() {
     this->MaxHP = this->HP;
     this->initCharacter();
  
+    if (this->magicGoods != NULL) {
+        this->gongJi = this->magicGoods->gongJi+this->gongJi;
+        this->fangYu = this->fangYu+this->magicGoods->fangYu;
+        this->faLi = this->faLi+this->magicGoods->faLi;
+        this->mingZhong = this->mingZhong + this->magicGoods->mingZhong;
+        this->shanBi = this->shanBi + this->magicGoods->shanBi;
+        this->baoJi = this->baoJi + this->magicGoods->baoJi;
+        this->mianBao = this->mianBao + this->magicGoods->mianBao;
+    }
 
-    this->gongJi = this->magicGoods->gongJi+this->gongJi;
-    this->fangYu = this->fangYu+this->magicGoods->fangYu;
-    this->faLi = this->faLi+this->magicGoods->faLi;
-    this->mingZhong = this->mingZhong + this->magicGoods->mingZhong;
-    this->shanBi = this->shanBi + this->magicGoods->shanBi;
-    this->baoJi = this->baoJi + this->magicGoods->baoJi;
-    this->mianBao = this->mianBao + this->magicGoods->mianBao;
     
 }
 

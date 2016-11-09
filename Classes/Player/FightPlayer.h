@@ -26,6 +26,7 @@ public:
     std::string fpName;
     Layer* fightLayer;
     FightPlayer* enemy;
+    std::string playerKey;
     int xiangong;
     void initMap(std::string imageName,std::string direction, Size mapLayerSize);
     

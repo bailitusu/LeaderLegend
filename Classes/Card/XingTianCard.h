@@ -22,7 +22,7 @@ public:
   //  virtual void didBeHit(Card* fromCard, std::string hitKinds);
    // virtual void ultimateSkill();
     virtual void initCharacter();
-    void nuQiManage();
+    void nuQiManage(OneRecord *info);
   //  void hitAction();
     void hitBlock(Vector<OneRecord*> affectRecordArray);
     void daHitBlock(Vector<OneRecord*> affectRecordArray);

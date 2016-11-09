@@ -131,8 +131,8 @@ void FengBoCard::recordRuning(FightPlayer *enemyTemp) {
 //}
 
 
-void FengBoCard::nuQiManage() {
-    this->addNuQi(this, 1);
+void FengBoCard::nuQiManage(OneRecord *info) {
+    this->nuQiAppear(this, info->nuQiChange);
 }
 
 void FengBoCard::recordHit() {
@@ -197,11 +197,12 @@ void FengBoCard::xiaoSkll(OneRecord *info) {
     auto movaFanhui = CallFunc::create(CC_CALLBACK_0(FengBoCard::moveAnimation, this, defaultPosition));
     auto appear = CallFunc::create(CC_CALLBACK_0(FengBoCard::appearUI, this));
     auto hit = CallFunc::create(CC_CALLBACK_0(FengBoCard::hitBlock,this,info->affectRecordArray));
-    auto addNuqi = CallFunc::create(CC_CALLBACK_0(FengBoCard::nuQiManage, this));
+    auto addNuqi = CallFunc::create(CC_CALLBACK_0(FengBoCard::nuQiManage, this,info));
     auto recordBlock = CallFunc::create(CC_CALLBACK_0(ReadRecordFight::readNextFightRecord, this->readRecordFight));
     auto gongMusic = CallFunc::create(CC_CALLBACK_0(FengBoCard::xiaoHitMusic, this));
     
-    this->cardSprite->runAction(Sequence::create(move,moveWait,gong,hit,wait,movaFanhui,moveWait,addNuqi,appear,recordBlock,NULL));
+    auto afterAction = CallFunc::create(CC_CALLBACK_0(Card::afterAnimation,this,info,this));
+    this->cardSprite->runAction(Sequence::create(move,moveWait,gong,hit,wait,movaFanhui,moveWait,addNuqi,afterAction,appear,recordBlock,NULL));
     this->cardSprite->runAction(Sequence::create(moveWait,gongMusic,NULL));
     this->fPro->hpPro->setVisible(false);
     this->fPro->hpProBg->setVisible(false);
@@ -242,9 +243,9 @@ void FengBoCard::hitBlock(Vector<OneRecord *> affectRecordArray) {
         if (affectRecordArray.at(i)->isShanBi == true) {
             beHitCard->animationShanBi();
         }else {
-            this->decreaseHP(beHitCard, affectRecordArray.at(i)->hitValue);
+            this->hpAppear(beHitCard, affectRecordArray.at(i)->hitValue, affectRecordArray.at(i)->currentHP);
             
-            this->addNuQi(beHitCard, 1);
+            this->nuQiAppear(beHitCard, affectRecordArray.at(i)->nuQiChange);
         }
     }
 }
@@ -279,10 +280,14 @@ void FengBoCard::daSkill(OneRecord *info) {
     auto movaFanhui = CallFunc::create(CC_CALLBACK_0(FengBoCard::moveAnimation, this, defaultPosition));
     auto appear = CallFunc::create(CC_CALLBACK_0(FengBoCard::appearUI, this));
     auto maxHit = CallFunc::create(CC_CALLBACK_0(FengBoCard::daHitBlock, this, info->affectRecordArray));
-    // auto addNuqi = CallFunc::create(CC_CALLBACK_0(TaoTieCard::nuQiManage, this));
+    
+    auto nuqi = CallFunc::create(CC_CALLBACK_0(FengBoCard::nuQiManage, this,info));
+    
     auto recordBlock = CallFunc::create(CC_CALLBACK_0(ReadRecordFight::readNextFightRecord, this->readRecordFight));
     auto dazhaoMusic = CallFunc::create(CC_CALLBACK_0(FengBoCard::daHitMusic, this));
-    this->cardSprite->runAction(Sequence::create(move,moveWait,dazhao,maxHit,wait,movaFanhui,moveWait,appear,recordBlock,NULL));
+    
+    auto afterAction = CallFunc::create(CC_CALLBACK_0(Card::afterAnimation,this,info,this));
+    this->cardSprite->runAction(Sequence::create(move,moveWait,dazhao,maxHit,wait,movaFanhui,moveWait,nuqi,afterAction,appear,recordBlock,NULL));
     this->cardSprite->runAction(Sequence::create(moveWait,dazhaoMusic, NULL));
     
     this->fPro->hpPro->setVisible(false);
@@ -297,19 +302,19 @@ void FengBoCard::daHitBlock(Vector<OneRecord*> affectRecordArray) {
         if (affectRecordArray.at(i)->isShanBi == true) {
             beHitCard->animationShanBi();
         }else {
-            this->decreaseHP(beHitCard, affectRecordArray.at(i)->hitValue);
-            if (beHitCard != NULL) {
-                auto shanBiBuff = ShanBiBuff::create();
-                shanBiBuff->decreaseBuff(beHitCard,0.05);
-                auto mianBaoBuff = MianBaoBuff::create();
-                mianBaoBuff->decreaseBuff(beHitCard,0.05);
-            }
+            this->hpAppear(beHitCard, affectRecordArray.at(i)->hitValue, affectRecordArray.at(i)->currentHP);
+//            if (beHitCard != NULL) {
+//                auto shanBiBuff = ShanBiBuff::create();
+//                shanBiBuff->decreaseBuff(beHitCard,0.05);
+//                auto mianBaoBuff = MianBaoBuff::create();
+//                mianBaoBuff->decreaseBuff(beHitCard,0.05);
+//            }
             
-            this->addNuQi(beHitCard, 1);
+            this->nuQiAppear(beHitCard, affectRecordArray.at(i)->nuQiChange);
         }
     }
     
-    this->decreaseNuQi(this, 3, true);
+  //  this->decreaseNuQi(this, 3, true);
 }
 
 void FengBoCard::runZhanLiAnimation() {

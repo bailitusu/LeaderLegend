@@ -137,7 +137,7 @@ void RecordFight::addItemOfNuqiBuff(int recordIndex, OneRecord *record) {
     rapidjson::Value& item = fightArray[recordIndex-1];
     rapidjson::Value& cardArray = item["affectArray"];
     rapidjson::Value objectCard(rapidjson::kObjectType);
-    objectCard.AddMember("enemynuqichange", record->enemyNuQiChange, allocator);
+    objectCard.AddMember("enemynuqichange", record->nuQiChange, allocator);
 
     cardArray.PushBack(objectCard, allocator);
     rapidjson::StringBuffer buffer;

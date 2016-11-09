@@ -22,7 +22,7 @@ public:
     virtual void initCharacter();
    // virtual void ultimateSkill();
    // virtual void cardDead();
-    void nuQiManage();
+    void nuQiManage(OneRecord *info);
    // void hitAction();
     void zaiShengAction(bool isRecord);
     

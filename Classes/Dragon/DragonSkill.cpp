@@ -13,6 +13,11 @@ bool DragonSkill::init() {
     return true;
 }
 
-void DragonSkill::runSkill(FightPlayer *player) {
+void DragonSkill::runSkill(FightPlayer *player, DragonData* data) {
+    
+}
+
+
+void DragonSkill::runSkillAnimation(cocos2d::Sprite *sprite,FightPlayer* player, DragonData* data) {
     
 }

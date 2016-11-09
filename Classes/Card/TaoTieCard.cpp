@@ -164,10 +164,12 @@ void TaoTieCard::xiaoSkll(OneRecord *info) {
     auto movaFanhui = CallFunc::create(CC_CALLBACK_0(TaoTieCard::moveAnimation, this, defaultPosition));
     auto appear = CallFunc::create(CC_CALLBACK_0(TaoTieCard::appearUI, this));
     auto hit = CallFunc::create(CC_CALLBACK_0(TaoTieCard::hitBlock,this,info->affectRecordArray));
-    auto addNuqi = CallFunc::create(CC_CALLBACK_0(TaoTieCard::nuQiManage, this));
+    auto addNuqi = CallFunc::create(CC_CALLBACK_0(TaoTieCard::nuQiManage, this,info));
     auto recordBlock = CallFunc::create(CC_CALLBACK_0(ReadRecordFight::readNextFightRecord, this->readRecordFight));
     auto gongMusic = CallFunc::create(CC_CALLBACK_0(TaoTieCard::xiaoHitMusic, this));
-    this->cardSprite->runAction(Sequence::create(move,moveWait,gong,hit,wait,movaFanhui,moveWait,addNuqi,appear,recordBlock,NULL));
+    
+    auto afterAction = CallFunc::create(CC_CALLBACK_0(Card::afterAnimation,this,info,this));
+    this->cardSprite->runAction(Sequence::create(move,moveWait,gong,hit,wait,movaFanhui,moveWait,addNuqi,afterAction,appear,recordBlock,NULL));
     
     this->cardSprite->runAction(Sequence::create(moveWait,gongMusic,NULL));
     this->fPro->hpPro->setVisible(false);
@@ -210,9 +212,13 @@ void TaoTieCard::daSkill(OneRecord *info) {
     auto appear = CallFunc::create(CC_CALLBACK_0(TaoTieCard::appearUI, this));
     auto maxHit = CallFunc::create(CC_CALLBACK_0(TaoTieCard::daHitBlock, this, info->affectRecordArray));
    // auto addNuqi = CallFunc::create(CC_CALLBACK_0(TaoTieCard::nuQiManage, this));
+    auto myNuqi = CallFunc::create(CC_CALLBACK_0(TaoTieCard::nuQiManage, this,info));
+    
     auto recordBlock = CallFunc::create(CC_CALLBACK_0(ReadRecordFight::readNextFightRecord, this->readRecordFight));
     auto dazhaoMusic = CallFunc::create(CC_CALLBACK_0(TaoTieCard::daHitMusic, this));
-    this->cardSprite->runAction(Sequence::create(move,moveWait,dazhao,maxHit,dazhaoWait,movaFanhui,moveWait,appear,recordBlock,NULL));
+    
+    auto afterAction = CallFunc::create(CC_CALLBACK_0(Card::afterAnimation,this,info,this));
+    this->cardSprite->runAction(Sequence::create(move,moveWait,dazhao,maxHit,dazhaoWait,movaFanhui,moveWait,myNuqi,afterAction,appear,recordBlock,NULL));
     this->cardSprite->runAction(Sequence::create(moveWait,dazhaoMusic,NULL));
     this->fPro->hpPro->setVisible(false);
     this->fPro->hpProBg->setVisible(false);
@@ -226,11 +232,13 @@ void TaoTieCard::daHitBlock(Vector<OneRecord *> affectRecordArray) {
         if (affectRecordArray.at(i)->isShanBi == true) {
             beHitCard->animationShanBi();
         }else {
-            this->decreaseHP(beHitCard, affectRecordArray.at(i)->hitValue);
-            this->decreaseNuQi(beHitCard, 1,false);
+            beHitCard->HP = affectRecordArray.at(i)->currentHP;
+            beHitCard->MaxHP = affectRecordArray.at(i)->maxHP;
+            this->hpAppear(beHitCard, affectRecordArray.at(i)->hitValue, affectRecordArray.at(i)->currentHP);
+            this->nuQiAppear(beHitCard, affectRecordArray.at(i)->nuQiChange);
         }
     }
-        this->decreaseNuQi(this, 3,true);
+       // this->decreaseNuQi(this, 3,true);
     
 }
 
@@ -258,8 +266,8 @@ void TaoTieCard::moveAnimation(Vec2 target) {
     this->cardSprite->runAction(animateActionWalk);
 }
 
-void TaoTieCard::nuQiManage() {
-    this->addNuQi(this, 1);
+void TaoTieCard::nuQiManage(OneRecord *info) {
+    this->nuQiAppear(this, info->nuQiChange);
 }
 
 //void TaoTieCard::hitAction() {
@@ -288,23 +296,34 @@ void TaoTieCard::recordHit() {
 }
 void TaoTieCard::hitBlock(Vector<OneRecord *> affectRecordArray) {
 
-    
-    auto beHitCardRecord = affectRecordArray.at(0);
-    if (beHitCardRecord->isShanBi == true) {
-        
-        beHitCardRecord->card->animationShanBi();
-    }else {
-        if (beHitCardRecord->card->HP > 0) {
-            
-            
-            this->decreaseHP(beHitCardRecord->card, beHitCardRecord->hitValue);
-
-            this->decreaseNuQi(beHitCardRecord->card, 1,false);
-            this->xiXue = beHitCardRecord->hitValue;
-            this->suckBlood(this);
-            
+    for (int i = 0 ; i < affectRecordArray.size(); i++) {
+        auto beHitCard = affectRecordArray.at(i)->card;
+        if (affectRecordArray.at(i)->isShanBi == true) {
+            beHitCard->animationShanBi();
+        }else {
+            beHitCard->HP = affectRecordArray.at(i)->currentHP;
+            beHitCard->MaxHP = affectRecordArray.at(i)->maxHP;
+            this->hpAppear(beHitCard, affectRecordArray.at(i)->hitValue, affectRecordArray.at(i)->currentHP);
+            this->nuQiAppear(beHitCard, affectRecordArray.at(i)->nuQiChange);
         }
     }
+    
+//    auto beHitCardRecord = affectRecordArray.at(0);
+//    if (beHitCardRecord->isShanBi == true) {
+//        
+//        beHitCardRecord->card->animationShanBi();
+//    }else {
+//        if (beHitCardRecord->card->HP > 0) {
+//            
+//            
+//            this->decreaseHP(beHitCardRecord->card, beHitCardRecord->hitValue);
+//
+//            this->decreaseNuQi(beHitCardRecord->card, 1,false);
+//            this->xiXue = beHitCardRecord->hitValue;
+//            this->suckBlood(this);
+//            
+//        }
+//    }
 
 }
 

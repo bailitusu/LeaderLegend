@@ -16,7 +16,7 @@ class JiuXiaoLongYin : public DragonSkill {
 public:
     CREATE_FUNC(JiuXiaoLongYin);
     virtual bool init();
-    virtual void runSkill(FightPlayer* player);
+    virtual void runSkill(FightPlayer* player, DragonData* data);
 };
 
 #endif /* JiuXiaoLongYin_hpp */

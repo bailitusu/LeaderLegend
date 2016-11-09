@@ -32,7 +32,9 @@ public:
 //    FightMap* rightMap;
     virtual bool onTouchBegan(Touch *touch, Event *unused_event);
     Vector<SetRoleData*> roleData;
+    std::string fightInfo;
     bool startFight;
+    void startGame(float dur);
 };
 
 #endif /* FightScene_h */
