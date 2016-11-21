@@ -11,6 +11,7 @@
 
 #include <stdio.h>
 #include "cocos2d.h"
+//#include "StandMapCellInterface.h"
 #include "StandMapCellInterface.h"
 USING_NS_CC;
 class MapCell : public  Node{

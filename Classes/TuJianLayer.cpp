@@ -37,19 +37,20 @@ bool TuJianLayer::init() {
 }
 
 void TuJianLayer::initTuJianLayer() {
-    auto background = Sprite::create("tuJianLayerBg.jpg");
-    CommonFunc::setSpriteSize(background, screenSize.width);
+    auto background = Sprite::create("buzhenBg2.jpg");//tuJianLayerBg.jpg
+   // CommonFunc::setSpriteSize(background, screenSize.width);
+    CommonFunc::setShowAllSpriteSize(background, screenSize.width, screenSize.height);
     background->setPosition(Vec2(screenSize.width/2, screenSize.height/2));
     this->addChild(background,-100);
 
-    this->initOneCardData("houyi", "xiaohei_big.jpg");
-    this->initOneCardData("change", "bingnv_big.jpg");
-    this->initOneCardData("taotie", "panda_big.jpg");
-    this->initOneCardData("xingtian", "jiansheng_big.jpg");
-    this->initOneCardData("xuanwu", "niutou_big.jpg");
-    this->initOneCardData("fengbo", "zhousi_big.jpg");
-    this->initOneCardData("fenghou", "gugong_big.jpg");
-    this->initOneCardData("suanyu", "fengxing_big.jpg");
+    this->initOneCardData("houyi","后羿", "xiaohei_big.jpg");
+    this->initOneCardData("change","嫦娥", "bingnv_big.jpg");
+    this->initOneCardData("taotie","饕餮", "panda_big.jpg");
+    this->initOneCardData("xingtian","刑天", "jiansheng_big.jpg");
+    this->initOneCardData("xuanwu","玄武", "niutou_big.jpg");
+    this->initOneCardData("fengbo","风伯", "zhousi_big.jpg");
+    this->initOneCardData("fenghou","风后", "gugong_big.jpg");
+    this->initOneCardData("suanyu","酸与", "fengxing_big.jpg");
     
 
     
@@ -57,26 +58,51 @@ void TuJianLayer::initTuJianLayer() {
     this->initShuXingLabel();
     this->changeLabelText();
     this->initTabelView();
+    
+    this->backBtnUI();
+    
+}
+
+void TuJianLayer::backBtnUI() {
+    
+    ui::Button *btn = ui::Button::create("fanhuijian.png");
+    
+    btn->setPressedActionEnabled(true);
+    btn->setPosition(Vec2(screenSize.width*0.96, screenSize.height*0.92));
+    btn->addTouchEventListener(CC_CALLBACK_2(TuJianLayer::backBtn, this));
+    btn->setScale(screenSize.width*0.05/btn->getBoundingBox().size.width);
+    
+    // btn = CommonFunc::initButton(btn,CC_CALLBACK_2(FuBenLayer::backBtn, this) , screenSize.width*0.05, Vec2(screenSize.width*0.96, screenSize.height*0.92));
+    this->addChild(btn,200);
+}
+
+void TuJianLayer::backBtn(cocos2d::Ref *sender, ui::Widget::TouchEventType type) {
+    if (type == ui::Widget::TouchEventType::ENDED) {
+        ((Scene*)this->getParent())->onExit();
+        Director::getInstance()->popScene();
+    }
+    
+    
 }
 
 void TuJianLayer::initTabelView() {
     this->allInfoTabelView = TableView::create(this, Size(160,280));
     this->allInfoTabelView->setDelegate(this);
     this->allInfoTabelView->setDirection(ScrollView::Direction::VERTICAL);
-    this->allInfoTabelView->setPosition(screenSize.width-170,screenSize.height-325);
+    this->allInfoTabelView->setPosition(screenSize.width-190,screenSize.height/2-this->allInfoTabelView->getBoundingBox().size.height/2);
     this->allInfoTabelView->setVerticalFillOrder(TableView::VerticalFillOrder::TOP_DOWN);
     
     Sprite* tvBgSp = Sprite::create("tuJianBg.png");
-    CommonFunc::setShowAllSpriteSize(tvBgSp, 180, 340);
+    CommonFunc::setShowAllSpriteSize(tvBgSp, 180, 320);
     tvBgSp->setAnchorPoint(Vec2(0, 0));
-    tvBgSp->setPosition(screenSize.width-190,screenSize.height-350);
+    tvBgSp->setPosition(screenSize.width-210,screenSize.height/2-160);
     this->addChild(tvBgSp,90);
     this->addChild(this->allInfoTabelView,100);
     this->oldNum = 0;
 }
 
 Size TuJianLayer::tableCellSizeForIndex(cocos2d::extension::TableView *table, ssize_t idx) {
-    return Size(140,80);
+    return Size(140,70);
 }
 
 void TuJianLayer::scrollViewDidScroll(cocos2d::extension::ScrollView *view) {
@@ -113,57 +139,69 @@ TableViewCell* TuJianLayer::tableCellAtIndex(cocos2d::extension::TableView *tabl
     if (!cell) {
         //创建一个新的cell
         cell = new TableViewCell();
-        cell->setContentSize(Size(140, 80));
+        cell->setContentSize(Size(140, 70));
         
         //加入到自动释放池中
         cell->autorelease();
         
-        Sprite* cellBgSp = Sprite::create("tuJianCellBg.png");
-        CommonFunc::setShowAllSpriteSize(cellBgSp, 140, 80);
+        Sprite* cellBgSp = Sprite::create("dragonSkillInfoBg.jpg");
+        CommonFunc::setShowAllSpriteSize(cellBgSp, 140, 60);
         cellBgSp->setAnchorPoint(Vec2(0, 0));
         cellBgSp->setPosition(0,0);
         cellBgSp->setTag(10);
         cell->addChild(cellBgSp,200);
       
         Sprite *tjSp = Sprite::create(this->allDataArray.at(idx)->cardName+"_tx.jpg");
-        CommonFunc::setSpriteSize(tjSp, 40);
+        CommonFunc::setSpriteSize(tjSp, 55);
 
-        tjSp->setPosition(Vec2(35,cell->getBoundingBox().size.height/2));
+        tjSp->setPosition(Vec2(30,cell->getBoundingBox().size.height/2-4));
         tjSp->setTag(20);
         cell->addChild(tjSp,250);
         
       
-        Label *label = Label::createWithTTF(this->allDataArray.at(idx)->cardName, "fonts/楷体.ttf", 16);
-    
-        label->setAnchorPoint(Vec2(0, 0.5));
-        label->setPosition(58,cell->getBoundingBox().size.height/2);
+        Label *labelDaInfo = Label::createWithTTF(this->allDataArray.at(idx)->cardLabelName, "fonts/fangzhengjingheijianti.ttf", 18);
+        labelDaInfo->setTextColor(tuJianTextColor);
+        labelDaInfo->setDimensions(cell->getBoundingBox().size.width-70, 20);
+        labelDaInfo->setAnchorPoint(Vec2(0, 0.5));
+        labelDaInfo->setAlignment(TextHAlignment::LEFT);
+        labelDaInfo->setPosition(60,cell->getBoundingBox().size.height/2+10);
         
-
+        Label *labelXiaoInfo = Label::createWithTTF("人物简介", "fonts/fangzhengjingheijianti.ttf", 14);
+        labelXiaoInfo->setTextColor(tuJianInfoColor);
+        labelXiaoInfo->setDimensions(cell->getBoundingBox().size.width-70, 40);
+        labelXiaoInfo->setLineBreakWithoutSpace(true);
+        labelXiaoInfo->setAnchorPoint(Vec2(0, 1));
+        labelXiaoInfo->setAlignment(TextHAlignment::LEFT);
+        labelXiaoInfo->setPosition(60,cell->getBoundingBox().size.height/2-8);
         //为标签做一个标记,以便于在cell在重用队列中被取出来时，能够获取的该label并重置label信息
-        label->setTag(30);
+        labelXiaoInfo->setTag(30);
+        labelDaInfo->setTag(40);
         //将标签加入到cell中
-        cell->addChild(label,300);
+        cell->addChild(labelDaInfo,300);
+        cell->addChild(labelXiaoInfo,300);
 
     }
     else
     {
-
-        Label *label = (Label*)cell->getChildByTag(30);
-        label->setString(this->allDataArray.at(idx)->cardName);
+        Label *labelXiao = (Label*)cell->getChildByTag(30);
+        labelXiao->setString("人物简介");
+        
+        Label *label = (Label*)cell->getChildByTag(40);
+        label->setString(this->allDataArray.at(idx)->cardLabelName);
         
         Sprite* tjSp = (Sprite*)cell->getChildByTag(20);
         tjSp->removeFromParentAndCleanup(true);
         tjSp = Sprite::create(this->allDataArray.at(idx)->cardName+"_tx.jpg");
-        CommonFunc::setSpriteSize(tjSp, 40);
+        CommonFunc::setSpriteSize(tjSp, 55);
         
-        tjSp->setPosition(Vec2(35,cell->getBoundingBox().size.height/2));
+        tjSp->setPosition(Vec2(30,cell->getBoundingBox().size.height/2-4));
         tjSp->setTag(20);
         cell->addChild(tjSp,250);
         
         Sprite* cellBgSp = (Sprite*)cell->getChildByTag(10);
         cellBgSp->removeFromParentAndCleanup(true);
-        cellBgSp = Sprite::create("tuJianCellBg.png");
-        CommonFunc::setShowAllSpriteSize(cellBgSp, 140, 80);
+        cellBgSp = Sprite::create("dragonSkillInfoBg.jpg");
+        CommonFunc::setShowAllSpriteSize(cellBgSp, 140, 60);
         cellBgSp->setAnchorPoint(Vec2(0, 0));
         cellBgSp->setPosition(0,0);
         cellBgSp->setTag(10);
@@ -185,11 +223,12 @@ ssize_t TuJianLayer::numberOfCellsInTableView(cocos2d::extension::TableView *tab
 }
 
 
-void TuJianLayer::initOneCardData(std::string cardName, std::string bigImage) {
+void TuJianLayer::initOneCardData(std::string cardName,std::string cardLabelName,std::string bigImage) {
     TuJianData* tjData = TuJianData::create();
    // tjData->tuJianSp = Sprite::create("smallImage");
     tjData->bigImage = bigImage;
     tjData->cardName = cardName;
+    tjData->cardLabelName = cardLabelName;
     tjData->xiaoZhaoImage = cardName+"_ss.jpg";
     tjData->daZhaoImage = cardName+"_bs.jpg";
     this->allDataArray.pushBack(tjData);
@@ -267,7 +306,7 @@ void TuJianLayer::changeDetailUIInfo(TuJianData *data) {
 void TuJianLayer::initDetailUI(TuJianData* data) {
     infoLayer = Layer::create();
     infoLayer->setContentSize(Size(screenSize.width*0.629, screenSize.height*0.8));
-    infoLayer->setPosition(20,screenSize.height-infoLayer->getBoundingBox().size.height-10);
+    infoLayer->setPosition(25,screenSize.height/2-infoLayer->getBoundingBox().size.height/2);
     this->addChild(infoLayer,25);
     
  //   printf("%f", infoLayer->getPosition().y);
@@ -308,35 +347,41 @@ void TuJianLayer::initDetailUI(TuJianData* data) {
     
     this->xiaoZhaoSp = Sprite::create(data->xiaoZhaoImage);
     CommonFunc::setSpriteSize(this->xiaoZhaoSp, 40);
-    this->xiaoZhaoSp->setPosition(this->appearCard->cardSprite->getPosition().x-20,this->appearCard->cardSprite->getPosition().y-90);
+    this->xiaoZhaoSp->setPosition(this->appearCard->cardSprite->getPosition().x-20,this->appearCard->cardSprite->getPosition().y-100);
     infoLayer->addChild(this->xiaoZhaoSp,150);
     
     this->daZhaoSp = Sprite::create(data->daZhaoImage);
     CommonFunc::setSpriteSize(this->daZhaoSp, 40);
-    this->daZhaoSp->setPosition(this->xiaoZhaoSp->getPosition().x,this->xiaoZhaoSp->getPosition().y-50);
+    this->daZhaoSp->setPosition(this->xiaoZhaoSp->getPosition().x,this->xiaoZhaoSp->getPosition().y-60);
     infoLayer->addChild(this->daZhaoSp,150);
     
-    this->xiaoZhaoLabel = CommonFunc::createLabel("", Vec2(xiaoZhaoSp->getPosition().x+80,xiaoZhaoSp->getPosition().y));
+    this->xiaoZhaoLabel = CommonFunc::createLabel("", Vec2(xiaoZhaoSp->getPosition().x+97,xiaoZhaoSp->getPosition().y-2));
+    this->xiaoZhaoLabel->setDimensions(infoLayer->getBoundingBox().size.width/3, 40);
   //  this->xiaoZhaoLabel->setContentSize(Size(60, 20));
+    this->xiaoZhaoLabel->setAlignment(TextHAlignment::LEFT);
+    this->xiaoZhaoLabel->setLineBreakWithoutSpace(true);
     infoLayer->addChild(this->xiaoZhaoLabel,100);
     
-    this->daZhaoLabel = CommonFunc::createLabel("", Vec2(daZhaoSp->getPosition().x+80,daZhaoSp->getPosition().y));
+    this->daZhaoLabel = CommonFunc::createLabel("", Vec2(daZhaoSp->getPosition().x+97,daZhaoSp->getPosition().y-2));
+    this->daZhaoLabel->setDimensions(infoLayer->getBoundingBox().size.width/3, 40);
+    this->daZhaoLabel->setLineBreakWithoutSpace(true);
+    this->daZhaoLabel->setAlignment(TextHAlignment::LEFT);
     infoLayer->addChild(this->daZhaoLabel,100);
     
 }
 
 void TuJianLayer::initShuXingLabel() {
     
-    infoLayer->addChild(CommonFunc::createLabel("武力:", Vec2(this->appearCard->cardSprite->getPosition().x+80,infoLayer->getBoundingBox().size.height-50)),100);
-    infoLayer->addChild(CommonFunc::createLabel("统帅:", Vec2(this->appearCard->cardSprite->getPosition().x+80,infoLayer->getBoundingBox().size.height-70)),100);
-    infoLayer->addChild(CommonFunc::createLabel("智力:", Vec2(this->appearCard->cardSprite->getPosition().x+80,infoLayer->getBoundingBox().size.height-90)),100);
-    infoLayer->addChild(CommonFunc::createLabel("敏捷:", Vec2(this->appearCard->cardSprite->getPosition().x+80,infoLayer->getBoundingBox().size.height-110)),100);
-    infoLayer->addChild(CommonFunc::createLabel("运气:", Vec2(this->appearCard->cardSprite->getPosition().x+80,infoLayer->getBoundingBox().size.height-130)),100);
-    this->wuLiLabel = CommonFunc::createLabel("", Vec2(this->appearCard->cardSprite->getPosition().x+120, infoLayer->getBoundingBox().size.height-50));
-    this->tongShuaiLabel = CommonFunc::createLabel("", Vec2(this->appearCard->cardSprite->getPosition().x+120, infoLayer->getBoundingBox().size.height-70));
-    this->zhiLiLabel = CommonFunc::createLabel("", Vec2(this->appearCard->cardSprite->getPosition().x+120, infoLayer->getBoundingBox().size.height-90));
-    this->minJieLabel = CommonFunc::createLabel("", Vec2(this->appearCard->cardSprite->getPosition().x+120, infoLayer->getBoundingBox().size.height-110));
-    this->yunQiLabel = CommonFunc::createLabel("", Vec2(this->appearCard->cardSprite->getPosition().x+120, infoLayer->getBoundingBox().size.height-130));
+    infoLayer->addChild(CommonFunc::createTextInfoLabel("武力:", Vec2(this->appearCard->cardSprite->getPosition().x+90,infoLayer->getBoundingBox().size.height-50)),100);
+    infoLayer->addChild(CommonFunc::createTextInfoLabel("统帅:", Vec2(this->appearCard->cardSprite->getPosition().x+90,infoLayer->getBoundingBox().size.height-70)),100);
+    infoLayer->addChild(CommonFunc::createTextInfoLabel("智力:", Vec2(this->appearCard->cardSprite->getPosition().x+90,infoLayer->getBoundingBox().size.height-90)),100);
+    infoLayer->addChild(CommonFunc::createTextInfoLabel("敏捷:", Vec2(this->appearCard->cardSprite->getPosition().x+90,infoLayer->getBoundingBox().size.height-110)),100);
+    infoLayer->addChild(CommonFunc::createTextInfoLabel("运气:", Vec2(this->appearCard->cardSprite->getPosition().x+90,infoLayer->getBoundingBox().size.height-130)),100);
+    this->wuLiLabel = CommonFunc::createLabel("", Vec2(this->appearCard->cardSprite->getPosition().x+130, infoLayer->getBoundingBox().size.height-50));
+    this->tongShuaiLabel = CommonFunc::createLabel("", Vec2(this->appearCard->cardSprite->getPosition().x+130, infoLayer->getBoundingBox().size.height-70));
+    this->zhiLiLabel = CommonFunc::createLabel("", Vec2(this->appearCard->cardSprite->getPosition().x+130, infoLayer->getBoundingBox().size.height-90));
+    this->minJieLabel = CommonFunc::createLabel("", Vec2(this->appearCard->cardSprite->getPosition().x+130, infoLayer->getBoundingBox().size.height-110));
+    this->yunQiLabel = CommonFunc::createLabel("", Vec2(this->appearCard->cardSprite->getPosition().x+130, infoLayer->getBoundingBox().size.height-130));
     infoLayer->addChild(this->wuLiLabel,100);
     infoLayer->addChild(this->tongShuaiLabel,100);
     infoLayer->addChild(this->zhiLiLabel,100);
@@ -362,6 +407,17 @@ void TuJianLayer::changeLabelText() {
         sprintf(tempText, "%d",(int)this->appearCard->yunQi);
         this->yunQiLabel->setString(tempText);
         
+        if (this->appearCard->xiaoZhaoInfo.size() <= 24) {
+            this->xiaoZhaoLabel->setPosition(Vec2(xiaoZhaoSp->getPosition().x+97,xiaoZhaoSp->getPosition().y-10));
+        }else {
+            this->xiaoZhaoLabel->setPosition(Vec2(xiaoZhaoSp->getPosition().x+97,xiaoZhaoSp->getPosition().y-2));
+        }
+        
+        if (this->appearCard->daZhaoInfo.size() <= 24) {
+            this->daZhaoLabel->setPosition(Vec2(daZhaoSp->getPosition().x+97,daZhaoSp->getPosition().y-10));
+        }else {
+            this->daZhaoLabel->setPosition(Vec2(daZhaoSp->getPosition().x+97,daZhaoSp->getPosition().y-2));
+        }
         this->xiaoZhaoLabel->setString(this->appearCard->xiaoZhaoInfo);
         this->daZhaoLabel->setString(this->appearCard->daZhaoInfo);
         

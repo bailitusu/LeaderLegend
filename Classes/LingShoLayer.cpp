@@ -7,12 +7,12 @@
 //
 
 #include "LingShoLayer.h"
-#include "Dragon/Dragon.h"
+#include "Dragon.h"
 #include "CommonFunc.h"
 #include "Setting.h"
 #include "SkillScrollLayer.h"
 #include "DragonSkill.h"
-#include "Bag/Bag.h"
+#include "Bag.h"
 #include "LingShouInfoLayer.h"
 
 #include "AllArmyGuWu.h"
@@ -56,6 +56,30 @@ void LingShoLayer::initLingShoLayer() {
     this->initShuXingLabel();
     this->initTakeGezi();
     this->initAllGezi();
+    
+    this->backBtnUI();
+}
+
+void LingShoLayer::backBtnUI() {
+    
+    ui::Button *btn = ui::Button::create("fanhuijian.png");
+    
+    btn->setPressedActionEnabled(true);
+    btn->setPosition(Vec2(screenSize.width*0.96, screenSize.height*0.92));
+    btn->addTouchEventListener(CC_CALLBACK_2(LingShoLayer::backBtn, this));
+    btn->setScale(screenSize.width*0.05/btn->getBoundingBox().size.width);
+    
+    // btn = CommonFunc::initButton(btn,CC_CALLBACK_2(FuBenLayer::backBtn, this) , screenSize.width*0.05, Vec2(screenSize.width*0.96, screenSize.height*0.92));
+    this->addChild(btn,200);
+}
+
+void LingShoLayer::backBtn(cocos2d::Ref *sender, ui::Widget::TouchEventType type) {
+    if (type == ui::Widget::TouchEventType::ENDED) {
+        ((Scene*)this->getParent())->onExit();
+        Director::getInstance()->popScene();
+    }
+    
+    
 }
 
 //void LingShoLayer::initTaoZi() {
@@ -151,7 +175,7 @@ void LingShoLayer::initShuXingLabel() {
 }
 
 Label* LingShoLayer::createLabel(std::string text,Vec2 positon) {
-    auto label = Label::createWithTTF(text, "fonts/方正经黑简体.ttf", 19);
+    auto label = Label::createWithTTF(text, "fonts/fangzhengjingheijianti.ttf", 19);
     label->setContentSize(Size(60, 20));
     label->setTextColor(dragonFontColor);
     label->setPosition(positon);

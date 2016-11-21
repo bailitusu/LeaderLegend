@@ -29,6 +29,10 @@ public:
     void readEnemyData();
     void backBtnUI();
     void backBtn(cocos2d::Ref *sender, ui::Widget::TouchEventType type);
+    virtual bool onTouchBegan(Touch *touch, Event *unused_event);
+    virtual void onTouchMoved(Touch *touch, Event *unused_event);
+    virtual void onTouchEnded(Touch *touch, Event *unused_event);
+    Sprite* background;
     //virtual void onExit();
 };
 

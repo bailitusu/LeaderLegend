@@ -40,6 +40,8 @@ public:
     std::string battleID;
     std::string player1;
     std::string player2;
+    void backBtnUI();
+    void backBtn(cocos2d::Ref *sender, ui::Widget::TouchEventType type);
 };
 
 #endif /* PvpMatchLayer_h */

@@ -25,6 +25,7 @@ public:
     std::string cardName;
     std::string xiaoZhaoImage;
     std::string daZhaoImage;
+    std::string cardLabelName;
     
 };
 
@@ -36,7 +37,7 @@ public:
     CREATE_FUNC(TuJianLayer);
     Vector<TuJianData*> allDataArray;
     void initTuJianLayer();
-    void initOneCardData(std::string cardName, std::string bigImage);
+    void initOneCardData(std::string cardName,std::string cardLabelName,std::string bigImage);
     Sprite* bigSprite;
     Sprite* xiaoZhaoSp;
     Sprite* daZhaoSp;
@@ -65,6 +66,8 @@ public:
     virtual TableViewCell* tableCellAtIndex(TableView *table, ssize_t idx);
     virtual ssize_t numberOfCellsInTableView(TableView *table);
 
+    void backBtnUI();
+    void backBtn(cocos2d::Ref *sender, ui::Widget::TouchEventType type);
 };
 
 #endif /* TuJianLayer_hpp */

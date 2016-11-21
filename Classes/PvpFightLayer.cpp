@@ -12,8 +12,8 @@
 #include "MapCell.h"
 #include "Setting.h"
 #include "FightProgress.h"
-#include "Dragon/Dragon.h"
-#include "Setting/ActionWait.h"
+#include "Dragon.h"
+#include "ActionWait.h"
 #include "FightNetwork.h"
 #include "ReadRecordFight.h"
 #include "PvpMatchLayer.h"
@@ -52,7 +52,7 @@ void PvpFightLayer::initPvpLayer() {
     this->player->fpName = "player";
     this->player->fightLayer = this;
     this->player->initMap("leftmap.png", "left", Size(300,300));
-    this->player->fMap->setPosition(10+origin.x, 40+origin.y);
+    this->player->fMap->setPosition(-2+origin.x, 56+origin.y);
     this->player->fMap->setLocalZOrder(300);
     this->player->initDragon("dragon_left.png");
     this->player->fDragon->dragonSprite->setPosition(150+origin.x,screenSize.height+origin.y);
@@ -61,8 +61,8 @@ void PvpFightLayer::initPvpLayer() {
     this->playerEnemy->fpName = "enemyPlayer";
     this->playerEnemy->fightLayer = this;
     this->playerEnemy->initMap("rightmap.png", "right", Size(300,300));
-    this->playerEnemy->fMap->setPosition(screenSize.width-(this->playerEnemy->fMap->getBoundingBox().size.width+10+origin.x),40+origin.y);
-    this->playerEnemy->fMap->setLocalZOrder(300);
+    this->playerEnemy->fMap->setPosition(screenSize.width-(this->playerEnemy->fMap->getBoundingBox().size.width+5+origin.x),50+origin.y);
+   // this->playerEnemy->fMap->setLocalZOrder(300);
     this->playerEnemy->initDragon("dragon_right.png");
     this->playerEnemy->fDragon->dragonSprite->setPosition(screenSize.width-150+origin.x,screenSize.height+origin.y);
     
@@ -73,7 +73,7 @@ void PvpFightLayer::initPvpLayer() {
     this->player->retain();
     this->playerEnemy->retain();
     
-    this->background = Sprite::create("uv界面测试(1).png");//bbg_arena.png
+    this->background = Sprite::create("duizhanjiemian.png");//bbg_arena.png
     CommonFunc::setSpriteSize(this->background, screenSize.width);
     this->background->setPosition(Vec2(screenSize.width/2+origin.x, screenSize.height/2+origin.y));
     this->background->setLocalZOrder(-100);
@@ -85,13 +85,30 @@ void PvpFightLayer::initPvpLayer() {
     this->addChild(this->chouTiBtn,200);
     
     this->initChouTiLayer();
-    this->roundLabel = Label::createWithTTF("", "fonts/楷体.ttf", 19);
-    this->roundLabel->setContentSize(Size(80,30));
+    this->roundLabel = Label::createWithTTF("", "fonts/fangzhengjingheijianti.ttf", 42);
+    this->roundLabel->setSystemFontSize(42);
+    this->roundLabel->setDimensions(80, 40);
     this->roundLabel->setAlignment(TextHAlignment::CENTER);
-    this->roundLabel->setTextColor(Color4B(0, 0, 255, 255));
-    this->roundLabel->setPosition(Vec2(screenSize.width/2+origin.x, screenSize.height-20));
-    this->addChild(this->roundLabel,100);
+    this->roundLabel->setTextColor(Color4B(215, 215, 215, 255));
+    this->roundLabel->enableBold();
+    this->roundLabel->setPosition(Vec2(screenSize.width/2+origin.x, screenSize.height-28));
+   // this->roundLabel->setLineBreakWithoutSpace(true);
+    this->addChild(this->roundLabel,150);
     
+    this->isRounding = false;
+    this->roundLabel->setString("30");
+    this->timeNum = 30;
+    schedule(schedule_selector(PvpFightLayer::daoJiShi), 1.0);
+    
+    Sprite* timeZhuangShiSp = Sprite::create("zhuangshi.png");
+    CommonFunc::setSpriteSize(timeZhuangShiSp, 190);
+    timeZhuangShiSp->setPosition(screenSize.width/2,screenSize.height-timeZhuangShiSp->getBoundingBox().size.height/2);
+    this->addChild(timeZhuangShiSp,-50);
+    
+    Sprite* timeBiaoDiSp = Sprite::create("biaodi.png");
+    CommonFunc::setSpriteSize(timeBiaoDiSp, 180);
+    timeBiaoDiSp->setPosition(screenSize.width/2,screenSize.height-timeBiaoDiSp->getBoundingBox().size.height/2);
+    this->addChild(timeBiaoDiSp,-70);
 }
 
 void PvpFightLayer::chouTibtnClick(cocos2d::Ref *sender, ui::Widget::TouchEventType type) {
@@ -121,7 +138,7 @@ void PvpFightLayer::initChouTiLayer() {
     this->chouTiLayer = Layer::create();
     this->chouTiLayer->setContentSize(Size(screenSize.width*0.46, screenSize.height*0.75));
     this->chouTiLayer->setPosition(Vec2(screenSize.width, screenSize.height/2-this->chouTiLayer->getBoundingBox().size.height/2));
-    this->addChild(chouTiLayer,100);
+    this->addChild(chouTiLayer,150);
     
     Sprite* bg = Sprite::create("buzhenBg2.jpg");
 
@@ -142,7 +159,9 @@ void PvpFightLayer::initChouTiLayer() {
     }
     
     this->buShuOverBtn = ui::Button::create("classbtn.png");
-    CommonFunc::initButton(this->buShuOverBtn, CC_CALLBACK_2(PvpFightLayer::buShubtnClick, this), screenSize.width/8, Vec2(screenSize.width*0.06, screenSize.height*0.075));
+    CommonFunc::initButton(this->buShuOverBtn, CC_CALLBACK_2(PvpFightLayer::buShubtnClick, this), screenSize.width/8, Vec2(screenSize.width*0.22, screenSize.height*0.075));
+    this->buShuOverBtn->setTitleFontSize(8);
+    this->buShuOverBtn->setTitleAlignment(TextHAlignment::RIGHT);
     this->buShuOverBtn->setTitleText("部署完成");
     this->buShuOverBtn->setTitleColor(Color3B(255, 255, 255));
     this->addChild(this->buShuOverBtn,100);
@@ -158,7 +177,7 @@ void PvpFightLayer::buShubtnClick(cocos2d::Ref *sender, ui::Widget::TouchEventTy
             
             this->chouTiLayer->runAction(moveIn);
         }
-        this->chouTiBtn->setTouchEnabled(false);
+       // this->chouTiBtn->setTouchEnabled(false);
         
         rapidjson::Document doc;
         doc.SetObject();
@@ -193,7 +212,13 @@ void PvpFightLayer::buShubtnClick(cocos2d::Ref *sender, ui::Widget::TouchEventTy
         doc.Accept(writer);
         
         FightNetwork* net = FightNetwork::GetInstance();
-        printf("%s/n",buffer.GetString());
+       // printf("%s/n",buffer.GetString());
+       // this->buShuOverBtn->setTitleColor(Color3B(70, 80, 89));
+        this->buShuOverBtn->setEnabled(false);
+        this->roundLabel->setSystemFontSize(18);
+        this->roundLabel->setPosition(Vec2(screenSize.width/2+origin.x, screenSize.height-40));
+        this->roundLabel->setString("请等待");
+        unschedule(schedule_selector(PvpFightLayer::daoJiShi));
         net->createPostHttp(PvpBushuPostUrl, this, httpresponse_selector(PvpFightLayer::buShuResponse), buffer.GetString());
     }
 
@@ -219,11 +244,30 @@ void PvpFightLayer::buShuResponse(cocos2d::network::HttpClient *sender, cocos2d:
 //
 //            }
           //  this->checkFightOk(10);
+            
         }else {
+           // this->buShuOverBtn->setTitleColor(Color3B(255, 255, 255));
+            this->buShuOverBtn->setEnabled(true);
             std::string message = doc["message"].GetString();
              printf("-------%s--------",message.c_str());
         }
+    }else {
+       // this->buShuOverBtn->setTitleColor(Color3B(255, 255, 255));
+        this->buShuOverBtn->setEnabled(true);
     }
+}
+
+void PvpFightLayer::daoJiShi(float dur) {
+    this->timeNum--;
+    char rnum[30] = {0};
+    sprintf(rnum, "%d",this->timeNum);
+    this->roundLabel->setString(rnum);
+    if (this->timeNum < 1) {
+        unschedule(schedule_selector(PvpFightLayer::daoJiShi));
+        this->buShubtnClick(this->buShuOverBtn, ui::Widget::TouchEventType::BEGAN);
+        
+    }
+
 }
 
 void PvpFightLayer::checkFightOk(float dur) {
@@ -255,6 +299,8 @@ void PvpFightLayer::checkFightResponse(cocos2d::network::HttpClient *sender, coc
         }
         int code = doc["code"].GetInt();
         if (code == 0) {
+            this->buShuOverBtn->setOpacity(0);
+
           //  unschedule(schedule_selector(PvpFightLayer::checkFightOk));
             for (int i = 0; i < this->myTakeRoleData.size(); i++) {
                 if(this->myTakeRoleData.at(i)->card->cardSprite != NULL) {
@@ -273,14 +319,19 @@ void PvpFightLayer::checkFightResponse(cocos2d::network::HttpClient *sender, coc
             rf->currentBigIndex = -1;
             rf->currentDragonIndex = 0;
             rf->currentJson = infoStr.c_str();
+            
+            this->roundNum++;
+            char rnum[10] = {0};
+            this->isRounding = true;
+            sprintf(rnum, "第%d回合",this->roundNum);
+            this->roundLabel->setSystemFontSize(18);
+            this->roundLabel->setPosition(Vec2(screenSize.width/2+origin.x, screenSize.height-40));
+            this->roundLabel->setString(rnum);
+            
             rf->gameOverLabel = this->roundLabel;
             rf->readPlayerInfo();
             rf->readBigNextRecord();
-            this->roundNum++;
-            char rnum[10] = {0};
-  
-            sprintf(rnum, "第%d回合",this->roundNum);
-            this->roundLabel->setString(rnum);
+
         }else {
             scheduleOnce(schedule_selector(PvpFightLayer::checkFightOk), 1.5);
             std::string message = doc["message"].GetString();
@@ -296,9 +347,21 @@ void PvpFightLayer::checkFightResponse(cocos2d::network::HttpClient *sender, coc
 
 void PvpFightLayer::roundOver() {
     this->chouTiBtn->setTouchEnabled(true);
+    this->player->fMap->setLocalZOrder(300);
+  //  this->buShuOverBtn->setTitleColor(Color3B(255, 255, 255));
+    this->buShuOverBtn->setEnabled(true);
+    this->buShuOverBtn->setOpacity(255);
+    this->isRounding = false;
+    this->roundLabel->setSystemFontSize(42);
+    this->roundLabel->setPosition(Vec2(screenSize.width/2+origin.x, screenSize.height-28));
+    this->roundLabel->setString("30");
+    this->timeNum = 30;
+    schedule(schedule_selector(PvpFightLayer::daoJiShi), 1.0);
+    
 }
 
 void PvpFightLayer::gameOver() {
+    
     scheduleOnce(schedule_selector(PvpFightLayer::enterMatchScene), 1.0);
 }
 
@@ -321,134 +384,142 @@ Vec2 PvpFightLayer::countCardOrigonPoint(Card *card, FightPlayer *tempPlayer) {
 bool PvpFightLayer::onTouchBegan(cocos2d::Touch *touch, cocos2d::Event *unused_event) {
     auto touchLocation = touch->getLocationInView();
     touchLocation = Director::getInstance()->convertToGL(touchLocation);
-    
-    for (int i = 0; i < this->myTakeRoleData.size(); i++) {
-        auto xiaoCardPoint = Vec2(this->myTakeRoleData.at(i)->xiaoSp->getPosition().x-this->myTakeRoleData.at(i)->xiaoSp->getBoundingBox().size.width/2, this->myTakeRoleData.at(i)->xiaoSp->getPosition().y-this->myTakeRoleData.at(i)->xiaoSp->getBoundingBox().size.height/2);
-        xiaoCardPoint = xiaoCardPoint+this->chouTiLayer->getPosition();
-        Rect rect = Rect(xiaoCardPoint.x,xiaoCardPoint.y,this->myTakeRoleData.at(i)->xiaoSp->getBoundingBox().size.width,this->myTakeRoleData.at(i)->xiaoSp->getBoundingBox().size.height);
-        
-        if (rect.containsPoint(touchLocation)) {
-            if (this->myTakeRoleData.at(i)->xiaoSp->getOpacity() > 125 ) {
-                this->myTakeRoleData.at(i)->card->initCardSprite(this->myTakeRoleData.at(i)->imageName);
-                auto point = Vec2(xiaoCardPoint.x+this->myTakeRoleData.at(i)->xiaoSp->getBoundingBox().size.width/2,xiaoCardPoint.y+this->myTakeRoleData.at(i)->xiaoSp->getBoundingBox().size.height/2);
-                this->myTakeRoleData.at(i)->card->cardSprite->setPosition(point-this->player->fMap->getPosition());
-                this->player->fMap->addChild(this->myTakeRoleData.at(i)->card->cardSprite,150);
-                this->myTakeRoleData.at(i)->xiaoSp->setOpacity(125);
-
-                break;
-            }
-        }
-    }
-    
-    for (int i = 0; i < this->myTakeRoleData.size(); i++) {
-        if (this->myTakeRoleData.at(i)->card->cardSprite != NULL && this->myTakeRoleData.at(i)->isPvpBuShu == false) {
-            auto tempPoint = this->countCardOrigonPoint(this->myTakeRoleData.at(i)->card,this->player);
-            Rect rect = Rect(tempPoint.x, tempPoint.y, this->player->fMap->getBoundingBox().size.width/4, this->player->fMap->getBoundingBox().size.width/4);
+    if (this->isRounding == false) {
+        for (int i = 0; i < this->myTakeRoleData.size(); i++) {
+            auto xiaoCardPoint = Vec2(this->myTakeRoleData.at(i)->xiaoSp->getPosition().x-this->myTakeRoleData.at(i)->xiaoSp->getBoundingBox().size.width/2, this->myTakeRoleData.at(i)->xiaoSp->getPosition().y-this->myTakeRoleData.at(i)->xiaoSp->getBoundingBox().size.height/2);
+            xiaoCardPoint = xiaoCardPoint+this->chouTiLayer->getPosition();
+            Rect rect = Rect(xiaoCardPoint.x,xiaoCardPoint.y,this->myTakeRoleData.at(i)->xiaoSp->getBoundingBox().size.width,this->myTakeRoleData.at(i)->xiaoSp->getBoundingBox().size.height);
+            
             if (rect.containsPoint(touchLocation)) {
-                if (this->myTakeRoleData.at(i)->isPvpBuShu == false) {
-                    this->moveCard = this->myTakeRoleData.at(i)->card;
+                if (this->myTakeRoleData.at(i)->xiaoSp->getOpacity() > 125 ) {
+                    this->myTakeRoleData.at(i)->card->initCardSprite(this->myTakeRoleData.at(i)->imageName);
+                    auto point = Vec2(xiaoCardPoint.x+this->myTakeRoleData.at(i)->xiaoSp->getBoundingBox().size.width/2,xiaoCardPoint.y+this->myTakeRoleData.at(i)->xiaoSp->getBoundingBox().size.height/2);
+                    this->myTakeRoleData.at(i)->card->cardSprite->setPosition(point-this->player->fMap->getPosition());
+                    this->player->fMap->addChild(this->myTakeRoleData.at(i)->card->cardSprite,150);
+                    this->myTakeRoleData.at(i)->xiaoSp->setOpacity(125);
+                    
+                    break;
                 }
-                
-                //     printf("%s",this->currentMoveCard->cardName.c_str());
-                // schedule(schedule_selector(SetRoleFormatlayer::showInfo), 1.0);
-                return true;
             }
         }
+        
+        for (int i = 0; i < this->myTakeRoleData.size(); i++) {
+            if (this->myTakeRoleData.at(i)->card->cardSprite != NULL && this->myTakeRoleData.at(i)->isPvpBuShu == false) {
+                auto tempPoint = this->countCardOrigonPoint(this->myTakeRoleData.at(i)->card,this->player);
+                Rect rect = Rect(tempPoint.x, tempPoint.y, this->player->fMap->getBoundingBox().size.width/4, this->player->fMap->getBoundingBox().size.width/4);
+                if (rect.containsPoint(touchLocation)) {
+                    if (this->myTakeRoleData.at(i)->isPvpBuShu == false) {
+                        this->moveCard = this->myTakeRoleData.at(i)->card;
+                    }
+                    
+                    //     printf("%s",this->currentMoveCard->cardName.c_str());
+                    // schedule(schedule_selector(SetRoleFormatlayer::showInfo), 1.0);
+                    return true;
+                }
+            }
+        }
+        this->moveCard = NULL;
+
     }
-    this->moveCard = NULL;
-    return true;
+    
+       return true;
 }
 
 void PvpFightLayer::onTouchMoved(cocos2d::Touch *touch, cocos2d::Event *unused_event) {
-    if (this->moveCard != NULL) {
-        auto point = Director::getInstance()->convertToGL(touch->getLocationInView());
-        auto oldPoint = Director::getInstance()->convertToGL(touch->getPreviousLocationInView());
-        auto distance = point-oldPoint;
-        this->moveCard->cardSprite->setPosition(this->moveCard->cardSprite->getPosition()+distance);
-  
+    if (this->isRounding == false) {
+        if (this->moveCard != NULL) {
+            auto point = Director::getInstance()->convertToGL(touch->getLocationInView());
+            auto oldPoint = Director::getInstance()->convertToGL(touch->getPreviousLocationInView());
+            auto distance = point-oldPoint;
+            this->moveCard->cardSprite->setPosition(this->moveCard->cardSprite->getPosition()+distance);
+            
+        }
     }
+
 }
 
 void PvpFightLayer::onTouchEnded(cocos2d::Touch *touch, cocos2d::Event *unused_event) {
-    
-    if (this->moveCard != NULL) {
-        
-        bool isTake = false;
-        for (int i = 0; i < this->player->fMap->mapCellArray.size(); i++) {
-            Vec2 point = Vec2(0,0);
-            point.x = this->player->fMap->mapCellArray.at(i)->position.x-this->player->fMap->getBoundingBox().size.width/8+this->player->fMap->getPosition().x+this->getPosition().x;
-            point.y = this->player->fMap->mapCellArray.at(i)->position.y-this->player->fMap->getBoundingBox().size.width/8+this->player->fMap->getPosition().y+this->getPosition().y;
-            Rect rect = Rect(point.x,point.y,this->player->fMap->getBoundingBox().size.width/4,this->player->fMap->getBoundingBox().size.width/4);
-            //            printf("%f----x\n",this->currentMoveCard->cardSprite->getPosition().x+this->player->fMap->getPosition().x);
-            //            printf("%f----y\n", this->currentMoveCard->cardSprite->getPosition().y+this->player->fMap->getPosition().y);
-            if (rect.containsPoint(Vec2(this->moveCard->cardSprite->getPosition().x+this->player->fMap->getPosition().x, this->moveCard->cardSprite->getPosition().y+this->player->fMap->getPosition().y))) {
-                isTake = true;
-                
-                Vec2 defaultCardPoint = Vec2(0, 0);
+    if (this->isRounding == false) {
+        if (this->moveCard != NULL) {
+            
+            bool isTake = false;
+            for (int i = 0; i < this->player->fMap->mapCellArray.size(); i++) {
+                Vec2 point = Vec2(0,0);
+                point.x = this->player->fMap->mapCellArray.at(i)->position.x-this->player->fMap->getBoundingBox().size.width/8+this->player->fMap->getPosition().x+this->getPosition().x;
+                point.y = this->player->fMap->mapCellArray.at(i)->position.y-this->player->fMap->getBoundingBox().size.width/8+this->player->fMap->getPosition().y+this->getPosition().y;
+                Rect rect = Rect(point.x,point.y,this->player->fMap->getBoundingBox().size.width/4,this->player->fMap->getBoundingBox().size.width/4);
+                //            printf("%f----x\n",this->currentMoveCard->cardSprite->getPosition().x+this->player->fMap->getPosition().x);
+                //            printf("%f----y\n", this->currentMoveCard->cardSprite->getPosition().y+this->player->fMap->getPosition().y);
+                if (rect.containsPoint(Vec2(this->moveCard->cardSprite->getPosition().x+this->player->fMap->getPosition().x, this->moveCard->cardSprite->getPosition().y+this->player->fMap->getPosition().y))) {
+                    isTake = true;
+                    
+                    Vec2 defaultCardPoint = Vec2(0, 0);
+                    for (int j = 0; j < this->player->fMap->mapCellArray.size(); j++) {
+                        if (this->player->fMap->mapCellArray.at(j)->obj != NULL) {
+                            
+                            if (((Card*)this->player->fMap->mapCellArray.at(j)->obj)->cardName.compare(this->moveCard->cardName) == 0) {
+                                defaultCardPoint = this->player->fMap->mapCellArray.at(j)->position;
+                                this->player->fMap->mapCellArray.at(j)->obj = NULL;
+                                break;
+                            }
+                        }
+                    }
+                    if (this->player->fMap->mapCellArray.at(i)->obj != NULL) {
+                        if (defaultCardPoint == Vec2(0, 0)) {
+                            
+                            for (int n = 0; n < this->myTakeRoleData.size(); n++) {
+                                if (this->myTakeRoleData.at(n)->card->cardName.compare(((Card*)this->player->fMap->mapCellArray.at(i)->obj)->cardName) == 0) {
+                                    this->myTakeRoleData.at(n)->xiaoSp->setOpacity(255);
+                                    ((Card*)this->player->fMap->mapCellArray.at(i)->obj)->cardSprite->removeFromParentAndCleanup(true);
+                                    ((Card*)this->player->fMap->mapCellArray.at(i)->obj)->cardSprite = NULL;
+                                    break;
+                                }
+                                
+                            }
+                        }else {
+                            ((Card*)this->player->fMap->mapCellArray.at(i)->obj)->cardSprite->setPosition(defaultCardPoint);
+                            ((Card*)this->player->fMap->mapCellArray.at(i)->obj)->cellIndex = this->moveCard->cellIndex;
+                            this->player->fMap->mapCellArray.at(this->moveCard->cellIndex)->obj = ((Card*)this->player->fMap->mapCellArray.at(i)->obj);
+                        }
+                        
+                    }
+                    this->moveCard->cardSprite->setPosition(this->player->fMap->mapCellArray.at(i)->position);
+                    this->player->fMap->mapCellArray.at(i)->obj = this->moveCard;
+                    this->moveCard->cellIndex = i;
+                    break;
+                }
+            }
+            if (isTake == false) {
                 for (int j = 0; j < this->player->fMap->mapCellArray.size(); j++) {
                     if (this->player->fMap->mapCellArray.at(j)->obj != NULL) {
                         
                         if (((Card*)this->player->fMap->mapCellArray.at(j)->obj)->cardName.compare(this->moveCard->cardName) == 0) {
-                            defaultCardPoint = this->player->fMap->mapCellArray.at(j)->position;
+                            
                             this->player->fMap->mapCellArray.at(j)->obj = NULL;
                             break;
                         }
                     }
                 }
-                if (this->player->fMap->mapCellArray.at(i)->obj != NULL) {
-                    if (defaultCardPoint == Vec2(0, 0)) {
-   
-                        for (int n = 0; n < this->myTakeRoleData.size(); n++) {
-                            if (this->myTakeRoleData.at(n)->card->cardName.compare(((Card*)this->player->fMap->mapCellArray.at(i)->obj)->cardName) == 0) {
-                                this->myTakeRoleData.at(n)->xiaoSp->setOpacity(255);
-                                ((Card*)this->player->fMap->mapCellArray.at(i)->obj)->cardSprite->removeFromParentAndCleanup(true);
-                                ((Card*)this->player->fMap->mapCellArray.at(i)->obj)->cardSprite = NULL;
-                                break;
-                            }
-                            
-                        }
-                    }else {
-                        ((Card*)this->player->fMap->mapCellArray.at(i)->obj)->cardSprite->setPosition(defaultCardPoint);
-                        ((Card*)this->player->fMap->mapCellArray.at(i)->obj)->cellIndex = this->moveCard->cellIndex;
-                        this->player->fMap->mapCellArray.at(this->moveCard->cellIndex)->obj = ((Card*)this->player->fMap->mapCellArray.at(i)->obj);
-                    }
-                    
-                }
-                this->moveCard->cardSprite->setPosition(this->player->fMap->mapCellArray.at(i)->position);
-                this->player->fMap->mapCellArray.at(i)->obj = this->moveCard;
-                this->moveCard->cellIndex = i;
-                break;
-            }
-        }
-        if (isTake == false) {
-            for (int j = 0; j < this->player->fMap->mapCellArray.size(); j++) {
-                if (this->player->fMap->mapCellArray.at(j)->obj != NULL) {
-                    
-                    if (((Card*)this->player->fMap->mapCellArray.at(j)->obj)->cardName.compare(this->moveCard->cardName) == 0) {
+                
+                for (int i = 0; i < this->myTakeRoleData.size(); i++) {
+                    if (this->myTakeRoleData.at(i)->card->cardName.compare(this->moveCard->cardName) == 0) {
+                        this->moveCard->cardSprite->removeFromParentAndCleanup(true);
+                        this->moveCard->cardSprite = NULL;
                         
-                        this->player->fMap->mapCellArray.at(j)->obj = NULL;
+                        this->myTakeRoleData.at(i)->xiaoSp->setOpacity(255);
                         break;
                     }
                 }
+                
             }
             
-            for (int i = 0; i < this->myTakeRoleData.size(); i++) {
-                if (this->myTakeRoleData.at(i)->card->cardName.compare(this->moveCard->cardName) == 0) {
-                    this->moveCard->cardSprite->removeFromParentAndCleanup(true);
-                    this->moveCard->cardSprite = NULL;
-
-                    this->myTakeRoleData.at(i)->xiaoSp->setOpacity(255);
-                    break;
-                }
+            for (int k = 0; k < this->myTakeRoleData.size(); k++) {
+                this->myTakeRoleData.at(k)->cellIndex = this->myTakeRoleData.at(k)->card->cellIndex;
+                //  printf("%s----%d\n",this->roleData.at(k)->card->cardName.c_str(),this->roleData.at(k)->cellIndex);
             }
- 
         }
-        
-        for (int k = 0; k < this->myTakeRoleData.size(); k++) {
-            this->myTakeRoleData.at(k)->cellIndex = this->myTakeRoleData.at(k)->card->cellIndex;
-            //  printf("%s----%d\n",this->roleData.at(k)->card->cardName.c_str(),this->roleData.at(k)->cellIndex);
-        }
-    }
 
+    }
+   
 }
 

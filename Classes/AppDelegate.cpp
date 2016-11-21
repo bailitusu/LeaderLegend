@@ -80,7 +80,7 @@ bool AppDelegate::applicationDidFinishLaunching() {
     }
     Director::getInstance()->getVisibleOrigin();
     register_all_packages();
-
+  //  FileUtils::getInstance()->addSearchPath("fonts");
     // create a scene. it's an autorelease object
   //  Scene* scene = FightLayer::createScene();
     Scene* scene = GameBeginLayer::createScene();

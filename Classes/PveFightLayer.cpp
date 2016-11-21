@@ -49,7 +49,7 @@ void PveFightLayer::initPveLayer() {
     this->player->fpName = "player";
     this->player->fightLayer = this;
     this->player->initMap("leftmap.png", "left", Size(300,300));
-    this->player->fMap->setPosition(10+origin.x, 40+origin.y);
+    this->player->fMap->setPosition(-2+origin.x, 56+origin.y);
     this->player->fMap->setLocalZOrder(300);
 
     
@@ -57,7 +57,7 @@ void PveFightLayer::initPveLayer() {
     this->playerEnemy->fpName = "enemyPlayer";
     this->playerEnemy->fightLayer = this;
     this->playerEnemy->initMap("rightmap.png", "right", Size(300,300));
-    this->playerEnemy->fMap->setPosition(screenSize.width-(this->playerEnemy->fMap->getBoundingBox().size.width+10+origin.x),40+origin.y);
+    this->playerEnemy->fMap->setPosition(screenSize.width-(this->playerEnemy->fMap->getBoundingBox().size.width+5+origin.x),50+origin.y);
    // this->playerEnemy->fMap->setLocalZOrder(300);
 
 
@@ -66,7 +66,7 @@ void PveFightLayer::initPveLayer() {
     this->player->retain();
     this->playerEnemy->retain();
     
-    this->background = Sprite::create("uv界面测试(1).png");//bbg_arena.png
+    this->background = Sprite::create("duizhanjiemian.png");//bbg_arena.png
     CommonFunc::setSpriteSize(this->background, screenSize.width);
     this->background->setPosition(Vec2(screenSize.width/2+origin.x, screenSize.height/2+origin.y));
     this->background->setLocalZOrder(-100);
@@ -210,7 +210,13 @@ void PveFightLayer::initChouTiLayer() {
     }
     
     this->startFightBtn = ui::Button::create("classbtn.png");
-    CommonFunc::initButton(this->startFightBtn, CC_CALLBACK_2(PveFightLayer::startFightBtnClick, this), screenSize.width/8, Vec2(screenSize.width*0.06, screenSize.height*0.075));
+    
+    CommonFunc::initButton(this->startFightBtn, CC_CALLBACK_2(PveFightLayer::startFightBtnClick, this), screenSize.width/8, Vec2(screenSize.width*0.22, screenSize.height*0.075));
+    this->startFightBtn->setContentSize(Size(screenSize.width*0.22, screenSize.height*0.075));
+    this->startFightBtn->setTitleFontSize(8);
+  //  this->startFightBtn->getTitleRenderer()->setDimensions(screenSize.width*0.22, screenSize.height*0.075);
+   // this->startFightBtn->getTitleRenderer()->setPosition(this->startFightBtn->getTitleRenderer()->getPosition().x+20,this->startFightBtn->getTitleRenderer()->getPosition().y-10);
+    this->startFightBtn->setTitleAlignment(TextHAlignment::RIGHT);
     this->startFightBtn->setTitleText("开始战斗");
     this->startFightBtn->setTitleColor(Color3B(255, 255, 255));
     this->addChild(this->startFightBtn,100);

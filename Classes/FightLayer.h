@@ -10,7 +10,7 @@
 #define FightScene_h
 
 #include "cocos2d.h"
-#include "FightPlayer.h"
+
 #include "SetRoleFormatLayer.h"
 USING_NS_CC;
 class FightPlayer;
@@ -35,6 +35,11 @@ public:
     std::string fightInfo;
     bool startFight;
     void startGame(float dur);
+    void overGame();
+    void backPreScene(float dur);
+    int huiheNum;
+    Label* huiheLabel;
+    void nextRound();
 };
 
 #endif /* FightScene_h */

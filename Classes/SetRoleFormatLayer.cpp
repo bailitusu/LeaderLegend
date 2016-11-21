@@ -10,7 +10,7 @@
 #include "CommonFunc.h"
 #include "Setting.h"
 
-#include "HuangDiCard.h"
+
 #include "HouYiCard.h"
 #include "ChangECard.h"
 #include "TaoTieCard.h"
@@ -64,7 +64,7 @@ void SetRoleFormatlayer::initSetRoleFormatLayer() {
     this->player->fpName = "player";
     this->player->fightLayer = this;
     this->player->initMap("leftmap.png", "left", Size(this->getBoundingBox().size.width*0.449,this->getBoundingBox().size.width*0.449));
-    this->player->fMap->setPosition(this->getBoundingBox().size.width*0.015+origin.x, this->getBoundingBox().size.height*0.266+origin.y);
+    this->player->fMap->setPosition(-2+origin.x, 56+origin.y);
     
     for (int i = 0; i < this->roleData.size(); i++) {
         if (this->roleData.at(i)->card->cardSprite != NULL) {
@@ -118,7 +118,7 @@ void SetRoleFormatlayer::initJzLayer() {
 
 void SetRoleFormatlayer::addBackBtnUI() {
 
-    ui::Button *btn = ui::Button::create("CloseNormal.png");
+    ui::Button *btn = ui::Button::create("fanhuijian.png");
     CommonFunc::initButton(btn,CC_CALLBACK_2(SetRoleFormatlayer::backBtn, this) , this->getBoundingBox().size.width*0.05, Vec2(this->getBoundingBox().size.width*0.96, this->getBoundingBox().size.height*0.92));
     this->addChild(btn,500);
 }

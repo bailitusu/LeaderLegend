@@ -12,10 +12,10 @@
 #include "MapCell.h"
 #include "Setting.h"
 
-#include "FightField.h"
+//#include "FightField.h"
 #include "FightProgress.h"
 
-#include "HuangDiCard.h"
+
 #include "HouYiCard.h"
 #include "ChangECard.h"
 #include "TaoTieCard.h"
@@ -25,9 +25,9 @@
 #include "FengHouCard.h"
 #include "SuanYuCard.h"
 
-#include "Dragon/Dragon.h"
-#include "Setting/ActionWait.h"
-#include "Treasure/HuFuTreasure.h"
+#include "Dragon.h"
+#include "ActionWait.h"
+#include "HuFuTreasure.h"
 #include "DunJiaTianShu.h"
 #include "BingFaTreasure.h"
 #include "YiBingBuDao.h"
@@ -38,11 +38,13 @@
 #include "json/document.h"
 #include "json/writer.h"
 #include "json/stringbuffer.h"
-#include "Setting/RecordFight.h"
+#include "RecordFight.h"
 #include "OneRecord.h"
 
+#include "FightPlayer.h"
+#include "FuBenLayer.h"
 #include "ReadRecordFight.h"
-#include "AnalysisJson.h"
+//#include "AnalysisJson.h"
 //#include "FightNetwork.h"
 Scene* FightLayer::createScene() {
     
@@ -72,12 +74,19 @@ void FightLayer::initFightLayer() {
     liston->onTouchBegan = CC_CALLBACK_2(FightLayer::onTouchBegan, this);
     liston->setSwallowTouches(true);
     dispatcher->addEventListenerWithSceneGraphPriority(liston, this);
+    
+    auto gameOverListon = EventListenerCustom::create("pveGameOver", CC_CALLBACK_0(FightLayer::overGame, this));
+    dispatcher->addEventListenerWithFixedPriority(gameOverListon, 1);
+    
+    auto nextRoundListon = EventListenerCustom::create("pveRoundNext", CC_CALLBACK_0(FightLayer::nextRound, this));
+    dispatcher->addEventListenerWithFixedPriority(nextRoundListon, 1);
+    
     // Director::getInstance()->getEventDispatcher()->resumeEventListenersForTarget(this, true);
     this->player = FightPlayer::create();
     this->player->fpName = "player";
     this->player->fightLayer = this;
     this->player->initMap("leftmap.png", "left", Size(300,300));
-    this->player->fMap->setPosition(10+origin.x, 40+origin.y);
+    this->player->fMap->setPosition(-2+origin.x, 56+origin.y);
     this->player->initDragon("dragon_left.png");
     this->player->fDragon->dragonSprite->setPosition(150+origin.x,screenSize.height+origin.y);
     
@@ -85,7 +94,7 @@ void FightLayer::initFightLayer() {
     this->enemyPlay->fpName = "enemyPlayer";
     this->enemyPlay->fightLayer = this;
     this->enemyPlay->initMap("rightmap.png", "right", Size(300,300));
-    this->enemyPlay->fMap->setPosition(screenSize.width-(enemyPlay->fMap->getBoundingBox().size.width+10+origin.x),40+origin.y);
+    this->enemyPlay->fMap->setPosition(screenSize.width-(enemyPlay->fMap->getBoundingBox().size.width+5+origin.x),50+origin.y);
     this->enemyPlay->initDragon("dragon_right.png");
     this->enemyPlay->fDragon->dragonSprite->setPosition(screenSize.width-150+origin.x,screenSize.height+origin.y);
     
@@ -130,7 +139,7 @@ void FightLayer::initFightLayer() {
 //    this->enemyPlay->initCardStandArray();
     
     
-    background = Sprite::create("uv界面测试(1).png");//bbg_arena.png
+    background = Sprite::create("duizhanjiemian.png");//bbg_arena.png
     CommonFunc::setSpriteSize(background, screenSize.width);
     background->setPosition(Vec2(screenSize.width/2+origin.x, screenSize.height/2+origin.y));
     background->setLocalZOrder(-100);
@@ -147,19 +156,69 @@ void FightLayer::initFightLayer() {
 //    OneRecord* one = OneRecord::create();
 //    one->hitTarget = 10;
 //    rff->addItemToRecord(one);
-
+    this->huiheNum = 1;
+    this->huiheLabel = Label::createWithTTF("", "fonts/fangzhengjingheijianti.ttf", 18);
+    this->huiheLabel->setSystemFontSize(18);
+    this->huiheLabel->setDimensions(130, 30);
+    this->huiheLabel->setAlignment(TextHAlignment::CENTER);
+    this->huiheLabel->setTextColor(Color4B(215, 215, 215, 255));
+    this->huiheLabel->enableBold();
+    this->huiheLabel->setPosition(Vec2(screenSize.width/2+origin.x, screenSize.height-40));
+    this->addChild(this->huiheLabel,100);
+    
+    
+    Sprite* timeZhuangShiSp = Sprite::create("zhuangshi.png");
+    CommonFunc::setSpriteSize(timeZhuangShiSp, 190);
+    timeZhuangShiSp->setPosition(screenSize.width/2,screenSize.height-timeZhuangShiSp->getBoundingBox().size.height/2);
+    this->addChild(timeZhuangShiSp,-50);
+    
+    Sprite* timeBiaoDiSp = Sprite::create("biaodi.png");
+    CommonFunc::setSpriteSize(timeBiaoDiSp, 180);
+    timeBiaoDiSp->setPosition(screenSize.width/2,screenSize.height-timeBiaoDiSp->getBoundingBox().size.height/2);
+    this->addChild(timeBiaoDiSp,-70);
+    
+    char rnum[10] = {0};
+    
+    sprintf(rnum, "第%d回合",this->huiheNum);
+    this->huiheLabel->setString(rnum);
+    
     scheduleOnce(schedule_selector(FightLayer::startGame), 1.0);
 
 }
 
+void FightLayer::nextRound() {
+    this->huiheNum++;
+    char rnum[10] = {0};
+    sprintf(rnum, "第 %d 回 合",this->huiheNum);
+    this->huiheLabel->setString(rnum);
+
+}
+
+void FightLayer::overGame() {
+    scheduleOnce(schedule_selector(FightLayer::backPreScene), 0.8);
+}
+
+void FightLayer::backPreScene(float dur) {
+
+    auto fuBenScene = FuBenLayer::createScene();
+    FuBenLayer* layer = FuBenLayer::create();
+    layer->setContentSize(screenSize);
+    fuBenScene->addChild(layer);
+    
+    layer->initFuBenLayer();
+    Director::getInstance()->replaceScene(TransitionFade::create(1.0f, fuBenScene));
+
+}
 
 void FightLayer::startGame(float dur) {
     ReadRecordFight* rf = ReadRecordFight::create();
     rf->player = this->player;
     rf->playerEnemy = this->enemyPlay;
     rf->currentJson = this->fightInfo.c_str();
+    rf->fightName = "pve";
     rf->readPlayerInfo();
     rf->retain();
+    
     rf->readBigNextRecord();
 }
 

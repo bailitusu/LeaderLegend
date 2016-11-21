@@ -20,13 +20,13 @@ void LingShouInfoLayer::initLingShouInfoLayer() {
     background->setOpacity(220);
     this->addChild(background, -100);
     
-    this->dragonNameLabel = CommonFunc::createLabel(this->dSkill->dargonInfoName, Vec2(0, 0));//该layer的猫点在0.5，0.5
+    this->dragonNameLabel = CommonFunc::createLabel(this->dSkill->dargonInfoName, Vec2(-30, 20));//该layer的猫点在0.5，0.5
     this->dragonNameLabel->setTextColor(dragonSkillInfoColor);
     this->addChild(this->dragonNameLabel,100);
     
     this->skillSp = Sprite::create(this->skillImageName);
     CommonFunc::setShowAllSpriteSize(this->skillSp, this->getBoundingBox().size.width/5, this->getBoundingBox().size.width/5);
-    this->skillSp->setPosition(Vec2(0, 0));
+    this->skillSp->setPosition(Vec2(-this->getBoundingBox().size.width/2+this->skillSp->getBoundingBox().size.width/2+15, 2));
     this->addChild(this->skillSp,100);
     
     

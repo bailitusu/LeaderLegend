@@ -42,25 +42,49 @@ void PvpMatchLayer::initMatchLayer() {
     this->background->setLocalZOrder(-100);
     this->addChild(background);
     
-    this->trainingBtn = ui::Button::create("classbtn.png");
-    CommonFunc::initButton(this->trainingBtn, CC_CALLBACK_2(PvpMatchLayer::trainingBtnClick, this), screenSize.width/8, Vec2(screenSize.width/3, screenSize.height*0.4));
-    this->trainingBtn->setTitleText("开始训练");
+    this->trainingBtn = ui::Button::create("xunlianBtn.jpg");
+    CommonFunc::initButton(this->trainingBtn, CC_CALLBACK_2(PvpMatchLayer::trainingBtnClick, this), screenSize.width/6, Vec2(screenSize.width/2, screenSize.height*0.4));
+   // this->trainingBtn->setTitleText("开始训练");
     this->trainingBtn->setTitleColor(Color3B(255, 255, 255));
     this->addChild(this->trainingBtn,100);
     
-    this->pvpMatchBtn = ui::Button::create("classbtn.png");
-    CommonFunc::initButton(this->pvpMatchBtn, CC_CALLBACK_2(PvpMatchLayer::pvpMatchBtnClick, this), screenSize.width/8, Vec2(screenSize.width*2/3, screenSize.height*0.4));
-    this->pvpMatchBtn->setTitleText("开始匹配");
-    this->pvpMatchBtn->setTitleColor(Color3B(255, 255, 255));
-    this->addChild(this->pvpMatchBtn,100);
+//    this->pvpMatchBtn = ui::Button::create("classbtn.png");
+//    CommonFunc::initButton(this->pvpMatchBtn, CC_CALLBACK_2(PvpMatchLayer::pvpMatchBtnClick, this), screenSize.width/8, Vec2(screenSize.width*2/3, screenSize.height*0.4));
+//    this->pvpMatchBtn->setTitleText("开始匹配");
+//    this->pvpMatchBtn->setTitleColor(Color3B(255, 255, 255));
+//    this->addChild(this->pvpMatchBtn,100);
     
-    this->pipeiLabel = Label::createWithTTF("", "fonts/楷体.ttf", 19);
+    this->pipeiLabel = Label::createWithTTF("", "fonts/kaiti.ttf", 19);
     this->pipeiLabel->setContentSize(Size(80,30));
     this->pipeiLabel->setAlignment(TextHAlignment::CENTER);
-    this->pipeiLabel->setTextColor(Color4B(0, 0, 255, 255));
+    this->pipeiLabel->setTextColor(Color4B(225, 225, 225, 255));
     this->pipeiLabel->setPosition(Vec2(screenSize.width/2+origin.x, screenSize.height*0.65+origin.x));
     this->addChild(this->pipeiLabel,100);
+    
+    this->backBtnUI();
 }
+
+void PvpMatchLayer::backBtnUI() {
+    
+    ui::Button *btn = ui::Button::create("fanhuijian.png");
+    
+    btn->setPressedActionEnabled(true);
+    btn->setPosition(Vec2(screenSize.width*0.96, screenSize.height*0.92));
+    btn->addTouchEventListener(CC_CALLBACK_2(PvpMatchLayer::backBtn, this));
+    btn->setScale(screenSize.width*0.05/btn->getBoundingBox().size.width);
+    
+    // btn = CommonFunc::initButton(btn,CC_CALLBACK_2(FuBenLayer::backBtn, this) , screenSize.width*0.05, Vec2(screenSize.width*0.96, screenSize.height*0.92));
+    this->addChild(btn,200);
+}
+
+void PvpMatchLayer::backBtn(cocos2d::Ref *sender, ui::Widget::TouchEventType type) {
+    if (type == ui::Widget::TouchEventType::ENDED) {
+        Director::getInstance()->popScene();
+    }
+    
+    
+}
+
 
 void PvpMatchLayer::trainingBtnClick(cocos2d::Ref *sender, ui::Widget::TouchEventType type) {
     if (type == ui::Widget::TouchEventType::ENDED) {

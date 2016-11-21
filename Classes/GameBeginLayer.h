@@ -13,6 +13,7 @@
 #include "ui/CocosGUI.h"
 
 #include "SetRoleFormatLayer.h"
+
 #include "Dragon.h"
 USING_NS_CC;
 class Bag;
@@ -33,7 +34,7 @@ public:
     ui::Button* buZhen;
     ui::Button* faBao;
     ui::Button* jingJiChang;
-    ui::Button* juHun;
+    ui::Button* shangDian;
     ui::Button* lingShou;
     ui::Button* renWu;
     ui::Button* tianFu;
@@ -42,7 +43,7 @@ public:
     void buZhenBtn(Ref* sender, ui::Widget::TouchEventType type);
     void faBaoBtn(Ref* sender, ui::Widget::TouchEventType type);
     void jingJiChangBtn(Ref* sender, ui::Widget::TouchEventType type);
-    void juHunBtn(Ref* sender, ui::Widget::TouchEventType type);
+    void shangDianBtn(Ref* sender, ui::Widget::TouchEventType type);
     void lingShouBtn(Ref* sender, ui::Widget::TouchEventType type);
     void renWuBtn(Ref* sender, ui::Widget::TouchEventType type);
     void tianFuBtn(Ref* sender, ui::Widget::TouchEventType type);
@@ -55,7 +56,11 @@ public:
     Vector<SetRoleData*> pveRoleData;
     void cardFormatJJC(Card* card,std::string imageName, int standIndex,Treasure* treasure);
     void cardFormatPVE(Card* card,std::string imageName, int standIndex,Treasure* treasure);
-    
+    void createUINameLabel(std::string text, Vec2 position);
+    void zanWeiKaiFang();
+    Label* zanWeiKaiFangLabel;
+    Sprite* zanWeiKaiFangSpBg;
+    void removeZanWeiKaiFang();
 };
 
 #endif /* GameBeginLayer_h */

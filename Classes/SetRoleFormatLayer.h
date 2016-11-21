@@ -10,6 +10,7 @@
 #define SetRoleFormatLayer_h
 
 #include "cocos2d.h"
+//#include "FightPlayer.h"
 #include "FightPlayer.h"
 #include "ui/CocosGUI.h"
 //#include "network/HttpClient.h"

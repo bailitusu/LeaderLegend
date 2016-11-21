@@ -50,6 +50,11 @@ public:
     void gameOver();
     void enterMatchScene(float dur);
     void roundOver();
+    bool isRounding;
+    void daoJiShi(float dur);
+    int timeNum;
+    
+    
 };
 
 #endif /* PvpFightLayer_h */

@@ -9,7 +9,9 @@
 #include "FightMap.h"
 #include "CommonFunc.h"
 #include "MapCell.h"
-#include "Card/Card.h"
+#include "Card.h"
+#include "StandMapCellInterface.h"
+#include "FightProgress.h"
 void FightMap::init(std::string imageName,std::string direction, Size mapLayerSize) {
 
     map = Sprite::create(imageName);

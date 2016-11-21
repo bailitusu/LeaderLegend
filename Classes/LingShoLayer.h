@@ -73,6 +73,10 @@ public:
     void disapperInfo();
     LingShouInfoLayer* lsInfoLayer;
   //  void taoZiBtn(Ref* sender, ui::Widget::TouchEventType type);
+    
+    void backBtnUI();
+    void backBtn(cocos2d::Ref *sender, ui::Widget::TouchEventType type);
+
 };
 
 
