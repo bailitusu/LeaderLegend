@@ -18,14 +18,16 @@ USING_NS_CC;
 USING_NS_CC_EXT;
 
 #define BaseURL "http://120.25.98.248:8900"
-//#define PvePlayerTakeCardGetUrl "http://192.168.1.104:8900/player/"
-//#define PveGuaiWuInfoGetUrl "http://192.168.1.104:8900/pve/%d"
-//#define PveUpdataMyInfoPostUrl "http://192.168.1.104:8900/pve"
-//#define PvpTrainingPostUrl "http://192.168.1.104:8900/pvp/training"
-//#define PvpMatchPostUrl "http://192.168.1.104:8900/pvp/match"
-//#define PvpMatchCheckOkPostUrl "http://192.168.1.104:8900/pvp/match/message"
-//#define PvpBushuPostUrl "http://192.168.1.104:8900/pvp"
-//#define PvpCheckBushuOkPostUrl "http://192.168.1.104:8900/pvp/message"
+
+
+//#define PvePlayerTakeCardGetUrl "http://192.168.0.102:8900/player/"
+//#define PveGuaiWuInfoGetUrl "http://192.168.0.102:8900/pve/%d"
+//#define PveUpdataMyInfoPostUrl "http://192.168.0.102:8900/pve"
+//#define PvpTrainingPostUrl "http://192.168.0.102:8900/pvp/training"
+//#define PvpMatchPostUrl "http://192.168.0.102:8900/pvp/match"
+//#define PvpMatchCheckOkPostUrl "http://192.168.0.102:8900/pvp/match/message"
+//#define PvpBushuPostUrl "http://192.168.0.102:8900/pvp"
+//#define PvpCheckBushuOkPostUrl "http://192.168.0.102:8900/pvp/message"
 
 #define PvePlayerTakeCardGetUrl "http://120.25.98.248:8900/player/"
 #define PveGuaiWuInfoGetUrl "http://120.25.98.248:8900/pve/%d"
@@ -35,6 +37,10 @@ USING_NS_CC_EXT;
 #define PvpMatchCheckOkPostUrl "http://120.25.98.248:8900/pvp/match/message"
 #define PvpBushuPostUrl "http://120.25.98.248:8900/pvp"
 #define PvpCheckBushuOkPostUrl "http://120.25.98.248:8900/pvp/message"
+
+#define zhucePostUrl "http://120.25.98.248:8091/signup"
+#define loginPostUrl "http://120.25.98.248:8091/login"
+#define quickSignUpGetUrl "http://120.25.98.248:8091/quicksignup"
 
 using namespace network;
 class FightNetwork : public Ref {

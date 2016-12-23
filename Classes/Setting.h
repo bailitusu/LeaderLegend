@@ -14,15 +14,20 @@
 #define screenSize Director::getInstance()->getVisibleSize()
 #define origin Director::getInstance()->getVisibleOrigin()
 #define winSize Director::getInstance()->getWinSize()
-#define animationFactor 0.1
+#define animationFactor 0.05
 
 //114 220 244 淡蓝
 #define dragonFontColor Color4B(225, 225, 225, 255)
 #define dragonSkillInfoColor Color4B(137, 87, 39, 255)
 #define tuJianInfoColor Color4B(25, 25, 25, 255)
 #define tuJianTextColor Color4B(114,68,37,255)
+#define zhuceTitle Color4B(241,117,60,255)
+#define ziSe Color4B(75,23,162,255)
+#define hongse Color4B(213,60,28,255)
+#define lvse Color4B(45,163,36,255)
 
-static std::string myKey = "yzq";
+extern std::string myKey;
+extern std::string myPassWord;
 struct CardRuleType {
     int jinZhan = 1;
     int gongJian = 2;

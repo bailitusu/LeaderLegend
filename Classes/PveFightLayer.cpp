@@ -19,6 +19,15 @@
 #include "FengHouCard.h"
 #include "SuanYuCard.h"
 
+#include "BaiZeCard.h"
+#include "DangKangCard.h"
+#include "FengHuangCard.h"
+#include "HunDunCard.h"
+#include "LeiShenCard.h"
+#include "QingNiaoCard.h"
+#include "QiongQiCard.h"
+#include "TaoWuCard.h"
+
 #include "FightLayer.h"
 bool PveFightLayer::init() {
     if (!Layer::init()) {
@@ -144,9 +153,39 @@ void PveFightLayer::takeCardResponse(cocos2d::network::HttpClient *sender, cocos
             }else if(tempName.compare("taotie") == 0) {
                 roleData->card = TaoTieCard::create();
                 roleData->card->retain();
+            }else if(tempName.compare("baize") == 0) {
+                roleData->card = BaiZeCard::create();
+                roleData->card->retain();
+            }else if(tempName.compare("dangkang") == 0) {
+                roleData->card = DangKangCard::create();
+                roleData->card->retain();
+            }else if(tempName.compare("fenghuang") == 0) {
+                roleData->card = FengHuangCard::create();
+                roleData->card->retain();
+            }else if(tempName.compare("hundun") == 0) {
+                roleData->card = HunDunCard::create();
+                roleData->card->retain();
+            }else if(tempName.compare("leishen") == 0) {
+                roleData->card = LeiShenCard::create();
+                roleData->card->retain();
+            }else if(tempName.compare("qingniao") == 0) {
+                roleData->card = QingNiaoCard::create();
+                roleData->card->retain();
+            }else if(tempName.compare("qiongqi") == 0) {
+                roleData->card = QiongQiCard::create();
+                roleData->card->retain();
+            }else if(tempName.compare("taowu") == 0) {
+                roleData->card = TaoWuCard::create();
+                roleData->card->retain();
             }
-            roleData->xiaoImageName = roleData->card->cardName+"_tx.jpg";
-            roleData->imageName = roleData->card->cardSpriteImageName+"_l0.png";
+            
+            if (tempName.compare("baize") == 0 || tempName.compare("dangkang") == 0 || tempName.compare("fenghuang") == 0 || tempName.compare("hundun") == 0 || tempName.compare("leishen") == 0 || tempName.compare("qingniao") == 0 || tempName.compare("qiongqi") == 0 || tempName.compare("taowu") == 0 ) {
+                roleData->xiaoImageName = roleData->card->cardName+"_tx.png";
+            }else {
+                roleData->xiaoImageName = roleData->card->cardName+"_tx.jpg";
+            }
+
+            roleData->imageName = roleData->card->cardSpriteImageName+"_0.png";
 
             this->myAllData.pushBack(roleData);
         }
@@ -158,6 +197,7 @@ void PveFightLayer::takeCardResponse(cocos2d::network::HttpClient *sender, cocos
 void PveFightLayer::initEnemyInfo() {
     for (int i = 0; i < this->enemyRoleData.size(); i++) {
         this->enemyRoleData.at(i)->card->initCardSprite(this->enemyRoleData.at(i)->imageName);
+        this->enemyRoleData.at(i)->card->cardSprite->setScaleX(-1);
         this->playerEnemy->setCardsPositon(this->enemyRoleData.at(i)->card, this->enemyRoleData.at(i)->cellIndex,50);
     }
 }

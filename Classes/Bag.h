@@ -17,6 +17,13 @@ public:
     virtual bool init();
     CREATE_FUNC(Bag);
     int taoZiNum;
+    int huoCaiLiaoNum;
+    int shuiCaiLiaoNum;
+    int jinCaiLiaoNum;
+    int muCaiLiaoNum;
+    int tuCaiLiaoNum;
+    int tieNum;
+    int goldNum;
 };
 
 #endif /* Bag_h */

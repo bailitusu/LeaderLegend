@@ -11,8 +11,9 @@
 #include "Card.h"
 bool AllArmyGuWu::init() {
     this->skillLevel = 1;
-    this->dargonName = "allarmyguwu";
+    this->dargonName = "quanjunguwu";
     this->dargonInfoName = "全军鼓舞";
+    this->zuheNum = 30000;
     return true;
 }
 
@@ -27,11 +28,11 @@ void AllArmyGuWu::runSkill(FightPlayer* player,DragonData* data) {
         if (data->dragonAffectArray.at(i)->playerName.compare(player->fpName) == 0) {
             affectCard = ((Card*)player->fMap->mapCellArray.at(data->dragonAffectArray.at(i)->standIndex)->obj);
             //affectCard->MaxHP = data->dragonAffectArray.at(i)->maxHP;
-            affectCard->nuQiAppear(affectCard, data->dragonAffectArray.at(i)->nuQiChange);
+            affectCard->nuQiAppear(affectCard, data->dragonAffectArray.at(i)->nuQiChange,data->dragonAffectArray.at(i)->nuQiMax);
         }else {
             affectCard = ((Card*)player->enemy->fMap->mapCellArray.at(data->dragonAffectArray.at(i)->standIndex)->obj);
           //  affectCard->MaxHP = data->dragonAffectArray.at(i)->maxHP;
-            affectCard->nuQiAppear(affectCard, data->dragonAffectArray.at(i)->nuQiChange);
+            affectCard->nuQiAppear(affectCard, data->dragonAffectArray.at(i)->nuQiChange,data->dragonAffectArray.at(i)->nuQiMax);
         }
     }
 }

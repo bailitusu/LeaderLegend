@@ -27,7 +27,8 @@ bool XingTianCard::init() {
     
     this->hitRuleNum = hitRuleType.jinZhan;
     this->cardName = "xingtian";
-    this->cardSpriteImageName = "jiansheng_stand";
+    this->cardZhongWenName = "刑天";
+    this->cardSpriteImageName = "xingtian_idle";
     this->xiaoZhaoInfo = "近战物理伤害";
     this->daZhaoInfo = "对单个目标造成3次物理伤害";
     this->wuLi = 90;
@@ -40,16 +41,7 @@ bool XingTianCard::init() {
 
     this->faLi = 17000;
     this->fangYu = 20000;
-    
-//    this->wuliHart =1;
-//    this->wuliMianShang = 10;
-//    this->fashuHart = 10;
-//    this->fashuMianShang = 10;
-//    this->shanBi = 20;
-//    this->mingZhong = 10;
-//    this->baoJi = 10;
-//    this->mianBao = 10;
-//    this->lianJi = 1;
+
     this->bingKinds = bingZhongType.fangYu;
    // this->hitValue = 2;
     this->hitLevel = 0.8;
@@ -126,13 +118,13 @@ void XingTianCard::xiaoSkll(OneRecord *info) {
     auto movaFanhui = CallFunc::create(CC_CALLBACK_0(XingTianCard::moveAnimation, this, defaultPosition));
     
     Animate* gong = NULL;
-    if (this->playerName.compare("enemyPlayer") == 0) {
-        gong = CommonFunc::creatAnimation("jiansheng_attack_r%d.png", 15, animationFactor*15, 1);
-    }else {
-        gong = CommonFunc::creatAnimation("jiansheng_attack_l%d.png", 15, animationFactor*15, 1);
-    }
+//    if (this->playerName.compare("enemyPlayer") == 0) {
+//        gong = CommonFunc::creatAnimation("jiansheng_attack_r%d.png", 15, animationFactor*15, 1);
+//    }else {
+//        gong = CommonFunc::creatAnimation("jiansheng_attack_l%d.png", 15, animationFactor*15, 1);
+//    }
     
-   // auto gong = CommonFunc::creatAnimation("jiansheng_attack_%d.png", 15, 1.0f, 1);
+    gong = CommonFunc::creatAnimation("xingtian_attackm_%d.png", 15, animationFactor*15, 1);
     auto gongWait = ActionWait::create(1.0);
     auto moveWait = ActionWait::create(animationFactor*14);
     auto addNuqi = CallFunc::create(CC_CALLBACK_0(XingTianCard::nuQiManage, this,info));
@@ -173,13 +165,13 @@ void XingTianCard::daSkill(OneRecord *info) {
     auto movaFanhui = CallFunc::create(CC_CALLBACK_0(XingTianCard::moveAnimation, this, defaultPosition));
     
     Animate* gong = NULL;
-    if (this->playerName.compare("enemyPlayer") == 0) {
-        gong = CommonFunc::creatAnimation("jiansheng_attack_r%d.png", 15, animationFactor*15, 1);
-    }else {
-        gong = CommonFunc::creatAnimation("jiansheng_attack_l%d.png", 15, animationFactor*15, 1);
-    }
+//    if (this->playerName.compare("enemyPlayer") == 0) {
+//        gong = CommonFunc::creatAnimation("jiansheng_attack_r%d.png", 15, animationFactor*15, 1);
+//    }else {
+//        gong = CommonFunc::creatAnimation("jiansheng_attack_l%d.png", 15, animationFactor*15, 1);
+//    }
     
-   // auto gong = CommonFunc::creatAnimation("jiansheng_attack_%d.png", 15, 1.0f, 1);
+    gong = CommonFunc::creatAnimation("xingtian_attackm_%d.png", 15, animationFactor*15, 1);
     auto hit = CallFunc::create(CC_CALLBACK_0(XingTianCard::hitBlock,this,info->affectRecordArray));
 
     auto gongWait = ActionWait::create(1.0);
@@ -215,6 +207,18 @@ void XingTianCard::daSkill(OneRecord *info) {
     this->fPro->nuqiProBg->setVisible(false);
 }
 
+void XingTianCard::createTeXiao(Card *cardTexiao) {
+    ParticleSystem *cps = ParticleMeteor::create();
+    cps->setPosition(cardTexiao->cardSprite->getPosition());
+    cps->setLife(0.05f);
+    cps->setTotalParticles(100);
+    cps->setDuration(0.7);
+    //  cps->setGravity(Point(0,-480));
+    cps->setEmissionRate(200);
+    cps->setPosVar(Point(20,20));
+    cardTexiao->forPlayer->fMap->addChild(cps,3000);
+}
+
 void XingTianCard::hitBlock(Vector<OneRecord *> affectRecordArray) {
 //    if (affectRecordArray.size() >= 2) {
 //        if (this->hitTimes > 2 ) {
@@ -233,7 +237,7 @@ void XingTianCard::hitBlock(Vector<OneRecord *> affectRecordArray) {
             
         beHitCardRecord->card->MaxHP = beHitCardRecord->maxHP;
         beHitCardRecord->card->HP = beHitCardRecord->currentHP;
-        
+        this->createTeXiao(beHitCardRecord->card);
         if (beHitCardRecord->isBaoJi == true) {
             this->hpAppear(beHitCardRecord->card, beHitCardRecord->hitValue, beHitCardRecord->currentHP,"暴击");
         }else if(beHitCardRecord->isGeDang == true) {
@@ -243,7 +247,7 @@ void XingTianCard::hitBlock(Vector<OneRecord *> affectRecordArray) {
         }
       //  this->hpAppear(beHitCardRecord->card, beHitCardRecord->hitValue, beHitCardRecord->currentHP);
 
-        this->nuQiAppear(beHitCardRecord->card, beHitCardRecord->nuQiChange);
+        this->nuQiAppear(beHitCardRecord->card, beHitCardRecord->nuQiChange,beHitCardRecord->nuQiMax);
             
        // }
     }
@@ -259,12 +263,12 @@ void XingTianCard::daHitBlock(Vector<OneRecord *> affectRecordArray) {
 
 void XingTianCard::moveAnimation(Vec2 target) {
     Animate* animateActionWalk = NULL;
-    if (this->playerName.compare("enemyPlayer") == 0) {
-        animateActionWalk = CommonFunc::creatAnimation("jiansheng_move_r%d.png", 14, animationFactor*14, 1);
-    }else {
-        animateActionWalk = CommonFunc::creatAnimation("jiansheng_move_l%d.png", 14, animationFactor*14, 1);
-    }
-    
+//    if (this->playerName.compare("enemyPlayer") == 0) {
+//        animateActionWalk = CommonFunc::creatAnimation("jiansheng_move_r%d.png", 14, animationFactor*14, 1);
+//    }else {
+//        animateActionWalk = CommonFunc::creatAnimation("jiansheng_move_l%d.png", 14, animationFactor*14, 1);
+//    }
+    animateActionWalk = CommonFunc::creatAnimation("xingtian_move_%d.png", 14, animationFactor*14, 1);
     auto moveTo = MoveTo::create(animationFactor*14, target);
    // auto animateActionWalk = CommonFunc::creatAnimation("jiansheng_move_%d.png", 14, 0.5f, 2);
     this->cardSprite->runAction(moveTo);
@@ -284,40 +288,18 @@ void XingTianCard::appearUI() {
 }
 
 void XingTianCard::nuQiManage(OneRecord *info) {
-    this->nuQiAppear(this, info->nuQiChange);
+    this->nuQiAppear(this, info->nuQiChange,info->nuQiMax);
 }
 
-//void XingTianCard::recordHit() {
-//    
-//    
-//  //  int cellNum = AttackRule::Rule(this->cellIndex, this->hitRuleNum, this->forEnemy->fMap);
-//    if (((Card*)(this->forEnemy->fMap->mapCellArray.at(this->targetNum))->obj) != NULL) {
-//        ((Card*)(this->forEnemy->fMap->mapCellArray.at(this->targetNum))->obj)->recordDidBeHit(this,"wuli");
-//
-//        this->recordAddNuqi((Card*)(this->forEnemy->fMap->mapCellArray.at(this->targetNum)->obj), 1);
-//
-//    }
-//    
-//    
-//    
-//}
-//void XingTianCard::recordUltimateSkill() {
-//        auto geDangBuff = GeDangBuff::create();
-//        geDangBuff->addBuff(this,0.5);
-//      //  geDangBuff->retain();
-//    //    this->buffArray
-//    //    this->geDang = this->geDang*0.15 + this->geDang;
-//        this->recordDecreaseNuqi(this, 3,true);
-//}
 
 void XingTianCard::runZhanLiAnimation() {
     Animate* zhanli = NULL;
-    if (this->playerName.compare("enemyPlayer") == 0) {
-        zhanli = CommonFunc::creatAnimation("jiansheng_stand_r%d.png", 3, animationFactor*3*1.5, 1);
-    }else {
-        zhanli = CommonFunc::creatAnimation("jiansheng_stand_l%d.png", 3, animationFactor*3*1.5, 1);
-    }
-    
+//    if (this->playerName.compare("enemyPlayer") == 0) {
+//        zhanli = CommonFunc::creatAnimation("jiansheng_stand_r%d.png", 3, animationFactor*3*1.5, 1);
+//    }else {
+//        zhanli = CommonFunc::creatAnimation("jiansheng_stand_l%d.png", 3, animationFactor*3*1.5, 1);
+//    }
+    zhanli = CommonFunc::creatAnimation("xingtian_idle_%d.png", 3, animationFactor*3*1.5, 1);
   //  auto zhanli = CommonFunc::creatAnimation("jiansheng_stand_%d.png", 3, 0.5f, 2);
     this->standAction = RepeatForever::create(zhanli);
     this->standAction->retain();

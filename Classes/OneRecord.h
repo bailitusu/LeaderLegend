@@ -45,8 +45,10 @@ public:
     int currentHP;
     int maxHP;
     int skillId;
+    int nuQiMax;
     CREATE_FUNC(OneRecord);
     virtual bool init();
+    int ballNum;
 };
 
 #endif /* OneRecord_h */

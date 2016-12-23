@@ -18,6 +18,11 @@
 #include "ReadRecordFight.h"
 #include "PvpMatchLayer.h"
 
+#include "AllArmyGuWu.h"
+#include "JiuXiaoLongYin.h"
+#include "HuiMieBoDong.h"
+#include "ZaiShengLongHou.h"
+#include "ZhanYiGaoAng.h"
 //std::string mykey = "zyh";
 Scene* PvpFightLayer::createScene() {
     Scene* scene = Scene::create();
@@ -109,6 +114,63 @@ void PvpFightLayer::initPvpLayer() {
     CommonFunc::setSpriteSize(timeBiaoDiSp, 180);
     timeBiaoDiSp->setPosition(screenSize.width/2,screenSize.height-timeBiaoDiSp->getBoundingBox().size.height/2);
     this->addChild(timeBiaoDiSp,-70);
+    
+    this->leftChouTiBtn = ui::Button::create("choutibtn_right.png");
+    this->leftChouTiBtn->setAnchorPoint(Vec2(0, 0.5));
+    CommonFunc::initButton(this->leftChouTiBtn, CC_CALLBACK_2(PvpFightLayer::leftChouTiClick, this), screenSize.width*0.072, Vec2(0, screenSize.height*0.072));
+    this->addChild(this->leftChouTiBtn,200);
+    
+    this->initLeftChouTi();
+
+    this->currentLiangNum = 0;
+    
+//    ParticleSystem *cps = ParticleMeteor::create();
+//    cps->setPosition(screenSize.width/2,screenSize.height/2);
+//    cps->setLife(0.05f);
+//    cps->setTotalParticles(100);
+//    cps->setDuration(-1);
+//    cps->setEmissionRate(1000);
+//    cps->setPosVar(Point(screenSize.width/2,screenSize.height/2));
+//    this->addChild(cps,5000);
+}
+
+void PvpFightLayer::createLiangGezi(float dur) {
+    int tempShunxu[16] = {0,1,2,3,7,6,5,4,8,9,10,11,15,14,13,12};
+    if (this->currentLiangNum > 15) {
+        this->currentLiangNum = 0;
+    }
+    ParticleSystem *cps = ParticleSun::create();
+    cps->setPosition(this->playerEnemy->fMap->mapCellArray.at(tempShunxu[this->currentLiangNum])->position);
+    cps->setLife(0.05f);
+    cps->setTotalParticles(100);
+    cps->setDuration(0.5);
+    cps->setEmissionRate(cps->getTotalParticles()/cps->getLife());
+    cps->setPosVar(Point(20,20));
+    this->playerEnemy->fMap->addChild(cps,1);
+    this->currentLiangNum++;
+}
+
+
+void PvpFightLayer::leftChouTiClick(cocos2d::Ref *sender, ui::Widget::TouchEventType type) {
+    if (type == ui::Widget::TouchEventType::BEGAN) {
+        if((this->leftChouTi->getActionByTag(10) == NULL) && (this->leftChouTi->getActionByTag(100) == NULL)) {
+            if (this->leftChouTi->getPosition().x < 0) {
+                
+                auto moveOut = MoveTo::create(0.3f, Vec2(0, this->leftChouTi->getPosition().y));
+                moveOut->setTag(10);
+                this->leftChouTiBtn->loadTextureNormal("choutibtn_left.png");
+                this->leftChouTi->runAction(moveOut);
+            }else {
+                auto moveIn = MoveTo::create(0.3f, Vec2(-this->leftChouTi->getBoundingBox().size.width, this->leftChouTi->getPosition().y));
+                
+                moveIn->setTag(100);
+                this->leftChouTiBtn->loadTextureNormal("choutibtn_right.png");
+                this->leftChouTi->runAction(moveIn);
+            }
+        }
+        
+        
+    }
 }
 
 void PvpFightLayer::chouTibtnClick(cocos2d::Ref *sender, ui::Widget::TouchEventType type) {
@@ -156,6 +218,20 @@ void PvpFightLayer::initChouTiLayer() {
         CommonFunc::setShowAllSpriteSize(this->myTakeRoleData.at(i)->xiaoSp, this->chouTiLayer->getBoundingBox().size.width/4-14, this->chouTiLayer->getBoundingBox().size.width/4-14);
         this->myTakeRoleData.at(i)->xiaoSp->setPosition(gezi->getPosition());
         this->chouTiLayer->addChild(this->myTakeRoleData.at(i)->xiaoSp,150);
+        
+        Label* cardNameLabel = Label::createWithTTF(this->myTakeRoleData.at(i)->card->cardZhongWenName, "fonts/kaiti.ttf", 12);
+        cardNameLabel->setDimensions(this->myTakeRoleData.at(i)->xiaoSp->getBoundingBox().size.width, 20);
+        cardNameLabel->setAlignment(TextHAlignment::CENTER);
+        cardNameLabel->setPosition(this->myTakeRoleData.at(i)->xiaoSp->getPosition().x,this->myTakeRoleData.at(i)->xiaoSp->getPosition().y-25);
+        cardNameLabel->setName("namelabel");
+        cardNameLabel->setTextColor(Color4B(225, 225, 225, 255));
+        this->chouTiLayer->addChild(cardNameLabel,200);
+        
+        Sprite* labelNameBg = Sprite::create("zhanliBg.png");
+        CommonFunc::setShowAllSpriteSize(labelNameBg, this->myTakeRoleData.at(i)->xiaoSp->getBoundingBox().size.width, 20);
+        labelNameBg->setPosition(cardNameLabel->getPosition().x,cardNameLabel->getPosition().y+3);
+        labelNameBg->setName("nameBgSp");
+        this->chouTiLayer->addChild(labelNameBg,170);
     }
     
     this->buShuOverBtn = ui::Button::create("classbtn.png");
@@ -165,6 +241,71 @@ void PvpFightLayer::initChouTiLayer() {
     this->buShuOverBtn->setTitleText("部署完成");
     this->buShuOverBtn->setTitleColor(Color3B(255, 255, 255));
     this->addChild(this->buShuOverBtn,100);
+}
+
+void PvpFightLayer::initLeftChouTi() {
+    this->leftChouTi = Layer::create();
+    this->leftChouTi->setContentSize(Size(screenSize.width*0.46, screenSize.height*0.75));
+    this->leftChouTi->setPosition(Vec2(-this->leftChouTi->getBoundingBox().size.width, screenSize.height/2-this->leftChouTi->getBoundingBox().size.height/2));
+
+    this->addChild(leftChouTi,500);
+    
+    Sprite* bg = Sprite::create("buzhenBg2.jpg");
+    
+    CommonFunc::setShowAllSpriteSize(bg, this->leftChouTi->getBoundingBox().size.width, this->leftChouTi->getBoundingBox().size.height);
+    bg->setPosition(this->leftChouTi->getBoundingBox().size.width/2,this->leftChouTi->getBoundingBox().size.height/2);
+    this->leftChouTi->addChild(bg, -100);
+    
+    for (int i = 0; i < 5; i++) {
+        SkillGezi* skill = SkillGezi::create();
+        
+        skill->geZiSp = Sprite::create("herotouxiangbg.png");
+        CommonFunc::setShowAllSpriteSize(skill->geZiSp, this->leftChouTi->getBoundingBox().size.width/4-5, this->leftChouTi->getBoundingBox().size.width/4-5);
+        skill->geZiSp->setPosition(Vec2(8+this->leftChouTi->getBoundingBox().size.width/8+(this->leftChouTi->getBoundingBox().size.width/4-5)*(i%4), this->leftChouTi->getBoundingBox().size.height-(this->leftChouTi->getBoundingBox().size.height/8+this->leftChouTi->getBoundingBox().size.height/4*(i/4))-10 ));
+        this->leftChouTi->addChild(skill->geZiSp,100);
+        skill->index = i;
+        skill->geziPositon = skill->geZiSp->getPosition();
+        
+        char skillImage[20] = {0};
+        sprintf(skillImage, "s_%d.jpg",i);
+        switch (i) {
+            case 0:
+                skill->obj = AllArmyGuWu::create();
+                break;
+            case 1:
+                skill->obj = HuiMieBoDong::create();
+                break;
+            case 2:
+                skill->obj = JiuXiaoLongYin::create();
+                break;
+            case 3:
+                skill->obj = ZaiShengLongHou::create();
+                break;
+            case 4:
+                skill->obj = ZhanYiGaoAng::create();
+                break;
+            default:
+                break;
+        }
+        skill->isEnable = false;
+        skill->isChoice = false;
+        skill->obj->dragonSkillSp = Sprite::create(skillImage);
+
+        CommonFunc::setShowAllSpriteSize(skill->obj->dragonSkillSp, this->leftChouTi->getBoundingBox().size.width/4-14, this->leftChouTi->getBoundingBox().size.width/4-14);
+        skill->obj->dragonSkillSp->setPosition(skill->geZiSp->getPosition());
+        skill->obj->dragonSkillSp->setOpacity(125);
+        this->leftChouTi->addChild(skill->obj->dragonSkillSp,150);
+        skill->obj->retain();
+        
+        skill->choiceLabel = Label::createWithTTF("选中", "fonts/kaiti.ttf", 12);
+        skill->choiceLabel->setOpacity(0);
+        skill->choiceLabel->setDimensions(40, 20);
+        skill->choiceLabel->setAnchorPoint(Vec2(1, 0));
+        skill->choiceLabel->setPosition(skill->geZiSp->getPosition().x+skill->geZiSp->getBoundingBox().size.width/2-5,skill->geZiSp->getPosition().y-skill->geZiSp->getBoundingBox().size.height/2+5);
+        this->leftChouTi->addChild(skill->choiceLabel,300);
+        this->dragonSkillData.pushBack(skill);
+    }
+
 }
 
 void PvpFightLayer::buShubtnClick(cocos2d::Ref *sender, ui::Widget::TouchEventType type) {
@@ -206,6 +347,12 @@ void PvpFightLayer::buShubtnClick(cocos2d::Ref *sender, ui::Widget::TouchEventTy
         printf("%d",cardsArray.Size());
         doc.AddMember("cardkeys", cardsArray, allocator);
         doc.AddMember("cellids", cellsArray, allocator);
+        rapidjson::Value skillkey;
+        if (this->currentClickSkill  != NULL) {
+            skillkey.SetString(this->currentClickSkill->obj->dargonName.c_str(), (unsigned int)strlen(this->currentClickSkill->obj->dargonName.c_str()));
+            doc.AddMember("guardiankey",skillkey , allocator);
+        }
+
         
         rapidjson::StringBuffer buffer;
         rapidjson::Writer<rapidjson::StringBuffer> writer(buffer);
@@ -276,6 +423,7 @@ void PvpFightLayer::checkFightOk(float dur) {
     rapidjson::Document::AllocatorType& allocator = doc.GetAllocator();
     rapidjson::Value tempKey;
     tempKey.SetString(myKey.c_str(), (unsigned int)strlen(myKey.c_str()));
+    printf("%s",myKey.c_str());
     doc.AddMember("playerkey", tempKey, allocator);
     rapidjson::StringBuffer buffer;
     rapidjson::Writer<rapidjson::StringBuffer> writer(buffer);
@@ -331,7 +479,8 @@ void PvpFightLayer::checkFightResponse(cocos2d::network::HttpClient *sender, coc
             rf->gameOverLabel = this->roundLabel;
             rf->readPlayerInfo();
             rf->readBigNextRecord();
-
+            
+          //  schedule(schedule_selector(PvpFightLayer::createLiangGezi), 0.5);
         }else {
             scheduleOnce(schedule_selector(PvpFightLayer::checkFightOk), 1.5);
             std::string message = doc["message"].GetString();
@@ -356,8 +505,82 @@ void PvpFightLayer::roundOver() {
     this->roundLabel->setPosition(Vec2(screenSize.width/2+origin.x, screenSize.height-28));
     this->roundLabel->setString("30");
     this->timeNum = 30;
+    
+    
+    this->jisuanEnableSkill();
+    
     schedule(schedule_selector(PvpFightLayer::daoJiShi), 1.0);
     
+   // unschedule(schedule_selector(PvpFightLayer::createLiangGezi));
+    
+}
+
+void PvpFightLayer::jisuanEnableSkill() {
+    int onrKindsBollNumArray[5] = {0};
+    for (int i = 0; i < this->player->haveBoll.size(); i++) {
+        switch (this->player->haveBoll.at(i)->bollType) {
+            case 1:
+                onrKindsBollNumArray[4] = onrKindsBollNumArray[4]+1;
+                if (onrKindsBollNumArray[4] >= 3) {
+                    this->enableSkill(3);
+                }
+                break;
+            case 10:
+                onrKindsBollNumArray[3] = onrKindsBollNumArray[3]+10;
+                if (onrKindsBollNumArray[3] >= 30) {
+                    this->enableSkill(30);
+                }
+                break;
+            case 100:
+                onrKindsBollNumArray[2] = onrKindsBollNumArray[2]+100;
+                if (onrKindsBollNumArray[2] >= 300) {
+                    this->enableSkill(300);
+                }
+                break;
+            case 1000:
+                onrKindsBollNumArray[1] = onrKindsBollNumArray[1]+1000;
+                if (onrKindsBollNumArray[1] >= 3000) {
+                    this->enableSkill(3000);
+                }
+                break;
+            case 10000:
+                onrKindsBollNumArray[0] = onrKindsBollNumArray[0]+10000;
+                if (onrKindsBollNumArray[0] >= 30000) {
+                    this->enableSkill(30000);
+                }
+                break;
+            default:
+                break;
+        }
+    }
+
+    
+}
+
+void PvpFightLayer::enableSkill(int skillType) {
+    for (int i = 0; i < this->dragonSkillData.size(); i++) {
+        if (this->dragonSkillData.at(i)->obj->zuheNum == skillType) {
+            this->dragonSkillData.at(i)->obj->dragonSkillSp->setOpacity(255);
+            this->dragonSkillData.at(i)->isEnable = true;
+            int eraseSumNum = 3;
+            Vector<Boll*> removeBoll;
+            for (int j = 0; j < this->player->haveBoll.size(); j++) {
+                if(this->player->haveBoll.at(j)->bollType == skillType/3) {
+                    if (eraseSumNum > 0) {
+                        removeBoll.pushBack(this->player->haveBoll.at(j));
+                        eraseSumNum--;
+                        
+                    }else {
+                        break;
+                    }
+                }
+            }
+            for (int n = 0; n < removeBoll.size(); n++) {
+                this->player->haveBoll.eraseObject(removeBoll.at(n));
+            }
+            return;
+        }
+    }
 }
 
 void PvpFightLayer::gameOver() {
@@ -402,7 +625,7 @@ bool PvpFightLayer::onTouchBegan(cocos2d::Touch *touch, cocos2d::Event *unused_e
                 }
             }
         }
-        
+        this->moveCard = NULL;
         for (int i = 0; i < this->myTakeRoleData.size(); i++) {
             if (this->myTakeRoleData.at(i)->card->cardSprite != NULL && this->myTakeRoleData.at(i)->isPvpBuShu == false) {
                 auto tempPoint = this->countCardOrigonPoint(this->myTakeRoleData.at(i)->card,this->player);
@@ -414,30 +637,110 @@ bool PvpFightLayer::onTouchBegan(cocos2d::Touch *touch, cocos2d::Event *unused_e
                     
                     //     printf("%s",this->currentMoveCard->cardName.c_str());
                     // schedule(schedule_selector(SetRoleFormatlayer::showInfo), 1.0);
-                    return true;
+                   // return true;
+                    break;
                 }
             }
         }
-        this->moveCard = NULL;
-
+        
+        
+        for (int j = 0; j < this->dragonSkillData.size(); j++) {
+            auto tempPoint = Vec2(this->dragonSkillData.at(j)->geZiSp->getPosition().x-this->dragonSkillData.at(j)->geZiSp->getBoundingBox().size.width/2, this->dragonSkillData.at(j)->geZiSp->getPosition().y-this->dragonSkillData.at(j)->geZiSp->getBoundingBox().size.height/2);
+            tempPoint = tempPoint+this->leftChouTi->getPosition();
+            Rect rect = Rect(tempPoint.x,tempPoint.y,this->dragonSkillData.at(j)->geZiSp->getBoundingBox().size.width,this->dragonSkillData.at(j)->geZiSp->getBoundingBox().size.height);
+            if (rect.containsPoint(touchLocation)) {
+                if (this->dragonSkillData.at(j)->isEnable == true) {
+                    if (this->dragonSkillData.at(j)->isChoice == false) {
+                        this->dragonSkillData.at(j)->isChoice = true;
+                        this->dragonSkillData.at(j)->choiceLabel->setOpacity(255);
+                        if (this->currentClickSkill != NULL) {
+                            this->currentClickSkill->isChoice = false;
+                            this->currentClickSkill->choiceLabel->setOpacity(0);
+                        }
+                        this->currentClickSkill = this->dragonSkillData.at(j);
+                        break;
+                    }else {
+                        this->dragonSkillData.at(j)->choiceLabel->setOpacity(0);
+                        this->dragonSkillData.at(j)->isChoice = false;
+                        this->currentClickSkill = NULL;
+                    }
+                }
+            }
+        }
+        
+        
+    }else {
+//        for (int k = 0; k < this->player->fMap->getChildren().size(); k++) {
+//            if (this->player->fMap->getChildren().at(k)->getTag() == 999) {
+//                auto temp = (Sprite*)(this->player->fMap->getChildren().at(k));
+//                auto point = Vec2(temp->getPosition().x-temp->getBoundingBox().size.width/2,temp->getPosition().y-temp->getBoundingBox().size.height/2);
+//                point = point+this->player->fMap->getPosition();
+//                Rect rect = Rect(point.x, point.y, temp->getBoundingBox().size.width, temp->getBoundingBox().size.height);
+//                if (rect.containsPoint(touchLocation)) {
+//                    temp->removeFromParentAndCleanup(true);
+//                    break;
+//                    
+//                }
+//            }
+//        }
+        for (int k = 0; k < this->player->allAppearBoll.size(); k++) {
+            auto temp = this->player->allAppearBoll.at(k)->bollSp;
+            auto point = Vec2(temp->getPosition().x-temp->getBoundingBox().size.width/2,temp->getPosition().y-temp->getBoundingBox().size.height/2);
+            point = point+this->player->fMap->getPosition();
+            Rect rect = Rect(point.x, point.y, temp->getBoundingBox().size.width, temp->getBoundingBox().size.height);
+            if (rect.containsPoint(touchLocation)) {
+                temp->removeFromParentAndCleanup(true);
+                temp = NULL;
+                this->player->haveBoll.pushBack(this->player->allAppearBoll.at(k));
+                this->player->allAppearBoll.eraseObject(this->player->allAppearBoll.at(k));
+                break;
+            }
+        }
+        
+        this->liziQiu = Sprite::create();
+       // CommonFunc::setSpriteSize(this->liziQiu, 80);
+        this->liziQiu->setPosition(touchLocation);
+        this->addChild(this->liziQiu,5000);
+        
+      //  this->cps = ParticleSun::create();
+        
     }
+    
     
        return true;
 }
 
 void PvpFightLayer::onTouchMoved(cocos2d::Touch *touch, cocos2d::Event *unused_event) {
+    auto point = Director::getInstance()->convertToGL(touch->getLocationInView());
+    auto oldPoint = Director::getInstance()->convertToGL(touch->getPreviousLocationInView());
     if (this->isRounding == false) {
         if (this->moveCard != NULL) {
-            auto point = Director::getInstance()->convertToGL(touch->getLocationInView());
-            auto oldPoint = Director::getInstance()->convertToGL(touch->getPreviousLocationInView());
+
             auto distance = point-oldPoint;
             this->moveCard->cardSprite->setPosition(this->moveCard->cardSprite->getPosition()+distance);
+            
+        }
+    }else {
+        if (this->liziQiu != NULL) {
+            this->liziQiu->setPosition(point);
+            
+            ParticleSystem *cps = ParticleSun::create();
+
+            cps->setPosition(0,5/this->liziQiu->getScaleX());
+            cps->setLife(0.05f);
+            cps->setTotalParticles(10);
+            cps->setEmissionRate(cps->getTotalParticles()/cps->getLife());
+            this->liziQiu->addChild(cps);
             
         }
     }
 
 }
-
+void PvpFightLayer::longJuanFengBlock() {
+    this->longJuanFengSp->stopAllActions();
+    this->longJuanFengSp->removeFromParentAndCleanup(true);
+    this->longJuanFengSp= NULL;
+}
 void PvpFightLayer::onTouchEnded(cocos2d::Touch *touch, cocos2d::Event *unused_event) {
     if (this->isRounding == false) {
         if (this->moveCard != NULL) {
@@ -519,6 +822,21 @@ void PvpFightLayer::onTouchEnded(cocos2d::Touch *touch, cocos2d::Event *unused_e
             }
         }
 
+    }else {
+        this->liziQiu->removeAllChildrenWithCleanup(true);
+        this->liziQiu->removeFromParentAndCleanup(true);
+        this->liziQiu = NULL;
+        if (this->longJuanFengSp == NULL) {
+            CommonFunc::removeAnimation();
+            this->longJuanFengSp = Sprite::create("full_0.png");
+            this->longJuanFengSp->setScale(2);
+            this->longJuanFengSp->setPosition(this->playerEnemy->fMap->getPosition().x+this->playerEnemy->fMap->getBoundingBox().size.width/2,this->playerEnemy->fMap->getPosition().y+this->playerEnemy->fMap->getBoundingBox().size.height/2);
+            this->addChild(this->longJuanFengSp,6000);
+            
+            Animate* longjuanFeng = CommonFunc::creatAnimation("full_%d.png", 12, animationFactor*12, 1);
+            auto block = CallFunc::create(CC_CALLBACK_0(PvpFightLayer::longJuanFengBlock, this));
+            this->longJuanFengSp->runAction(Sequence::create(longjuanFeng,block,NULL));
+        }
     }
    
 }

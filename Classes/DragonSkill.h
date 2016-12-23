@@ -29,6 +29,8 @@ public:
     std::string dargonName;
     bool noHave;
     std::string dargonInfoName;
+    DragonData* currentData;
+    int zuheNum;
 };
 
 #endif /* DragonSkill_h */

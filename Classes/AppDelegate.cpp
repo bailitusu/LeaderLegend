@@ -1,8 +1,8 @@
 #include "AppDelegate.h"
-#include "FightLayer.h"
-#include "SetRoleFormatLayer.h"
+
 #include "GameBeginLayer.h"
 #include "HelloWorldScene.h"
+#include "GongGaoLayer.h"
 USING_NS_CC;
 
 static cocos2d::Size designResolutionSize = cocos2d::Size(667, 375);
@@ -49,7 +49,7 @@ bool AppDelegate::applicationDidFinishLaunching() {
     }
 
     // turn on display FPS
-    director->setDisplayStats(true);
+    director->setDisplayStats(false);
 
     // set FPS. the default value is 1.0/60 if you don't call this
     director->setAnimationInterval(1.0f / 60);
@@ -83,7 +83,7 @@ bool AppDelegate::applicationDidFinishLaunching() {
   //  FileUtils::getInstance()->addSearchPath("fonts");
     // create a scene. it's an autorelease object
   //  Scene* scene = FightLayer::createScene();
-    Scene* scene = GameBeginLayer::createScene();
+    Scene* scene = GongGaoLayer::createScene();
     // run
     director->runWithScene(scene);
 

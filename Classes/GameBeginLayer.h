@@ -61,6 +61,10 @@ public:
     Label* zanWeiKaiFangLabel;
     Sprite* zanWeiKaiFangSpBg;
     void removeZanWeiKaiFang();
+    
+    void enterLoadingLayer(std::string pushType,Scene* nextScene);
+    Label* playerNameLabel;
+    Label* zhanliNumLabel;
 };
 
 #endif /* GameBeginLayer_h */

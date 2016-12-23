@@ -15,6 +15,7 @@ bool ZhanYiGaoAng::init() {
     this->skillLevel = 9;
     this->dargonName = "zhanyigaoang";
     this->dargonInfoName = "战役高昂";
+    this->zuheNum = 3;
     return true;
 }
 

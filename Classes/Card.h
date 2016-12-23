@@ -25,6 +25,7 @@ class Card: public Ref, public StandMapCellInterface  {
 
 public:
     std::string cardName;
+    std::string cardZhongWenName;
     std::string playerName;
     std::string cardSpriteImageName;
     std::string xiaoZhaoInfo;
@@ -51,7 +52,7 @@ public:
 //    virtual void addNuQi(Card* card,int num);
 //    virtual void decreaseNuQi(Card* card,int num, bool isDaZhao);
     
-    virtual void nuQiAppear(Card* card, int num);
+    virtual void nuQiAppear(Card* card, int num,int maxSp);
     virtual void hpAppear(Card *card, int hitValue, int hp,std::string textType);
     
 //    virtual void recordAddHP(Card *card, float hpValue);
@@ -83,6 +84,9 @@ public:
     
     virtual void beforeAnimation(OneRecord *info,Card* card);
     virtual void afterAnimation(OneRecord *info, Card* card);
+    
+    virtual void createBall();
+    virtual void createTeXiao(Card* cardTexiao);
     RepeatForever* standAction;
     
     Buff* fBuff;

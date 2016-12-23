@@ -14,6 +14,7 @@ bool JiuXiaoLongYin::init() {
     this->skillLevel = 9;
     this->dargonName = "jiuxiaolongyin";
     this->dargonInfoName = "九霄龙吟";
+    this->zuheNum = 3000;
     return true;
 }
 

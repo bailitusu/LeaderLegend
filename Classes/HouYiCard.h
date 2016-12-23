@@ -41,7 +41,7 @@ public:
 //    virtual void beforeAnimation(OneRecord *info);
 //    virtual void afterAnimation(OneRecord *info);
    // void actionBlock();
-    
+    virtual void createTeXiao(Card* cardTexiao);
     
 };
 

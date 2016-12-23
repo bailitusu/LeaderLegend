@@ -14,6 +14,7 @@
 #include "RecordFight.h"
 #include "FightProgress.h"
 
+#include "Boll.h"
 bool Card::init() {
     return true;
 }
@@ -258,28 +259,30 @@ void Card::textLabelDisappearBlock() {
 //
 //}
 
-void Card::nuQiAppear(Card *card, int num) {
+void Card::nuQiAppear(Card *card, int num,int maxSp) {
     if (card != NULL) {
-        switch (num) {
-            case 0:
-                card->fPro->setNuQiProPrecent(0);
-                break;
-            case 1:
-                
-                card->fPro->setNuQiProPrecent(34);
-                break;
-            case 2:
-                
-                card->fPro->setNuQiProPrecent(66);
-                break;
-            case 3:
-                
-                card->fPro->setNuQiProPrecent(100);
-                break;
-            default:
-                card->fPro->setNuQiProPrecent(100);
-                break;
-        }
+//        switch (num) {
+//            case 0:
+//                card->fPro->setNuQiProPrecent(0);
+//                break;
+//            case 1:
+//                
+//                card->fPro->setNuQiProPrecent(34);
+//                break;
+//            case 2:
+//                
+//                card->fPro->setNuQiProPrecent(66);
+//                break;
+//            case 3:
+//                
+//                card->fPro->setNuQiProPrecent(100);
+//                break;
+//            default:
+//                card->fPro->setNuQiProPrecent(100);
+//                break;
+//        }
+        int tempSp = (int)(((float)num / (float)maxSp)*100);
+        card->fPro->setNuQiProPrecent(tempSp);
     }
 }
 
@@ -293,7 +296,7 @@ void Card::beforeAnimation(OneRecord *info, Card* card) {
                 info->beforeArray.at(i)->card->MaxHP = info->beforeArray.at(i)->maxHP;
                 this->hpAppear(info->beforeArray.at(i)->card, -info->beforeArray.at(i)->offsetHP, info->beforeArray.at(i)->currentHP,"");
             }else if (info->beforeArray.at(i)->reason.compare("changesp") == 0) {
-                this->nuQiAppear(info->beforeArray.at(i)->card, info->beforeArray.at(i)->nuQiChange);
+                this->nuQiAppear(info->beforeArray.at(i)->card, info->beforeArray.at(i)->nuQiChange,info->beforeArray.at(i)->nuQiMax);
             }else if(info->beforeArray.at(i)->reason.compare("addbuff") == 0) {
                 printf("%s",info->beforeArray.at(i)->buffName.c_str());
             }
@@ -307,7 +310,45 @@ void Card::beforeAnimation(OneRecord *info, Card* card) {
     }
 }
 
+void Card::createBall() {
+
+}
+
+void Card::createTeXiao(Card* cardTexiao) {
+
+}
+
 void Card::afterAnimation(OneRecord *info, Card* card) {
+    if (info->ballNum > 0) {
+        Boll* boll = Boll::create();
+       // Sprite* boll = NULL;
+        if (info->ballNum >= 10000) {
+            boll->bollSp = Sprite::create("jin.png");
+            boll->bollType = 10000;
+        }else if(info->ballNum < 10000 && info->ballNum >= 1000) {
+            boll->bollSp = Sprite::create("mu.png");
+            boll->bollType = 1000;
+        }else if(info->ballNum < 1000 && info->ballNum >= 100) {
+            boll->bollSp = Sprite::create("shui.png");
+            boll->bollType = 100;
+        }else if(info->ballNum < 100 && info->ballNum >= 10) {
+            boll->bollSp = Sprite::create("huo.png");
+            boll->bollType = 10;
+        }else if(info->ballNum < 10 && info->ballNum >= 1) {
+            boll->bollSp = Sprite::create("tu.png");
+            boll->bollType = 1;
+        }
+        CommonFunc::setShowAllSpriteSize(boll->bollSp, 44, 44);
+        boll->bollSp->setPosition(card->cardSprite->getPosition().x,card->cardSprite->getPosition().y+20);
+        boll->bollSp->setTag(999);
+        card->cardSprite->getParent()->addChild(boll->bollSp,2000);
+        boll->retain();
+        card->forPlayer->allAppearBoll.pushBack(boll);
+    }
+    
+
+    
+    
     if (info->afterArray.size() == 0) {
         info->release();
         return;
@@ -317,7 +358,7 @@ void Card::afterAnimation(OneRecord *info, Card* card) {
                 info->afterArray.at(i)->card->MaxHP = info->afterArray.at(i)->maxHP;
                 this->hpAppear(info->afterArray.at(i)->card, -info->afterArray.at(i)->offsetHP, info->afterArray.at(i)->currentHP,"");
             }else if (info->afterArray.at(i)->reason.compare("changesp") == 0) {
-                this->nuQiAppear(info->afterArray.at(i)->card, info->afterArray.at(i)->nuQiChange);
+                this->nuQiAppear(info->afterArray.at(i)->card, info->afterArray.at(i)->nuQiChange,info->afterArray.at(i)->nuQiMax);
             }else if(info->afterArray.at(i)->reason.compare("addbuff") == 0) {
                 printf("%s",info->afterArray.at(i)->buffName.c_str());
             }

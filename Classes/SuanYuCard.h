@@ -38,7 +38,7 @@ public:
     virtual void preCardAudio();
     void xiaoHitMusic();
     void daHitMusic();
-
+    virtual void createTeXiao(Card* cardTexiao);
 };
 
 

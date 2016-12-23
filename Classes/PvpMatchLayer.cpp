@@ -24,6 +24,15 @@
 #include "FengHouCard.h"
 #include "SuanYuCard.h"
 
+#include "BaiZeCard.h"
+#include "DangKangCard.h"
+#include "FengHuangCard.h"
+#include "HunDunCard.h"
+#include "LeiShenCard.h"
+#include "QingNiaoCard.h"
+#include "QiongQiCard.h"
+#include "TaoWuCard.h"
+
 Scene* PvpMatchLayer::createScene() {
     Scene* scene = Scene::create();
     return scene;
@@ -42,17 +51,17 @@ void PvpMatchLayer::initMatchLayer() {
     this->background->setLocalZOrder(-100);
     this->addChild(background);
     
-    this->trainingBtn = ui::Button::create("xunlianBtn.jpg");
-    CommonFunc::initButton(this->trainingBtn, CC_CALLBACK_2(PvpMatchLayer::trainingBtnClick, this), screenSize.width/6, Vec2(screenSize.width/2, screenSize.height*0.4));
-   // this->trainingBtn->setTitleText("开始训练");
+    this->trainingBtn = ui::Button::create("btnBg1.png");
+    CommonFunc::initButton(this->trainingBtn, CC_CALLBACK_2(PvpMatchLayer::trainingBtnClick, this), screenSize.width/6, Vec2(screenSize.width/3, screenSize.height*0.4));
+    this->trainingBtn->setTitleText("训练对战");
     this->trainingBtn->setTitleColor(Color3B(255, 255, 255));
     this->addChild(this->trainingBtn,100);
     
-//    this->pvpMatchBtn = ui::Button::create("classbtn.png");
-//    CommonFunc::initButton(this->pvpMatchBtn, CC_CALLBACK_2(PvpMatchLayer::pvpMatchBtnClick, this), screenSize.width/8, Vec2(screenSize.width*2/3, screenSize.height*0.4));
-//    this->pvpMatchBtn->setTitleText("开始匹配");
-//    this->pvpMatchBtn->setTitleColor(Color3B(255, 255, 255));
-//    this->addChild(this->pvpMatchBtn,100);
+    this->pvpMatchBtn = ui::Button::create("btnBg1.png");
+    CommonFunc::initButton(this->pvpMatchBtn, CC_CALLBACK_2(PvpMatchLayer::pvpMatchBtnClick, this), screenSize.width/6, Vec2(screenSize.width*2/3, screenSize.height*0.4));
+    this->pvpMatchBtn->setTitleText("匹配对战");
+    this->pvpMatchBtn->setTitleColor(Color3B(255, 255, 255));
+    this->addChild(this->pvpMatchBtn,100);
     
     this->pipeiLabel = Label::createWithTTF("", "fonts/kaiti.ttf", 19);
     this->pipeiLabel->setContentSize(Size(80,30));
@@ -137,6 +146,10 @@ void PvpMatchLayer::trainingResponse(cocos2d::network::HttpClient *sender, cocos
         std::vector<char>* info = response->getResponseData();
         std::string infoStr  = std::string(info->begin(),info->end());
         this->analysisResponseData(infoStr, "training");
+        
+    }else {
+        this->pipeiLabel->setString("训练匹配超时。。。。");
+        this->isTraining = false;
     }
 }
 
@@ -148,6 +161,8 @@ void PvpMatchLayer::matchResponse(cocos2d::network::HttpClient *sender, cocos2d:
 //        std::string infoStr  = std::string(info->begin(),info->end());
         
         
+    }else {
+       scheduleOnce(schedule_selector(PvpMatchLayer::checkIsMatchSuccess), 1.0);
     }
 }
 
@@ -194,9 +209,40 @@ bool PvpMatchLayer::analysisResponseData(std::string infoStr,std::string reponse
             }else if(tempName.compare("taotie") == 0) {
                 roleData->card = TaoTieCard::create();
                 roleData->card->retain();
+            }else if(tempName.compare("baize") == 0) {
+                roleData->card = BaiZeCard::create();
+                roleData->card->retain();
+            }else if(tempName.compare("dangkang") == 0) {
+                roleData->card = DangKangCard::create();
+                roleData->card->retain();
+            }else if(tempName.compare("fenghuang") == 0) {
+                roleData->card = FengHuangCard::create();
+                roleData->card->retain();
+            }else if(tempName.compare("hundun") == 0) {
+                roleData->card = HunDunCard::create();
+                roleData->card->retain();
+            }else if(tempName.compare("leishen") == 0) {
+                roleData->card = LeiShenCard::create();
+                roleData->card->retain();
+            }else if(tempName.compare("qingniao") == 0) {
+                roleData->card = QingNiaoCard::create();
+                roleData->card->retain();
+            }else if(tempName.compare("qiongqi") == 0) {
+                roleData->card = QiongQiCard::create();
+                roleData->card->retain();
+            }else if(tempName.compare("taowu") == 0) {
+                roleData->card = TaoWuCard::create();
+                roleData->card->retain();
             }
-            roleData->xiaoImageName = roleData->card->cardName+"_tx.jpg";
-            roleData->imageName = roleData->card->cardSpriteImageName+"_l0.png";
+            
+            
+            if (tempName.compare("baize") == 0 || tempName.compare("dangkang") == 0 || tempName.compare("fenghuang") == 0 || tempName.compare("hundun") == 0 || tempName.compare("leishen") == 0 || tempName.compare("qingniao") == 0 || tempName.compare("qiongqi") == 0 || tempName.compare("taowu") == 0 ) {
+                roleData->xiaoImageName = roleData->card->cardName+"_tx.png";
+            }else {
+                roleData->xiaoImageName = roleData->card->cardName+"_tx.jpg";
+            }
+            
+            roleData->imageName = roleData->card->cardSpriteImageName+"_0.png";
             roleData->isPvpBuShu = false;
             this->myData.pushBack(roleData);
         }
@@ -257,5 +303,7 @@ void PvpMatchLayer::matchSuccessResponse(cocos2d::network::HttpClient *sender, c
             scheduleOnce(schedule_selector(PvpMatchLayer::checkIsMatchSuccess), 1.0);
         }
         
+    }else {
+        scheduleOnce(schedule_selector(PvpMatchLayer::checkIsMatchSuccess), 1.0);
     }
 }

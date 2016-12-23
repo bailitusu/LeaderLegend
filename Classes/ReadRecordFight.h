@@ -48,7 +48,7 @@ public:
     Card* getCardFromIndex(int cardStandIndex,FightPlayer* fplayer);
     Vector<SetRoleData*> *roleData;
     void readPlayerInfo();
-    void initPlayerCard(FightPlayer*tempPlayer, std::string cardName,std::string imageName, int cellIndex, std::string pName);
+    void initPlayerCard(FightPlayer*tempPlayer, std::string cardName,std::string imageName, int cellIndex, std::string pName,int hp,int maxHp,int sp,int maxSp);
     void analysisBeforeOrAfterArray(Vector<OneRecord*> *tempBefore,rapidjson::Value& tempArray);
     void readDragonInfo();
     void readNextDragon();

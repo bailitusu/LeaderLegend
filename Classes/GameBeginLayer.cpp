@@ -26,7 +26,11 @@
 #include "Bag.h"
 #include "TuJianLayer.h"
 
+#include "LoadingLayer.h"
 #include "PvpMatchLayer.h"
+
+#include "RoleInfoLayer.h"
+#include "CreateTreasureLayer.h"
 bool GameBeginLayer::init() {
     if (!Layer::init()) {
         return  false;
@@ -79,32 +83,25 @@ void GameBeginLayer::initGameBeginLayer() {
     this->playerBag->taoZiNum = 100;
     this->playerBag->retain();
     
-    this->cardFormatJJC(HouYiCard::create(),"xiaohei_stand_l0.png", 0, DunJiaTianShu::create());
-    this->cardFormatJJC(XuanWuCard::create(),"niutou_stand_l0.png", 1, DunJiaTianShu::create());
-    this->cardFormatJJC(XingTianCard::create(),"jiansheng_stand_l0.png", 2, DunJiaTianShu::create());
-    this->cardFormatJJC(ChangECard::create(),"bingnv_stand_l0.png", 3, DunJiaTianShu::create());
-    this->cardFormatJJC(TaoTieCard::create(),"panda_stand_l0.png", 4, DunJiaTianShu::create());
-    this->cardFormatJJC(FengHouCard::create(),"gugong_stand_l0.png", 5, DunJiaTianShu::create());
-    this->cardFormatJJC(FengBoCard::create(),"zhousi_stand_l0.png", 6, DunJiaTianShu::create());
-    this->cardFormatJJC(SuanYuCard::create(),"fengxing_stand_l0.png", 7, DunJiaTianShu::create());
+    this->cardFormatJJC(HouYiCard::create(),"houyi_idle_0.png", 0, DunJiaTianShu::create());
+    this->cardFormatJJC(XuanWuCard::create(),"xuanwu_idle_0.png", 1, DunJiaTianShu::create());
+    this->cardFormatJJC(XingTianCard::create(),"xingtian_idle_0.png", 2, DunJiaTianShu::create());
+    this->cardFormatJJC(ChangECard::create(),"change_idle_0.png", 3, DunJiaTianShu::create());
+    this->cardFormatJJC(TaoTieCard::create(),"taotie_idle_0.png", 4, DunJiaTianShu::create());
+    this->cardFormatJJC(FengHouCard::create(),"fenghou_idle_0.png", 5, DunJiaTianShu::create());
+    this->cardFormatJJC(FengBoCard::create(),"fengbo_idle_0.png", 6, DunJiaTianShu::create());
+    this->cardFormatJJC(SuanYuCard::create(),"suanyu_idle_0.png", 7, DunJiaTianShu::create());
     
     
-    this->cardFormatPVE(HouYiCard::create(),"xiaohei_stand_l0.png", 0, DunJiaTianShu::create());
-//    this->cardFormatPVE(HouYiCard::create(),"xiaohei_stand_l0.png", 1, DunJiaTianShu::create());
-//    this->cardFormatPVE(HouYiCard::create(),"xiaohei_stand_l0.png", 2, DunJiaTianShu::create());
-//    this->cardFormatPVE(HouYiCard::create(),"xiaohei_stand_l0.png", 3, DunJiaTianShu::create());
-//    this->cardFormatPVE(HouYiCard::create(),"xiaohei_stand_l0.png", 4, DunJiaTianShu::create());
-//    this->cardFormatPVE(HouYiCard::create(),"xiaohei_stand_l0.png", 5, DunJiaTianShu::create());
-//    this->cardFormatPVE(HouYiCard::create(),"xiaohei_stand_l0.png", 6, DunJiaTianShu::create());
-//    this->cardFormatPVE(HouYiCard::create(),"xiaohei_stand_l0.png", 7, DunJiaTianShu::create());
+    this->cardFormatPVE(HouYiCard::create(),"houyi_idle_0.png", 0, DunJiaTianShu::create());
     
-    this->cardFormatPVE(XuanWuCard::create(),"niutou_stand_l0.png", 1, DunJiaTianShu::create());
-    this->cardFormatPVE(XingTianCard::create(),"jiansheng_stand_l0.png", 2, DunJiaTianShu::create());
-    this->cardFormatPVE(ChangECard::create(),"bingnv_stand_l0.png", 3, DunJiaTianShu::create());
-    this->cardFormatPVE(TaoTieCard::create(),"panda_stand_l0.png", 4, DunJiaTianShu::create());
-    this->cardFormatPVE(FengHouCard::create(),"gugong_stand_l0.png", 5, DunJiaTianShu::create());
-    this->cardFormatPVE(FengBoCard::create(),"zhousi_stand_l0.png", 6, DunJiaTianShu::create());
-    this->cardFormatPVE(SuanYuCard::create(),"fengxing_stand_l0.png", 7, DunJiaTianShu::create());
+    this->cardFormatPVE(XuanWuCard::create(),"xuanwu_idle_0.png", 1, DunJiaTianShu::create());
+    this->cardFormatPVE(XingTianCard::create(),"xingtian_idle_0.png", 2, DunJiaTianShu::create());
+    this->cardFormatPVE(ChangECard::create(),"change_idle_0.png", 3, DunJiaTianShu::create());
+    this->cardFormatPVE(TaoTieCard::create(),"taotie_idle_0.png", 4, DunJiaTianShu::create());
+    this->cardFormatPVE(FengHouCard::create(),"fenghou_idle_0.png", 5, DunJiaTianShu::create());
+    this->cardFormatPVE(FengBoCard::create(),"fengbo_idle_0.png", 6, DunJiaTianShu::create());
+    this->cardFormatPVE(SuanYuCard::create(),"suanyu_idle_0.png", 7, DunJiaTianShu::create());
 
 
     this->renWu = ui::Button::create("jingjichang.png");
@@ -168,6 +165,56 @@ void GameBeginLayer::initGameBeginLayer() {
 //    this->zhuXian = ui::Button::create("zhuxian.png");
 //    CommonFunc::initButton(this->zhuXian, CC_CALLBACK_2(GameBeginLayer::zhuXianBtn, this), screenSize.width/10/scale, Vec2(screenSize.width/10*4/scale, screenSize.height/3/scale));
 //    this->backgroundOne->addChild(this->zhuXian,50);
+    RoleInfoLayer* roleInfoLayer = RoleInfoLayer::create();
+    roleInfoLayer->setContentSize(Size(380, 50));
+    //roleInfoLayer->setContentSize(Size(120, 120));
+    roleInfoLayer->initRoleInfoLayer();
+    roleInfoLayer->setPosition(Vec2(190, screenSize.height-45));
+   // roleInfoLayer->setPosition(Vec2(5, screenSize.height-215));
+    this->addChild(roleInfoLayer,100);
+    
+//    Sprite* vipSp = Sprite::create("vip12.png");
+//    CommonFunc::setSpriteSize(vipSp, 50);
+//    vipSp->setPosition(100,screenSize.height-67);//x:118
+//    this->addChild(vipSp,150);
+    
+    Sprite* playerTX = Sprite::create("playertx3.png");
+    CommonFunc::setSpriteSize(playerTX, 80);//110
+    //playerTX->setPosition(Vec2(playerTX->getBoundingBox().size.width/2-2, screenSize.height-playerTX->getBoundingBox().size.height/2+12));
+    playerTX->setPosition(playerTX->getBoundingBox().size.width/2+5,screenSize.height-playerTX->getBoundingBox().size.height/2);
+    this->addChild(playerTX,100);
+    
+    Sprite* playerNameBgSp = Sprite::create("infoBg.png");
+    CommonFunc::setShowAllSpriteSize(playerNameBgSp, 130,35);
+    playerNameBgSp->setPosition(Vec2(120, screenSize.height-22));
+    this->addChild(playerNameBgSp,50);
+    
+    this->playerNameLabel = Label::createWithTTF("虎虎", "fonts/kaiti.ttf", 20);
+    playerNameLabel->setTextColor(Color4B(255, 255, 255, 255));
+    playerNameLabel->setDimensions(120, 30);
+    playerNameLabel->setPosition(Vec2(playerNameBgSp->getPosition().x, playerNameBgSp->getPosition().y-5));
+    playerNameLabel->setAlignment(TextHAlignment::CENTER);
+    this->addChild(playerNameLabel,75);
+    
+    
+    Sprite* zhanliBgSp = Sprite::create("zhanliBg.png");
+    CommonFunc::setShowAllSpriteSize(zhanliBgSp, 150, 25);
+    zhanliBgSp->setPosition(Vec2(140, screenSize.height-48));
+    this->addChild(zhanliBgSp,50);
+    
+    Label* zlLabel = Label::createWithTTF("战力", "fonts/hanyixuejunti.ttf", 18);
+    zlLabel->setTextColor(Color4B(228, 80, 62, 255));
+    zlLabel->setDimensions(40, 25);
+    zlLabel->setPosition(Vec2(zhanliBgSp->getPosition().x-20, zhanliBgSp->getPosition().y-3));
+    zlLabel->setAlignment(TextHAlignment::LEFT);
+    this->addChild(zlLabel,75);
+    
+    this->zhanliNumLabel = Label::createWithTTF("140021", "fonts/hanyixuejunti.ttf", 16);
+    zhanliNumLabel->setTextColor(Color4B(254, 231, 119, 255));
+    zhanliNumLabel->setDimensions(100, 25);
+    zhanliNumLabel->setPosition(Vec2(zhanliBgSp->getPosition().x+53, zhanliBgSp->getPosition().y-4));
+    zhanliNumLabel->setAlignment(TextHAlignment::LEFT);
+    this->addChild(zhanliNumLabel,75);
 }
 
 void GameBeginLayer::createUINameLabel(std::string text, cocos2d::Vec2 position) {
@@ -232,7 +279,7 @@ void GameBeginLayer::buZhenBtn(cocos2d::Ref *sender, ui::Widget::TouchEventType 
 //        layer->initSetRoleFormatLayer();
 //        Director::getInstance()->pushScene(TransitionFade::create(1.0f, setRoleScene));
 //    }
-    if (type == ui::Widget::TouchEventType::ENDED) {
+    if (type == ui::Widget::TouchEventType::BEGAN) {
         if (this->zanWeiKaiFangSpBg == NULL && this->zanWeiKaiFangLabel == NULL) {
             this->zanWeiKaiFang();
         }
@@ -246,24 +293,42 @@ void GameBeginLayer::faBaoBtn(cocos2d::Ref *sender, ui::Widget::TouchEventType t
 }
 
 void GameBeginLayer::jingJiChangBtn(cocos2d::Ref *sender, ui::Widget::TouchEventType type) {
-    if (type == ui::Widget::TouchEventType::ENDED) {
+    if (type == ui::Widget::TouchEventType::BEGAN) {
         auto matchScene = PvpMatchLayer::createScene();
         PvpMatchLayer* layer = PvpMatchLayer::create();
         layer->setContentSize(screenSize);
         matchScene->addChild(layer);
         layer->initMatchLayer();
-        Director::getInstance()->pushScene(TransitionFade::create(1.0f, matchScene));
+//        Director::getInstance()->pushScene(TransitionFade::create(1.0f, matchScene));
+        this->enterLoadingLayer("replace", matchScene);
+        
     }
 
 }
 
 void GameBeginLayer::shangDianBtn(cocos2d::Ref *sender, ui::Widget::TouchEventType type) {
-    if (type == ui::Widget::TouchEventType::ENDED) {
+    if (type == ui::Widget::TouchEventType::BEGAN) {
         if (this->zanWeiKaiFangSpBg == NULL && this->zanWeiKaiFangLabel == NULL) {
              this->zanWeiKaiFang();
         }
-       
+//        CreateTreasureLayer* layer = CreateTreasureLayer::create();
+//        layer->setContentSize(screenSize);
+//        layer->setPosition(screenSize.width/2-layer->getBoundingBox().size.width/2,screenSize.height/2-layer->getBoundingBox().size.height/2);
+//        layer->initCreateFabaoLayer();
+//        this->addChild(layer, 200);
+        
     }
+}
+
+void GameBeginLayer::enterLoadingLayer(std::string pushType, cocos2d::Scene *nextScene) {
+    auto scene = LoadingLayer::CreateScene();
+    LoadingLayer* loadLayer = LoadingLayer::GetInstance();
+    loadLayer->setContentSize(screenSize);
+    scene->addChild(loadLayer);
+    loadLayer->pushType = pushType;
+    loadLayer->nextScene = nextScene;
+    loadLayer->initLoadLayer();
+    Director::getInstance()->pushScene(TransitionFade::create(1.0f, scene));
 }
 
 void GameBeginLayer::zanWeiKaiFang() {
@@ -303,7 +368,7 @@ void GameBeginLayer::removeZanWeiKaiFang() {
 }
 
 void GameBeginLayer::lingShouBtn(cocos2d::Ref *sender, ui::Widget::TouchEventType type) {
-    if (type == ui::Widget::TouchEventType::ENDED) {
+    if (type == ui::Widget::TouchEventType::BEGAN) {
         auto lingShoScene = LingShoLayer::createScene();
         LingShoLayer* layer = LingShoLayer::create();
         layer->setContentSize(screenSize);
@@ -312,13 +377,15 @@ void GameBeginLayer::lingShouBtn(cocos2d::Ref *sender, ui::Widget::TouchEventTyp
         layer->myBag = this->playerBag;
         layer->myDragon = this->dragon;
         layer->initLingShoLayer();
-        Director::getInstance()->pushScene(TransitionFade::create(1.0f, lingShoScene));
+        
+        this->enterLoadingLayer("replace", lingShoScene);
+       // Director::getInstance()->pushScene(TransitionFade::create(1.0f, lingShoScene));
     }
 
 }
 
 void GameBeginLayer::renWuBtn(cocos2d::Ref *sender, ui::Widget::TouchEventType type) {
-    if (type == ui::Widget::TouchEventType::ENDED) {
+    if (type == ui::Widget::TouchEventType::BEGAN) {
         auto tuJianScene = TuJianLayer::createScene();
         TuJianLayer* layer = TuJianLayer::create();
         layer->setContentSize(screenSize);
@@ -326,7 +393,9 @@ void GameBeginLayer::renWuBtn(cocos2d::Ref *sender, ui::Widget::TouchEventType t
         tuJianScene->addChild(layer);
         
         layer->initTuJianLayer();
-        Director::getInstance()->pushScene(TransitionFade::create(1.0f, tuJianScene));
+        
+        this->enterLoadingLayer("replace", tuJianScene);
+       // Director::getInstance()->pushScene(TransitionFade::create(1.0f, tuJianScene));
     }
 
 }
@@ -336,7 +405,7 @@ void GameBeginLayer::tianFuBtn(cocos2d::Ref *sender, ui::Widget::TouchEventType 
 }
 
 void GameBeginLayer::zhuXianBtn(cocos2d::Ref *sender, ui::Widget::TouchEventType type) {
-    if (type == ui::Widget::TouchEventType::ENDED) {
+    if (type == ui::Widget::TouchEventType::BEGAN) {
         auto fuBenScene = FuBenLayer::createScene();
         FuBenLayer* layer = FuBenLayer::create();
         layer->setContentSize(screenSize);
@@ -346,7 +415,9 @@ void GameBeginLayer::zhuXianBtn(cocos2d::Ref *sender, ui::Widget::TouchEventType
             layer->myRoleData.pushBack(this->pveRoleData.at(i));
         }
         layer->initFuBenLayer();
-        Director::getInstance()->pushScene(TransitionFade::create(1.0f, fuBenScene));
+        
+        this->enterLoadingLayer("replace", fuBenScene);
+       // Director::getInstance()->pushScene(TransitionFade::create(1.0f, fuBenScene));
     }
 
 }

@@ -73,18 +73,7 @@ void SetRoleFormatlayer::initSetRoleFormatLayer() {
         }
     }
     
-//    for (int i = 0; i < this->roleData.size(); i++) {
-//        this->roleData.at(i)->card->initCardSprite(this->roleData.at(i)->imageName);
-//        this->player->setCardsPositon(this->roleData.at(i)->card, this->roleData.at(i)->cellIndex,50);
-//    }
-//    this->initCardFormat(HouYiCard::create(),"xiaohei_stand_l0.png", 0, DunJiaTianShu::create());
-//    this->initCardFormat(XuanWuCard::create(),"niutou_stand_l0.png", 1, DunJiaTianShu::create());
-//    this->initCardFormat(XingTianCard::create(),"jiansheng_stand_l0.png", 2, DunJiaTianShu::create());
-//    this->initCardFormat(ChangECard::create(),"bingnv_stand_l0.png", 3, DunJiaTianShu::create());
-//    this->initCardFormat(TaoTieCard::create(),"panda_stand_l0.png", 4, DunJiaTianShu::create());
-//    this->initCardFormat(FengHouCard::create(),"gugong_stand_l0.png", 5, DunJiaTianShu::create());
-//    this->initCardFormat(FengBoCard::create(),"zhousi_stand_l0.png", 6, DunJiaTianShu::create());
-//    this->initCardFormat(SuanYuCard::create(),"fengxing_stand_l0.png", 7, DunJiaTianShu::create());
+
     this->player->retain();
     
     if(this->preLayerName.compare("fuben") == 0) {

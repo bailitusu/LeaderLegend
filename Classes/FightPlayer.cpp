@@ -75,10 +75,13 @@ void FightPlayer::initRecordTackCard(Card *card, int standIndex, std::string pla
 
 
 
-void FightPlayer::initTackCard(Card* card, std::string imageName, int standIndex, std::string playerName,Treasure* treasure) {
+void FightPlayer::initTackCard(Card* card, std::string imageName, int standIndex, std::string playerName,Treasure* treasure,int hp,int maxHp,int sp,int maxSp) {
     card->initCardSprite(imageName);
     card->playerName = playerName;
    // printf("%d", this->xiangong);
+    if (playerName.compare("enemyPlayer") == 0 ) {
+        card->cardSprite->setScaleX(-1);
+    }
     this->setCardsPositon(card, standIndex,standIndex*10+5);
     card->forPlayer = this;
   //  card->forPlayer->enemy = this->enemy;
@@ -89,9 +92,12 @@ void FightPlayer::initTackCard(Card* card, std::string imageName, int standIndex
     card->fPro->hpPro->setPosition(Vec2(card->fPro->hpProBg->getPosition().x, card->fPro->hpProBg->getPosition().y));
     this->fMap->addChild(card->fPro->hpPro,standIndex*10+20);
     
-
+    card->MaxHP = maxHp;
+    card->HP = hp;
+    card->fPro->hpPro->setPercentage((1-(float)hp/card->MaxHP)*100);
+    int tempSp = (int)(((float)sp / (float)maxSp)*100);
     
-    card->fPro->initNuQiPro(0);
+    card->fPro->initNuQiPro(tempSp);
     card->fPro->nuqiProBg->setPosition(card->cardSprite->getPosition().x+1,card->cardSprite->getPosition().y+34);
     this->fMap->addChild(card->fPro->nuqiProBg, standIndex*10+10);
     

@@ -13,6 +13,7 @@
 #include "FightPlayer.h"
 #include "SetRoleFormatLayer.h"
 #include "ui/CocosGUI.h"
+#include "LingShoLayer.h"
 USING_NS_CC;
 class PvpFightLayer : public Layer {
     
@@ -54,7 +55,23 @@ public:
     void daoJiShi(float dur);
     int timeNum;
     
+    void initLeftChouTi();
+    Layer* leftChouTi;
+    Vector<SkillGezi*> dragonSkillData;
     
+    ui::Button* leftChouTiBtn;
+    void leftChouTiClick(cocos2d::Ref *sender, ui::Widget::TouchEventType type);
+    SkillGezi* currentClickSkill;
+    void jisuanEnableSkill();
+    void enableSkill(int skillType);
+    
+    Sprite* liziQiu;
+   // ParticleSystem* cps;
+    Sprite* longJuanFengSp;
+    void longJuanFengBlock();
+    void createLiangGezi(float dur);
+  //  int* shunxuArray;
+    int currentLiangNum;
 };
 
 #endif /* PvpFightLayer_h */

@@ -28,6 +28,7 @@ public:
     virtual void runZhanLiAnimation();
     void appearUI();
     virtual void preCardAudio();
+    virtual void createTeXiao();
    // void xiaoHitMusic();
     //int hitTimes;
 };

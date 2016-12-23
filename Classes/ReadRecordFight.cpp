@@ -19,7 +19,14 @@
 #include "FengBoCard.h"
 #include "FengHouCard.h"
 #include "SuanYuCard.h"
-
+#include "BaiZeCard.h"
+#include "DangKangCard.h"
+#include "FengHuangCard.h"
+#include "LeiShenCard.h"
+#include "QiongQiCard.h"
+#include "QingNiaoCard.h"
+#include "TaoWuCard.h"
+#include "HunDunCard.h"
 
 
 #include "Dragon.h"
@@ -82,6 +89,16 @@ void ReadRecordFight::readPlayerInfo() {
     
     rapidjson::Value& pOneCardCellArray = player1["cellids"];
     rapidjson::Value& pTwoCardCellArray = player2["cellids"];
+    
+    rapidjson::Value& pOneCardHPArray = player1["hp"];
+    rapidjson::Value& pOneCardMaxHPArray = player1["maxhp"];
+    rapidjson::Value& pOneCardSPArray = player1["sp"];
+    rapidjson::Value& pOneCardMaxSpArray = player1["maxsp"];
+    
+    rapidjson::Value& pTwoCardHPArray = player2["hp"];
+    rapidjson::Value& pTwoCardMaxHPArray = player2["maxhp"];
+    rapidjson::Value& pTwoCardSPArray = player2["sp"];
+    rapidjson::Value& pTwoCardMaxSpArray = player2["maxsp"];
     std::string player1Key = player1["playerkey"].GetString();
     std::string player2Key = player2["playerkey"].GetString();
     std::string cardName;
@@ -92,17 +109,16 @@ void ReadRecordFight::readPlayerInfo() {
         for (int i = 0; i < pOneCardArray.Size(); i++) {
             cardName = pOneCardArray[i].GetString();
             cellIndex = pOneCardCellArray[i].GetInt();
-            imageName = "_stand_l0.png";
-            this->initPlayerCard(this->player,cardName, imageName, cellIndex, "player");
+            imageName = "_idle_0.png";
+            this->initPlayerCard(this->player,cardName, imageName, cellIndex, "player",pOneCardHPArray[i].GetInt(),pOneCardMaxHPArray[i].GetInt(),pOneCardSPArray[i].GetInt(),pOneCardMaxSpArray[i].GetInt());
 
         }
         this->player->initCardStandArray();
-      //  printf("enemy--------%d", pTwoCardArray.Size());
         for (int i = 0; i < pTwoCardArray.Size(); i++) {
             cardName = pTwoCardArray[i].GetString();
             cellIndex = pTwoCardCellArray[i].GetInt();
-            imageName = "_stand_r0.png";
-            this->initPlayerCard(this->playerEnemy,cardName, imageName, cellIndex, "enemyPlayer");
+            imageName = "_idle_0.png";
+            this->initPlayerCard(this->playerEnemy,cardName, imageName, cellIndex, "enemyPlayer",pTwoCardHPArray[i].GetInt(),pTwoCardMaxHPArray[i].GetInt(),pTwoCardSPArray[i].GetInt(),pTwoCardMaxSpArray[i].GetInt());
         }
         this->playerEnemy->initCardStandArray();
     }else if(player2Key.compare(myKey) == 0) {
@@ -110,8 +126,8 @@ void ReadRecordFight::readPlayerInfo() {
         for (int i = 0; i < pTwoCardArray.Size(); i++) {
             cardName = pTwoCardArray[i].GetString();
             cellIndex = pTwoCardCellArray[i].GetInt();
-            imageName = "_stand_l0.png";
-            this->initPlayerCard(this->player,cardName, imageName, cellIndex, "player");
+            imageName = "_idle_0.png";
+            this->initPlayerCard(this->player,cardName, imageName, cellIndex, "player",pTwoCardHPArray[i].GetInt(),pTwoCardMaxHPArray[i].GetInt(),pTwoCardSPArray[i].GetInt(),pTwoCardMaxSpArray[i].GetInt());
             
         }
         this->player->initCardStandArray();
@@ -119,8 +135,8 @@ void ReadRecordFight::readPlayerInfo() {
         for (int i = 0; i < pOneCardArray.Size(); i++) {
             cardName = pOneCardArray[i].GetString();
             cellIndex = pOneCardCellArray[i].GetInt();
-            imageName = "_stand_r0.png";
-            this->initPlayerCard(this->playerEnemy,cardName, imageName, cellIndex, "enemyPlayer");
+            imageName = "_idle_0.png";
+            this->initPlayerCard(this->playerEnemy,cardName, imageName, cellIndex, "enemyPlayer",pOneCardHPArray[i].GetInt(),pOneCardMaxHPArray[i].GetInt(),pOneCardSPArray[i].GetInt(),pOneCardMaxSpArray[i].GetInt());
         }
         this->playerEnemy->initCardStandArray();
     }
@@ -141,61 +157,85 @@ void ReadRecordFight::readPlayerInfo() {
 
 
 
-void ReadRecordFight::initPlayerCard(FightPlayer* tempPlayer, std::string cardName,std::string imageName, int cellIndex, std::string pName) {
+void ReadRecordFight::initPlayerCard(FightPlayer*tempPlayer, std::string cardName,std::string imageName, int cellIndex, std::string pName,int hp,int maxHp,int sp,int maxSp) {
     
     
-
+    imageName = cardName+imageName;
 
     if (cardName.compare("houyi") == 0) {
-        imageName = "xiaohei"+imageName;
-        tempPlayer->initTackCard(HouYiCard::create(), imageName, cellIndex, pName,NULL);
+      //  imageName = "xiaohei"+imageName;
+        tempPlayer->initTackCard(HouYiCard::create(), imageName, cellIndex, pName,NULL,hp,maxHp,sp,maxSp);
     }else if (cardName.compare("change") == 0) {
-        imageName = "bingnv"+imageName;
-        tempPlayer->initTackCard(ChangECard::create(), imageName, cellIndex, pName,NULL);
+      
+        tempPlayer->initTackCard(ChangECard::create(), imageName, cellIndex, pName,NULL,hp,maxHp,sp,maxSp);
     }else if (cardName.compare("xingtian") == 0) {
-        imageName = "jiansheng"+imageName;
-        tempPlayer->initTackCard(XingTianCard::create(), imageName, cellIndex, pName,NULL);
+      
+        tempPlayer->initTackCard(XingTianCard::create(), imageName, cellIndex, pName,NULL,hp,maxHp,sp,maxSp);
     }else if (cardName.compare("taotie") == 0) {
-        imageName = "panda"+imageName;
-        tempPlayer->initTackCard(TaoTieCard::create(), imageName, cellIndex, pName,NULL);
+       
+        tempPlayer->initTackCard(TaoTieCard::create(), imageName, cellIndex, pName,NULL,hp,maxHp,sp,maxSp);
     }else if (cardName.compare("fenghou") == 0) {
-        imageName = "gugong"+imageName;
-        tempPlayer->initTackCard(FengHouCard::create(), imageName, cellIndex, pName,NULL);
+       
+        tempPlayer->initTackCard(FengHouCard::create(), imageName, cellIndex, pName,NULL,hp,maxHp,sp,maxSp);
     }else if (cardName.compare("fengbo") == 0) {
-        imageName = "zhousi"+imageName;
-        tempPlayer->initTackCard(FengBoCard::create(), imageName, cellIndex, pName,NULL);
+       
+        tempPlayer->initTackCard(FengBoCard::create(), imageName, cellIndex, pName,NULL,hp,maxHp,sp,maxSp);
     }else if (cardName.compare("suanyu") == 0) {
-        imageName = "fengxing"+imageName;
-        tempPlayer->initTackCard(SuanYuCard::create(), imageName, cellIndex, pName,NULL);
+       
+        tempPlayer->initTackCard(SuanYuCard::create(), imageName, cellIndex, pName,NULL,hp,maxHp,sp,maxSp);
     }else if (cardName.compare("xuanwu") == 0) {
-        imageName = "niutou"+imageName;
-        tempPlayer->initTackCard(XuanWuCard::create(), imageName, cellIndex, pName,NULL);
+       
+        tempPlayer->initTackCard(XuanWuCard::create(), imageName, cellIndex, pName,NULL,hp,maxHp,sp,maxSp);
+    }else if (cardName.compare("baize") == 0) {
+        
+        tempPlayer->initTackCard(BaiZeCard::create(), imageName, cellIndex, pName,NULL,hp,maxHp,sp,maxSp);
+    }else if (cardName.compare("dangkang") == 0) {
+        
+        tempPlayer->initTackCard(DangKangCard::create(), imageName, cellIndex, pName,NULL,hp,maxHp,sp,maxSp);
+    }else if (cardName.compare("fenghuang") == 0) {
+        
+        tempPlayer->initTackCard(FengHuangCard::create(), imageName, cellIndex, pName,NULL,hp,maxHp,sp,maxSp);
+    }else if (cardName.compare("leishen") == 0) {
+        
+        tempPlayer->initTackCard(LeiShenCard::create(), imageName, cellIndex, pName,NULL,hp,maxHp,sp,maxSp);
+    }else if (cardName.compare("qiongqi") == 0) {
+        
+        tempPlayer->initTackCard(QiongQiCard::create(), imageName, cellIndex, pName,NULL,hp,maxHp,sp,maxSp);
+    }else if (cardName.compare("qingniao") == 0) {
+        
+        tempPlayer->initTackCard(QingNiaoCard::create(), imageName, cellIndex, pName,NULL,hp,maxHp,sp,maxSp);
+    }else if (cardName.compare("taowu") == 0) {
+        
+        tempPlayer->initTackCard(TaoWuCard::create(), imageName, cellIndex, pName,NULL,hp,maxHp,sp,maxSp);
+    }else if (cardName.compare("hundun") == 0) {
+        
+        tempPlayer->initTackCard(HunDunCard::create(), imageName, cellIndex, pName,NULL,hp,maxHp,sp,maxSp);
     }
 }
 
 void ReadRecordFight::readRecordFormMenmory() {
   //  this->currentJson = RecordFight::GetInstance()->currentJson;
     
-    for (int i = 0; i < this->roleData->size(); i++) {
-       // this->player->initTackCard(this->roleData->at(i)->card, this->roleData->at(i)->imageName, this->roleData->at(i)->cellIndex, "player",this->roleData->at(i)->magicGoods);
-        if (this->roleData->at(i)->card->cardName.compare("houyi") == 0) {
-            this->player->initTackCard(HouYiCard::create(), this->roleData->at(i)->imageName, this->roleData->at(i)->cellIndex, "player",this->roleData->at(i)->magicGoods);
-        }else if (this->roleData->at(i)->card->cardName.compare("change") == 0) {
-            this->player->initTackCard(ChangECard::create(), this->roleData->at(i)->imageName, this->roleData->at(i)->cellIndex, "player",this->roleData->at(i)->magicGoods);
-        }else if (this->roleData->at(i)->card->cardName.compare("xingtian") == 0) {
-            this->player->initTackCard(XingTianCard::create(), this->roleData->at(i)->imageName, this->roleData->at(i)->cellIndex, "player",this->roleData->at(i)->magicGoods);
-        }else if (this->roleData->at(i)->card->cardName.compare("taotie") == 0) {
-            this->player->initTackCard(TaoTieCard::create(), this->roleData->at(i)->imageName, this->roleData->at(i)->cellIndex, "player",this->roleData->at(i)->magicGoods);
-        }else if (this->roleData->at(i)->card->cardName.compare("fenghou") == 0) {
-            this->player->initTackCard(FengHouCard::create(), this->roleData->at(i)->imageName, this->roleData->at(i)->cellIndex, "player",this->roleData->at(i)->magicGoods);
-        }else if (this->roleData->at(i)->card->cardName.compare("fengbo") == 0) {
-            this->player->initTackCard(FengBoCard::create(), this->roleData->at(i)->imageName, this->roleData->at(i)->cellIndex, "player",this->roleData->at(i)->magicGoods);
-        }else if (this->roleData->at(i)->card->cardName.compare("suanyu") == 0) {
-            this->player->initTackCard(SuanYuCard::create(), this->roleData->at(i)->imageName, this->roleData->at(i)->cellIndex, "player",this->roleData->at(i)->magicGoods);
-        }else if (this->roleData->at(i)->card->cardName.compare("xuanwu") == 0) {
-            this->player->initTackCard(XuanWuCard::create(), this->roleData->at(i)->imageName, this->roleData->at(i)->cellIndex, "player",this->roleData->at(i)->magicGoods);
-        }
-    }
+//    for (int i = 0; i < this->roleData->size(); i++) {
+//       // this->player->initTackCard(this->roleData->at(i)->card, this->roleData->at(i)->imageName, this->roleData->at(i)->cellIndex, "player",this->roleData->at(i)->magicGoods);
+//        if (this->roleData->at(i)->card->cardName.compare("houyi") == 0) {
+//            this->player->initTackCard(HouYiCard::create(), this->roleData->at(i)->imageName, this->roleData->at(i)->cellIndex, "player",this->roleData->at(i)->magicGoods);
+//        }else if (this->roleData->at(i)->card->cardName.compare("change") == 0) {
+//            this->player->initTackCard(ChangECard::create(), this->roleData->at(i)->imageName, this->roleData->at(i)->cellIndex, "player",this->roleData->at(i)->magicGoods);
+//        }else if (this->roleData->at(i)->card->cardName.compare("xingtian") == 0) {
+//            this->player->initTackCard(XingTianCard::create(), this->roleData->at(i)->imageName, this->roleData->at(i)->cellIndex, "player",this->roleData->at(i)->magicGoods);
+//        }else if (this->roleData->at(i)->card->cardName.compare("taotie") == 0) {
+//            this->player->initTackCard(TaoTieCard::create(), this->roleData->at(i)->imageName, this->roleData->at(i)->cellIndex, "player",this->roleData->at(i)->magicGoods);
+//        }else if (this->roleData->at(i)->card->cardName.compare("fenghou") == 0) {
+//            this->player->initTackCard(FengHouCard::create(), this->roleData->at(i)->imageName, this->roleData->at(i)->cellIndex, "player",this->roleData->at(i)->magicGoods);
+//        }else if (this->roleData->at(i)->card->cardName.compare("fengbo") == 0) {
+//            this->player->initTackCard(FengBoCard::create(), this->roleData->at(i)->imageName, this->roleData->at(i)->cellIndex, "player",this->roleData->at(i)->magicGoods);
+//        }else if (this->roleData->at(i)->card->cardName.compare("suanyu") == 0) {
+//            this->player->initTackCard(SuanYuCard::create(), this->roleData->at(i)->imageName, this->roleData->at(i)->cellIndex, "player",this->roleData->at(i)->magicGoods);
+//        }else if (this->roleData->at(i)->card->cardName.compare("xuanwu") == 0) {
+//            this->player->initTackCard(XuanWuCard::create(), this->roleData->at(i)->imageName, this->roleData->at(i)->cellIndex, "player",this->roleData->at(i)->magicGoods);
+//        }
+//    }
     
 //    this->player->initTackCard(XuanWuCard::create(), "niutou_stand_l0.png", 0, "player",DunJiaTianShu::create());
 //    this->player->initTackCard(XingTianCard::create(), "jiansheng_stand_l0.png", 3, "player",DunJiaTianShu::create());
@@ -206,25 +246,25 @@ void ReadRecordFight::readRecordFormMenmory() {
 //    this->player->initTackCard(HouYiCard::create(), "xiaohei_stand_l0.png", 12, "player",DunJiaTianShu::create());
 //    this->player->initTackCard(SuanYuCard::create(), "fengxing_stand_l0.png", 15, "player",DunJiaTianShu::create());
 
-    this->player->initCardStandArray();
-
-    this->playerEnemy->initTackCard(XuanWuCard::create(), "niutou_stand_r0.png", 0, "enemyPlayer",DunJiaTianShu::create());
-    this->playerEnemy->initTackCard(XingTianCard::create(), "jiansheng_stand_r0.png", 3, "enemyPlayer",DunJiaTianShu::create());
-    this->playerEnemy->initTackCard(ChangECard::create(),"bingnv_stand_r0.png" , 5, "enemyPlayer",DunJiaTianShu::create());
-    this->playerEnemy->initTackCard(TaoTieCard::create(), "panda_stand_r0.png", 6, "enemyPlayer",DunJiaTianShu::create());
-    this->playerEnemy->initTackCard(FengHouCard::create(), "gugong_stand_r0.png", 9, "enemyPlayer",DunJiaTianShu::create());
-    this->playerEnemy->initTackCard(FengBoCard::create(), "zhousi_stand_r0.png", 10, "enemyPlayer",DunJiaTianShu::create());
-    this->playerEnemy->initTackCard(HouYiCard::create(), "xiaohei_stand_r0.png", 12, "enemyPlayer",DunJiaTianShu::create());
-    this->playerEnemy->initTackCard(SuanYuCard::create(), "fengxing_stand_r0.png", 15, "enemyPlayer",DunJiaTianShu::create());
-    this->playerEnemy->initCardStandArray();
-    
-    for (int i = 0; i < 8; i++) {
-        if (i < this->player->cardArray.size()) {
-            this->player->cardArray.at(i)->readRecordFight = this;
-        }
-        
-        this->playerEnemy->cardArray.at(i)->readRecordFight = this;
-    }
+//    this->player->initCardStandArray();
+//
+//    this->playerEnemy->initTackCard(XuanWuCard::create(), "niutou_stand_r0.png", 0, "enemyPlayer",DunJiaTianShu::create());
+//    this->playerEnemy->initTackCard(XingTianCard::create(), "jiansheng_stand_r0.png", 3, "enemyPlayer",DunJiaTianShu::create());
+//    this->playerEnemy->initTackCard(ChangECard::create(),"bingnv_stand_r0.png" , 5, "enemyPlayer",DunJiaTianShu::create());
+//    this->playerEnemy->initTackCard(TaoTieCard::create(), "panda_stand_r0.png", 6, "enemyPlayer",DunJiaTianShu::create());
+//    this->playerEnemy->initTackCard(FengHouCard::create(), "gugong_stand_r0.png", 9, "enemyPlayer",DunJiaTianShu::create());
+//    this->playerEnemy->initTackCard(FengBoCard::create(), "zhousi_stand_r0.png", 10, "enemyPlayer",DunJiaTianShu::create());
+//    this->playerEnemy->initTackCard(HouYiCard::create(), "xiaohei_stand_r0.png", 12, "enemyPlayer",DunJiaTianShu::create());
+//    this->playerEnemy->initTackCard(SuanYuCard::create(), "fengxing_stand_r0.png", 15, "enemyPlayer",DunJiaTianShu::create());
+//    this->playerEnemy->initCardStandArray();
+//    
+//    for (int i = 0; i < 8; i++) {
+//        if (i < this->player->cardArray.size()) {
+//            this->player->cardArray.at(i)->readRecordFight = this;
+//        }
+//        
+//        this->playerEnemy->cardArray.at(i)->readRecordFight = this;
+//    }
     
    //  CocosDenshion::SimpleAudioEngine::getInstance()->playBackgroundMusic("battle_bgm.mp3",true);
 }
@@ -389,6 +429,7 @@ void ReadRecordFight::readNextDragon() {
         }
 
         tempDragonData->nuQiChange = dragonAffectArray[i]["sp"].GetInt();
+        tempDragonData->nuQiMax = dragonAffectArray[i]["maxsp"].GetInt();
         tempDragonData->currentHP = dragonAffectArray[i]["hp"].GetInt();
         tempDragonData->hitValue = dragonAffectArray[i]["hitvalue"].GetInt();
         tempDragonData->maxHP = dragonAffectArray[i]["maxhp"].GetInt();
@@ -495,6 +536,7 @@ void ReadRecordFight::readNextFightRecord() {
         oneInfo->currentHP = affectArray[i]["hp"].GetInt();
         oneInfo->maxHP = affectArray[i]["maxhp"].GetInt();
         oneInfo->nuQiChange = affectArray[i]["sp"].GetInt();
+        oneInfo->nuQiMax = affectArray[i]["maxsp"].GetInt();
         oneInfo->card->MaxHP = oneInfo->maxHP;
     //    oneInfo->enemyNuQiChange = affectArray[i]["enemynuqichange"].GetInt();
         tempRecordVector.pushBack(oneInfo);
@@ -502,6 +544,7 @@ void ReadRecordFight::readNextFightRecord() {
     oneRecordInfo->affectRecordArray = tempRecordVector;
     oneRecordInfo->hitTarget = item["targetcellid"].GetInt();
     oneRecordInfo->nuQiChange = item["sp"].GetInt();
+    oneRecordInfo->nuQiMax = item["maxsp"].GetInt();
     oneRecordInfo->cardName = item["cardkey"].GetString();
     if (oneRecordInfo->cardName.compare("houyi") == 0) {
         if (item.HasMember("islianji") == true) {
@@ -509,11 +552,14 @@ void ReadRecordFight::readNextFightRecord() {
         }
         
     }
+    oneRecordInfo->ballNum = item["ball"].GetInt();
+    
     rapidjson::Value& beforeArray = item["before"];
     if (!affectArray.IsArray()) {
         printf("before  is no array!");
         return;
     }
+    
     Vector<OneRecord*> tempBefore(0);
     this->analysisBeforeOrAfterArray(&tempBefore, beforeArray);
     
@@ -570,6 +616,7 @@ void ReadRecordFight::analysisBeforeOrAfterArray(Vector<OneRecord *> *tempBefore
             oneBeforeInfo->offsetHP = tempArray[n]["offsethp"].GetInt();
         }else if(oneBeforeInfo->reason.compare("changesp") == 0) {
             oneBeforeInfo->nuQiChange = tempArray[n]["sp"].GetInt();
+            oneBeforeInfo->nuQiMax = tempArray[n]["maxsp"].GetInt();
         }else if(oneBeforeInfo->reason.compare("addbuff") == 0) {
             oneBeforeInfo->buffName = tempArray[n]["buffname"].GetString();
         }

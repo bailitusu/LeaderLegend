@@ -21,12 +21,13 @@
 #include "FengHouCard.h"
 #include "SuanYuCard.h"
 #include "PveGuaiWuInfoLayer.h"
-
+#include "FuBenLayer.h"
+#include "ZheZhaoLayer.h"
 bool PveGuaiWu::init() {
     return true;
 }
 
-void PveGuaiWu::createGuaiWu(Layer* layer,std::string imageName, cocos2d::Vec2 position,float width) {
+void PveGuaiWu::createGuaiWu(FuBenLayer* layer,std::string imageName, cocos2d::Vec2 position,float width) {
     this->preLayer = layer;
     this->guaiWuBtn = ui::Button::create(imageName);
     CommonFunc::initButton(this->guaiWuBtn, CC_CALLBACK_2(PveGuaiWu::btnClick, this), width, position);
@@ -82,12 +83,15 @@ bool PveGuaiWu::analysisGuaiWuInfo(std::string info) {
 
 void PveGuaiWu::cardFormatGuaiWu(Card* card, int standIndex,Treasure* treasure) {
     
-    card->initCardSprite(card->cardSpriteImageName+"_r0.png");
+   // card->initCardSprite(card->cardSpriteImageName+"_r0.png");
+    card->initCardSprite(card->cardSpriteImageName+"_0.png");
+    card->cardSprite->setScaleX(-1);
     //  this->player->setCardsPositon(card, standIndex,50);
     card->retain();
     
     auto roleData = SetRoleData::create();
-    roleData->imageName = card->cardSpriteImageName+"_r0.png";
+    //roleData->imageName = card->cardSpriteImageName+"_r0.png";
+    roleData->imageName = card->cardSpriteImageName+"_0.png";
     roleData->cellIndex = standIndex;
 //    roleData->magicGoods = treasure;
 //    roleData->magicGoods->retain();
@@ -101,14 +105,25 @@ void PveGuaiWu::responseBack(cocos2d::network::HttpClient *sender, cocos2d::netw
         std::vector<char>* info = response->getResponseData();
         std::string infoStr  = std::string(info->begin(),info->end());
         if(this->analysisGuaiWuInfo(infoStr)) {
-
+//            LayerColor* mengheiLayer = LayerColor::create(Color4B(0, 0, 0, 100), screenSize.width, screenSize.height);
+//            this->preLayer->addChild(mengheiLayer,200);
+            ZheZhaoLayer* zheZhao = ZheZhaoLayer::create();
+            zheZhao->setContentSize(Size(screenSize.width, screenSize.height));
+            zheZhao->setPosition(0,0);
+            zheZhao->initThisLayer();
+            this->preLayer->addChild(zheZhao,300);
+            
             PveGuaiWuInfoLayer* infoLayer = PveGuaiWuInfoLayer::create();
-            infoLayer->setContentSize(Size(400, 300));
-            this->preLayer->addChild(infoLayer,300);
+          //  infoLayer->setL
+            infoLayer->setContentSize(Size(screenSize.width, screenSize.height));
+            
+            
             infoLayer->setPosition(Vec2(screenSize.width/2-infoLayer->getBoundingBox().size.width/2, screenSize.height/2-infoLayer->getBoundingBox().size.height/2));
             infoLayer->guaiWuData = &this->guaiWuData;
             infoLayer->index = this->index;
             infoLayer->initPveGuaiWuLayer();
+            zheZhao->addChild(infoLayer,300);
+            
             
         }
     }

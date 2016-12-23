@@ -11,7 +11,7 @@
 
 #include "cocos2d.h"
 #include "FightMap.h"
-//#include "Card.h"
+#include "Boll.h"
 #include "Card.h"
 class Dragon;
 class FightLayer;
@@ -33,11 +33,13 @@ public:
     
     void setCardsPositon(Card *card, int index, int zPoint);
     void initCardStandArray();
-    void initTackCard(Card* card, std::string imageName, int standIndex, std::string playerName,Treasure* treasure);
+    void initTackCard(Card* card, std::string imageName, int standIndex, std::string playerName,Treasure* treasure,int hp,int maxHp,int sp,int maxSp);
     void initRecordTackCard(Card* card, int standIndex, std::string playerName,Treasure* treasure);
     void initDragon(std::string imageName);
     
     void initCardTreasure(Treasure* treasure);
+    Vector<Boll*> allAppearBoll;
+    Vector<Boll*> haveBoll;
   //  void initSetCardFormat(Card* card,std::string imageName,int standIndex,Treasure* treasure);
 };
 

@@ -27,6 +27,9 @@ public:
     DragonSkill* obj;
     int index;
     Vec2 geziPositon;
+    bool isChoice;
+    bool isEnable;
+    Label* choiceLabel;
 };
 
 

@@ -15,6 +15,7 @@ bool HuiMieBoDong::init() {
     this->skillLevel = 9;
     this->dargonName = "huimiebodong";
     this->dargonInfoName = "毁灭波动";
+    this->zuheNum = 300;
     return true;
 }
 
@@ -36,20 +37,22 @@ void HuiMieBoDong::runSkill(FightPlayer* player, DragonData* data) {
             affectCard->hpAppear(affectCard, data->dragonAffectArray.at(i)->hitValue, data->dragonAffectArray.at(i)->currentHP,"");
         }
     }
+    this->currentData->release();
     this->release();
     
 }
 
 void HuiMieBoDong::runSkillAnimation(cocos2d::Sprite *sprite,FightPlayer* player, DragonData* data) {
     
-    
+    this->currentData = data;
+    this->currentData->retain();
     Sprite* huimieSp = Sprite::create("huimiebodong_0.png");
     CommonFunc::setSpriteSize(huimieSp, 200);
     // huimieSp->setAnchorPoint(Vec2(1, 0));
     auto positon = Vec2(player->enemy->fMap->getPosition().x+player->enemy->fMap->getBoundingBox().size.width/2, player->enemy->fMap->getPosition().y+player->fMap->getBoundingBox().size.height/2);
     auto moveTo = MoveTo::create(1.0, positon);
     auto huimiebodong = CommonFunc::creatAnimation("huimiebodong_%d.png", 18, 1, 0);
-    auto overBlock = CallFunc::create(CC_CALLBACK_0(HuiMieBoDong::animationOver, this,huimieSp,player,data));
+    auto overBlock = CallFunc::create(CC_CALLBACK_0(HuiMieBoDong::animationOver, this,huimieSp,player,this->currentData));
     huimieSp->setPosition(screenSize.width/2, 300);
     sprite->getParent()->addChild(huimieSp,300);
     
@@ -60,5 +63,6 @@ void HuiMieBoDong::runSkillAnimation(cocos2d::Sprite *sprite,FightPlayer* player
 void HuiMieBoDong::animationOver(cocos2d::Sprite *sprite, FightPlayer *player, DragonData *data) {
     sprite->removeFromParentAndCleanup(true);
     CommonFunc::removeAnimation();
-    this->runSkill(player, data);
+    
+    this->runSkill(player, this->currentData);
 }

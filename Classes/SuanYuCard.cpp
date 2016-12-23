@@ -27,7 +27,8 @@ bool SuanYuCard::init() {
 //    this->MaxHP = 20;
     this->hitRuleNum = hitRuleType.niao;
     this->cardName = "suanyu";
-    this->cardSpriteImageName = "fengxing_stand";
+    this->cardZhongWenName = "酸与";
+    this->cardSpriteImageName = "suanyu_idle";
     this->xiaoZhaoInfo = "攻击敌方后排部队";
     this->daZhaoInfo = "吸取敌方后排部队怒气并眩晕";
     this->wuLi = 81;
@@ -40,15 +41,7 @@ bool SuanYuCard::init() {
     this->faLi = 17000;
     this->fangYu = 18000;
     
-//    this->wuliHart = 10;
-//    this->wuliMianShang = 10;
-//    this->fashuHart = 10;
-//    this->fashuMianShang = 10;
-//    this->shanBi = 20;
-//    this->mingZhong = 100;
-//    this->baoJi = 10;
-//    this->mianBao = 10;
-//    this->lianJi = 1;
+
     this->bingKinds = bingZhongType.yuanCheng;
 //    this->hitValue = 2;
 //    this->geDang = 10;
@@ -68,90 +61,13 @@ void SuanYuCard::initCharacter() {
 }
 
 
-//void SuanYuCard::recordRuning(FightPlayer *enemyTemp) {
-//    this->forEnemy = enemyTemp;
-//    
-//    auto oneRecord = OneRecord::create();
-//    
-//    if (this->nuQiNum < this->nuQiNumMax){
-//        this->targetNum = AttackRule::Rule(this->cellIndex, this->hitRuleNum, this->forEnemy->fMap);
-//    }else {
-//        Vector<MapCell*> temp = AttackRule::NuQiMaxRule(this->cellIndex, this->hitRuleNum, this->forEnemy->fMap);
-//        bool breakFlag = false;
-//        for (int j = 5; j >= 0; j--) {
-//            for (int i = 0; i < temp.size(); i++) {
-//                if (((Card*)temp.at(i)->obj)->nuQiNum == j) {
-//
-//                    this->targetNum = ((Card*)temp.at(i)->obj)->cellIndex;
-//                    breakFlag = true;
-//                    break;
-//                }
-//            }
-//            if (breakFlag == true) {
-//                break;
-//            }
-//        }
-//    }
-//
-//    oneRecord->hitTarget = this->targetNum;
-//    oneRecord->cardName = this->cardName;
-//    oneRecord->playerName = this->playerName;
-//    oneRecord->standIndex = this->cellIndex;
-//    
-//    
-//    if (this->nuQiNum < this->nuQiNumMax) {
-//        oneRecord->isXiaoZhao = true;
-//        oneRecord->isDaZhao = false;
-//        RecordFight::GetInstance()->addItemToRecord(oneRecord);
-//        this->recordHit();
-//        
-//        this->recordAddNuqi(this, 1);
-//        this->recordActionBlock();
-//    }else {
-//        oneRecord->isXiaoZhao = false;
-//        oneRecord->isDaZhao = true;
-//        RecordFight::GetInstance()->addItemToRecord(oneRecord);
-//        
-//        this->recordUltimateSkill();
-//        this->recordActionBlock();
-//        // this->cardSprite->runAction(Sequence::create(maxHit,block, NULL));
-//    }
-//}
+
 
 void SuanYuCard::nuQiManage(OneRecord *info) {
-    this->nuQiAppear(this, info->nuQiChange);
+    this->nuQiAppear(this, info->nuQiChange,info->nuQiMax);
 }
 
-//void SuanYuCard::recordHit() {
-//  //  int cellNum = AttackRule::Rule(this->cellIndex, this->hitRuleNum, this->forEnemy->fMap);
-//    if (((Card*)(this->forEnemy->fMap->mapCellArray.at(this->targetNum))->obj) != NULL) {
-//        ((Card*)(this->forEnemy->fMap->mapCellArray.at(this->targetNum))->obj)->recordDidBeHit(this,"wuli");
-//
-//        this->recordAddNuqi((Card*)(this->forEnemy->fMap->mapCellArray.at(this->targetNum)->obj), 1);
-//    }
-//   
-//}
-//
-//void SuanYuCard::recordUltimateSkill() {
-//    Vector<MapCell*> temp = AttackRule::NuQiMaxRule(this->cellIndex, this->hitRuleNum, this->forEnemy->fMap);
-//    for (int j = 5; j >= 0; j--) {
-//        for (int i = 0; i < temp.size(); i++) {
-//            if (((Card*)temp.at(i)->obj)->nuQiNum == j) {
-//
-//                this->recordDecreaseNuqi((Card*)temp.at(i)->obj, 1, false);
-//                this->recordAddNuqi(this, 1);
-//                ((Card*)temp.at(i)->obj)->recordDidBeHit(this, "wuli");
-//                this->recordDecreaseNuqi(this, 3,true);
-//
-//                if (((Card*)(temp.at(i))->obj) != NULL) {
-//                    auto xuanYunBuff = XuanYunBuff::create();
-//                    xuanYunBuff->addBuff(((Card*)(temp.at(i))->obj),0);
-//                }
-//                return;
-//            }
-//        }
-//    }
-//}
+
 
 void SuanYuCard::xiaoHitMusic() {
     CocosDenshion::SimpleAudioEngine::getInstance()->playEffect("fengxing_attack.mp3",false);
@@ -170,12 +86,12 @@ void SuanYuCard::xiaoSkll(OneRecord *info) {
     Vec2 target = Vec2(tagetX, this->forEnemy->fMap->mapCellArray.at(info->hitTarget)->position.y); //this->playerTemp->fMap->mapCellArray.at(cellNum)->position;
     
     Animate* gong = NULL;
-    if (this->playerName.compare("enemyPlayer") == 0) {
-        gong = CommonFunc::creatAnimation("fengxing_attack_r%d.png", 6, animationFactor*6, 1);
-    }else {
-        gong = CommonFunc::creatAnimation("fengxing_attack_l%d.png", 6, animationFactor*6, 1);
-    }
-    
+//    if (this->playerName.compare("enemyPlayer") == 0) {
+//        gong = CommonFunc::creatAnimation("fengxing_attack_r%d.png", 6, animationFactor*6, 1);
+//    }else {
+//        gong = CommonFunc::creatAnimation("fengxing_attack_l%d.png", 6, animationFactor*6, 1);
+//    }
+     gong = CommonFunc::creatAnimation("suanyu_attackm_%d.png", 6, animationFactor*6, 1);
   //  auto gong = CommonFunc::creatAnimation("fengxing_attack_%d.png", 6, 0.5f, 2);
     auto move = CallFunc::create(CC_CALLBACK_0(SuanYuCard::moveAnimation, this, target));
     auto wait = ActionWait::create(1.0);
@@ -200,12 +116,12 @@ void SuanYuCard::xiaoSkll(OneRecord *info) {
 
 void SuanYuCard::moveAnimation(Vec2 target) {
     Animate* animateActionWalk = NULL;
-    if (this->playerName.compare("enemyPlayer") == 0) {
-        animateActionWalk = CommonFunc::creatAnimation("fengxing_move_r%d.png", 3, animationFactor*3, 2);
-    }else {
-        animateActionWalk = CommonFunc::creatAnimation("fengxing_move_l%d.png", 3, animationFactor*3, 2);
-    }
-    
+//    if (this->playerName.compare("enemyPlayer") == 0) {
+//        animateActionWalk = CommonFunc::creatAnimation("fengxing_move_r%d.png", 3, animationFactor*3, 2);
+//    }else {
+//        animateActionWalk = CommonFunc::creatAnimation("fengxing_move_l%d.png", 3, animationFactor*3, 2);
+//    }
+    animateActionWalk = CommonFunc::creatAnimation("suanyu_move_%d.png", 3, animationFactor*3, 2);
     auto moveTo = MoveTo::create(animationFactor*3*2, target);
   //  auto animateActionWalk = CommonFunc::creatAnimation("fengxing_move_%d.png", 3, 0.25f, 4);
     this->cardSprite->runAction(moveTo);
@@ -230,6 +146,7 @@ void SuanYuCard::hitBlock(Vector<OneRecord *> affectRecordArray) {
         if (affectRecordArray.at(i)->isShanBi == true) {
             beHitCard->animationShanBi();
         }else {
+            this->createTeXiao(beHitCard);
             if (affectRecordArray.at(i)->isBaoJi == true) {
                 this->hpAppear(beHitCard, affectRecordArray.at(i)->hitValue, affectRecordArray.at(i)->currentHP,"暴击");
             }else if(affectRecordArray.at(i)->isGeDang == true) {
@@ -238,11 +155,23 @@ void SuanYuCard::hitBlock(Vector<OneRecord *> affectRecordArray) {
                 this->hpAppear(beHitCard, affectRecordArray.at(i)->hitValue, affectRecordArray.at(i)->currentHP,"");
             }
         //    this->hpAppear(beHitCard, affectRecordArray.at(i)->hitValue, affectRecordArray.at(i)->currentHP);
-
-            this->nuQiAppear(beHitCard, affectRecordArray.at(i)->nuQiChange);
+            
+            this->nuQiAppear(beHitCard, affectRecordArray.at(i)->nuQiChange,affectRecordArray.at(i)->nuQiMax);
         }
     }
 
+}
+
+void SuanYuCard::createTeXiao(Card *cardTexiao) {
+    ParticleSystem *cps = ParticleSun::create();
+    cps->setPosition(cardTexiao->cardSprite->getPosition());
+    cps->setLife(0.05f);
+    cps->setTotalParticles(100);
+    cps->setDuration(0.7);
+    //  cps->setGravity(Point(0,-480));
+    cps->setEmissionRate(200);
+    cps->setPosVar(Point(20,20));
+    cardTexiao->forPlayer->fMap->addChild(cps,3000);
 }
 
 void SuanYuCard::daHitMusic() {
@@ -262,13 +191,13 @@ void SuanYuCard::daSkill(OneRecord *info) {
     Vec2 target = Vec2(tagetX, this->forEnemy->fMap->mapCellArray.at(info->hitTarget)->position.y); //this->playerTemp->fMap->mapCellArray.at(cellNum)->position;
     
     Animate* dazhao = NULL;
-    if (this->playerName.compare("enemyPlayer") == 0) {
-        dazhao = CommonFunc::creatAnimation("fengxing_conjure_r%d.png", 6, animationFactor*6*2, 1);
-    }else {
-        dazhao = CommonFunc::creatAnimation("fengxing_conjure_l%d.png", 6, animationFactor*6*2, 1);
-    }
-    
-    //auto dazhao = CommonFunc::creatAnimation("fengxing_conjure_%d.png", 6, 0.5f, 2);
+//    if (this->playerName.compare("enemyPlayer") == 0) {
+//        dazhao = CommonFunc::creatAnimation("fengxing_conjure_r%d.png", 6, animationFactor*6*2, 1);
+//    }else {
+//        dazhao = CommonFunc::creatAnimation("fengxing_conjure_l%d.png", 6, animationFactor*6*2, 1);
+//    }
+    dazhao = CommonFunc::creatAnimation("suanyu_attackb_%d.png", 6, animationFactor*6*2, 1);
+
     
     auto move = CallFunc::create(CC_CALLBACK_0(SuanYuCard::moveAnimation, this, target));
     auto moveWait = ActionWait::create(animationFactor*3*2);
@@ -297,7 +226,7 @@ void SuanYuCard::daHitBlock(Vector<OneRecord*> affectRecordArray) {
         if (affectRecordArray.at(i)->isShanBi == true) {
             beHitCard->animationShanBi();
         }else {
-            
+            this->createTeXiao(beHitCard);
             if (affectRecordArray.at(i)->isBaoJi == true) {
                 this->hpAppear(beHitCard, affectRecordArray.at(i)->hitValue, affectRecordArray.at(i)->currentHP,"暴击");
             }else if(affectRecordArray.at(i)->isGeDang == true) {
@@ -314,7 +243,7 @@ void SuanYuCard::daHitBlock(Vector<OneRecord*> affectRecordArray) {
                 }
 
             }
-            this->nuQiAppear(beHitCard, affectRecordArray.at(i)->nuQiChange);
+            this->nuQiAppear(beHitCard, affectRecordArray.at(i)->nuQiChange,affectRecordArray.at(i)->nuQiMax);
         }
     }
     
@@ -324,12 +253,12 @@ void SuanYuCard::daHitBlock(Vector<OneRecord*> affectRecordArray) {
 
 void SuanYuCard::runZhanLiAnimation() {
     Animate* zhanli = NULL;
-    if (this->playerName.compare("enemyPlayer") == 0) {
-        zhanli = CommonFunc::creatAnimation("fengxing_stand_r%d.png", 3, animationFactor*3, 1);
-    }else {
-        zhanli = CommonFunc::creatAnimation("fengxing_stand_l%d.png", 3, animationFactor*3, 1);
-    }
-   // auto zhanli = CommonFunc::creatAnimation("fengxing_stand_%d.png", 3, 0.25f, 4);
+//    if (this->playerName.compare("enemyPlayer") == 0) {
+//        zhanli = CommonFunc::creatAnimation("fengxing_stand_r%d.png", 3, animationFactor*3, 1);
+//    }else {
+//        zhanli = CommonFunc::creatAnimation("fengxing_stand_l%d.png", 3, animationFactor*3, 1);
+//    }
+    zhanli = CommonFunc::creatAnimation("suanyu_idle_%d.png", 3, animationFactor*3, 1);
     this->standAction = RepeatForever::create(zhanli);
     this->standAction->retain();
     this->standAction->setTag(10);

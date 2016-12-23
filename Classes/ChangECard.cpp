@@ -22,7 +22,8 @@ bool ChangECard::init() {
 //    this->MaxHP = 20;
     this->hitRuleNum = hitRuleType.faShi;
     this->cardName = "change";
-    this->cardSpriteImageName = "bingnv_stand";
+    this->cardZhongWenName = "嫦娥";
+    this->cardSpriteImageName = "change_idle";
     this->xiaoZhaoInfo = "鼓舞友军";
     this->daZhaoInfo = "鼓舞友军并恢复少量气血";
     this->wuLi = 60;
@@ -92,12 +93,12 @@ void ChangECard::preCardAudio() {
 void ChangECard::xiaoSkll(OneRecord *info) {
     this->stopStandAnimation();
     Animate* gong = NULL;
-    if (this->playerName.compare("enemyPlayer") == 0) {
-        gong = CommonFunc::creatAnimation("bingnv_attack_r%d.png", 12, animationFactor*12, 1);
-    }else {
-        gong = CommonFunc::creatAnimation("bingnv_attack_l%d.png", 12, animationFactor*12, 1);
-    }
-   // auto gong = CommonFunc::creatAnimation("bingnv_attack_%d.png", 11, 0.5f, 2);
+//    if (this->playerName.compare("enemyPlayer") == 0) {
+//        gong = CommonFunc::creatAnimation("bingnv_attack_r%d.png", 12, animationFactor*12, 1);
+//    }else {
+//        gong = CommonFunc::creatAnimation("bingnv_attack_l%d.png", 12, animationFactor*12, 1);
+//    }
+    gong = CommonFunc::creatAnimation("change_attackm_%d.png", 12, animationFactor*12, 1);
     auto wait = ActionWait::create(1.0);
     
     auto addNuqi = CallFunc::create(CC_CALLBACK_0(ChangECard::nuQiManage, this,info));
@@ -122,12 +123,13 @@ void ChangECard::xiaoSkll(OneRecord *info) {
 void ChangECard::daSkill(OneRecord *info) {
     this->stopStandAnimation();
     Animate* dazhao = NULL;
-    if (this->playerName.compare("enemyPlayer") == 0) {
-        dazhao = CommonFunc::creatAnimation("bingnv_conjure_r%d.png", 16, animationFactor*16, 1);
-    }else {
-        dazhao = CommonFunc::creatAnimation("bingnv_conjure_l%d.png", 16, animationFactor*16, 1);
-    }
+//    if (this->playerName.compare("enemyPlayer") == 0) {
+//        dazhao = CommonFunc::creatAnimation("bingnv_conjure_r%d.png", 16, animationFactor*16, 1);
+//    }else {
+//        dazhao = CommonFunc::creatAnimation("bingnv_conjure_l%d.png", 16, animationFactor*16, 1);
+//    }
     //auto dazhao = CommonFunc::creatAnimation("bingnv_conjure_%d.png", 16, 1.0f, 1);
+    dazhao = CommonFunc::creatAnimation("change_attackb_%d.png", 16, animationFactor*16, 1);
     auto wait = ActionWait::create(1.4);
     auto nuqi = CallFunc::create(CC_CALLBACK_0(ChangECard::nuQiManage, this,info));
     auto appear = CallFunc::create(CC_CALLBACK_0(ChangECard::appearUI, this));
@@ -137,11 +139,24 @@ void ChangECard::daSkill(OneRecord *info) {
     auto afterAction = CallFunc::create(CC_CALLBACK_0(Card::afterAnimation,this,info,this));
     
     this->cardSprite->runAction(Sequence::create(dazhao,maxHit,wait,nuqi,afterAction,appear,recordBlock,NULL));
+    this->createTeXiao();
     CocosDenshion::SimpleAudioEngine::getInstance()->playEffect("bingnv_conjure.mp3",false);
     this->fPro->hpPro->setVisible(false);
     this->fPro->hpProBg->setVisible(false);
     this->fPro->nuqiPro->setVisible(false);
     this->fPro->nuqiProBg->setVisible(false);
+}
+
+void ChangECard::createTeXiao() {
+    ParticleSystem *cps = ParticleSnow::create();
+    cps->setPosition(this->forPlayer->fMap->getPosition().x+this->forPlayer->fMap->getBoundingBox().size.width/2,this->forPlayer->fMap->getPosition().y+this->forPlayer->fMap->getBoundingBox().size.height/2);
+    cps->setLife(0.001f);
+    cps->setTotalParticles(100);
+    cps->setDuration(0.7);
+  //  cps->setGravity(Point(0,-480));
+    cps->setEmissionRate(100);
+    cps->setPosVar(Point(this->forPlayer->fMap->getBoundingBox().size.width/2,this->forPlayer->fMap->getBoundingBox().size.height/2));
+    this->forPlayer->fMap->getParent()->getParent()->addChild(cps,3000);
 }
 
 void ChangECard::appearUI() {
@@ -157,7 +172,7 @@ void ChangECard::appearUI() {
 }
 
 void ChangECard::nuQiManage(OneRecord *info) {
-   this->nuQiAppear(this, info->nuQiChange);
+   this->nuQiAppear(this, info->nuQiChange,info->nuQiMax);
 }
 
 void ChangECard::hitBlock(Vector<OneRecord *> affectRecordArray) {
@@ -165,7 +180,7 @@ void ChangECard::hitBlock(Vector<OneRecord *> affectRecordArray) {
     for(int i = 0; i < affectRecordArray.size(); i++) {
         auto affectCard = affectRecordArray.at(i)->card;
     //    this->hpAppear(affectCard, affectRecordArray.at(i)->hitValue, affectRecordArray.at(i)->currentHP);
-        this->nuQiAppear(affectCard, affectRecordArray.at(i)->nuQiChange);
+        this->nuQiAppear(affectCard, affectRecordArray.at(i)->nuQiChange,affectRecordArray.at(i)->nuQiMax);
     }
 
 }
@@ -179,52 +194,22 @@ void ChangECard::daHitBlock(Vector<OneRecord *> affectRecordArray) {
         }else {
             this->hpAppear(beHitCard, affectRecordArray.at(i)->hitValue, affectRecordArray.at(i)->currentHP,"");
         }
-        
-       // this->hpAppear(beHitCard, affectRecordArray.at(i)->hitValue, affectRecordArray.at(i)->currentHP);
-        this->nuQiAppear(beHitCard, affectRecordArray.at(i)->nuQiChange);
+
+        this->nuQiAppear(beHitCard, affectRecordArray.at(i)->nuQiChange,affectRecordArray.at(i)->nuQiMax);
         
     }
   //  this->decreaseNuQi(this, 3, true);
 }
 
-//void ChangECard::recordHit() {
-//    for (int i = 0; i < this->forPlayer->cardArray.size(); i++) {
-//        if (this->forPlayer->cardArray.at(i)->cellIndex != this->cellIndex && this->forPlayer->cardArray.at(i)->nuQiNum < this->forPlayer->cardArray.at(i)->nuQiNumMax) {
-//
-//            this->recordAddNuqi(this->forPlayer->cardArray.at(i), 1);
-//        }
-//    }
-//
-//}
-//
-//void ChangECard::recordUltimateSkill() {
-//    for (int i = 0; i < this->forPlayer->fMap->mapCellArray.size(); i++) {
-//        auto temp = (Card*)(this->forPlayer->fMap->mapCellArray.at(i))->obj;
-//        if (temp != NULL) {
-//            if (temp->cellIndex != this->cellIndex) {
-//                this->recordAddNuqi(temp, 1);
-//            }
-//            OneRecord* oneRecord = OneRecord::create();
-//            oneRecord->zhiLiao = CommonFunc::reckonZhiLiaoValue(this, temp);
-//            oneRecord->playerName = temp->playerName;
-//            oneRecord->cardName = temp->cardName;
-//            oneRecord->standIndex = temp->cellIndex;
-//            RecordFight::GetInstance()->addAffectCardArray(RecordFight::GetInstance()->currentRecordIndex, oneRecord);
-//            this->recordAddHP(temp, CommonFunc::reckonZhiLiaoValue(this, temp));
-//        }
-//    }
-//    
-//    this->recordDecreaseNuqi(this, 3,true);
-//}
 
 void ChangECard::runZhanLiAnimation() {
     Animate* zhanli = NULL;
-    if (this->playerName.compare("enemyPlayer") == 0) {
-        zhanli = CommonFunc::creatAnimation("bingnv_stand_r%d.png", 4, animationFactor*4, 1);
-    }else {
-        zhanli = CommonFunc::creatAnimation("bingnv_stand_l%d.png", 4, animationFactor*4, 1);
-    }
-   // auto zhanli = CommonFunc::creatAnimation("bingnv_stand_%d.png", 4, 0.5f, 1);
+//    if (this->playerName.compare("enemyPlayer") == 0) {
+//        zhanli = CommonFunc::creatAnimation("bingnv_stand_r%d.png", 4, animationFactor*4, 1);
+//    }else {
+//        zhanli = CommonFunc::creatAnimation("bingnv_stand_l%d.png", 4, animationFactor*4, 1);
+//    }
+    zhanli = CommonFunc::creatAnimation("change_idle_%d.png", 4, animationFactor*4, 1);
     //zhanli->setTag(10);
     this->standAction = RepeatForever::create(zhanli);
     this->standAction->retain();

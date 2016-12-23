@@ -41,6 +41,7 @@ public:
     void xiaoHitMusic();
     void daHitMusic();
     // void actionBlock();
+    virtual void createTeXiao(Card* cardTexiao);
 };
 
 

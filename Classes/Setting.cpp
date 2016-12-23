@@ -7,3 +7,6 @@
 //
 
 #include "Setting.h"
+
+std::string myKey = "yzq";
+std::string myPassWord = "123";

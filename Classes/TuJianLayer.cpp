@@ -150,8 +150,14 @@ TableViewCell* TuJianLayer::tableCellAtIndex(cocos2d::extension::TableView *tabl
         cellBgSp->setPosition(0,0);
         cellBgSp->setTag(10);
         cell->addChild(cellBgSp,200);
-      
-        Sprite *tjSp = Sprite::create(this->allDataArray.at(idx)->cardName+"_tx.jpg");
+        auto tempName = this->allDataArray.at(idx)->cardName;
+        if (tempName.compare("baize") == 0 || tempName.compare("dangkang") == 0 || tempName.compare("fenghuang") == 0 || tempName.compare("hundun") == 0 || tempName.compare("leishen") == 0 || tempName.compare("qingniao") == 0 || tempName.compare("qiongqi") == 0 || tempName.compare("taowu") == 0 ) {
+            tempName = tempName + "_tx.png";
+        }else {
+            tempName = tempName + "_tx.jpg";
+        }
+        
+        Sprite *tjSp = Sprite::create(tempName);
         CommonFunc::setSpriteSize(tjSp, 55);
 
         tjSp->setPosition(Vec2(30,cell->getBoundingBox().size.height/2-4));
@@ -191,7 +197,15 @@ TableViewCell* TuJianLayer::tableCellAtIndex(cocos2d::extension::TableView *tabl
         
         Sprite* tjSp = (Sprite*)cell->getChildByTag(20);
         tjSp->removeFromParentAndCleanup(true);
-        tjSp = Sprite::create(this->allDataArray.at(idx)->cardName+"_tx.jpg");
+        
+        auto tempName = this->allDataArray.at(idx)->cardName;
+        if (tempName.compare("baize") == 0 || tempName.compare("dangkang") == 0 || tempName.compare("fenghuang") == 0 || tempName.compare("hundun") == 0 || tempName.compare("leishen") == 0 || tempName.compare("qingniao") == 0 || tempName.compare("qiongqi") == 0 || tempName.compare("taowu") == 0 ) {
+            tempName = tempName + "_tx.png";
+        }else {
+            tempName = tempName + "_tx.jpg";
+        }
+        
+        tjSp = Sprite::create(tempName);
         CommonFunc::setSpriteSize(tjSp, 55);
         
         tjSp->setPosition(Vec2(30,cell->getBoundingBox().size.height/2-4));
@@ -262,7 +276,7 @@ void TuJianLayer::changeDetailUIInfo(TuJianData *data) {
         card = SuanYuCard::create();
     }
     card->playerName = this->appearCard->playerName;
-    card->cardSprite = Sprite::create(card->cardSpriteImageName+"_l0.png");
+    card->cardSprite = Sprite::create(card->cardSpriteImageName+"_0.png");
     if (data->cardName.compare("houyi") == 0 || data->cardName.compare("change") == 0 || data->cardName.compare("suanyu") == 0) {
         CommonFunc::setSpriteSize(card->cardSprite, screenSize.width*0.75);
     }else {
@@ -338,7 +352,7 @@ void TuJianLayer::initDetailUI(TuJianData* data) {
         this->appearCard = SuanYuCard::create();
     }
     this->appearCard->playerName = "player";
-    this->appearCard->cardSprite = Sprite::create(this->appearCard->cardSpriteImageName+"_l0.png");
+    this->appearCard->cardSprite = Sprite::create(this->appearCard->cardSpriteImageName+"_0.png");
     CommonFunc::setSpriteSize(this->appearCard->cardSprite, screenSize.width*0.75);
     this->appearCard->cardSprite->setPosition(infoLayer->getBoundingBox().size.width*0.555,infoLayer->getBoundingBox().size.height*0.7);
     infoLayer->addChild(this->appearCard->cardSprite,100);

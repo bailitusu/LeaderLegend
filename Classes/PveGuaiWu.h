@@ -14,17 +14,18 @@
 #include "SetRoleFormatLayer.h"
 #include "FightNetwork.h"
 #include "PveFightLayer.h"
-USING_NS_CC;
 
+USING_NS_CC;
+class FuBenLayer;
 class PveGuaiWu : public Ref {
     
 public:
     virtual bool init();
     CREATE_FUNC(PveGuaiWu);
     int index;
-    Layer* preLayer;
+    FuBenLayer* preLayer;
     ui::Button* guaiWuBtn;
-    void createGuaiWu(Layer* layer,std::string imageName,Vec2 position,float width);
+    void createGuaiWu(FuBenLayer* layer,std::string imageName,Vec2 position,float width);
     void btnClick(cocos2d::Ref *sender, ui::Widget::TouchEventType type);
    // SetRoleFormatlayer* roleFormatLayer;
     Vector<SetRoleData*> *myData;

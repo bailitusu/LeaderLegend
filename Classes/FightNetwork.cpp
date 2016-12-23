@@ -33,9 +33,11 @@ void FightNetwork::createPostHttp(std::string url,Ref* pTarget, SEL_HttpResponse
     request->setUrl(url);
     request->setRequestType(HttpRequest::Type::POST);
     request->setResponseCallback(pTarget, pSelector);
-
+    
     request->setRequestData(data, strlen(data));
     HttpClient::getInstance()->send(request);
+    HttpClient::getInstance()->setTimeoutForRead(3);
+    HttpClient::getInstance()->setTimeoutForConnect(3);
     request->release();
     
 }
@@ -60,5 +62,7 @@ void FightNetwork::createGetHttp(std::string url, cocos2d::Ref *pTarget, SEL_Htt
     request->setResponseCallback(pTarget, pSelector);
  //   request->setTag("getFightRecord");
     HttpClient::getInstance()->send(request);
+    HttpClient::getInstance()->setTimeoutForRead(3);
+    HttpClient::getInstance()->setTimeoutForConnect(3);
     request->release();
 }

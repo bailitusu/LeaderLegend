@@ -22,8 +22,8 @@ bool TaoTieCard::init() {
 //    this->MaxHP = 20;
     this->hitRuleNum = hitRuleType.jinZhan;
     this->cardName = "taotie";
-    
-    this->cardSpriteImageName = "panda_stand";
+    this->cardZhongWenName = "饕餮";
+    this->cardSpriteImageName = "taotie_idle";
     this->xiaoZhaoInfo = "挫志攻击";
     this->daZhaoInfo = "大范围固定伤害";
     this->wuLi = 87;
@@ -111,13 +111,13 @@ void TaoTieCard::xiaoSkll(OneRecord *info) {
     }
     Vec2 target = Vec2(tagetX, this->forEnemy->fMap->mapCellArray.at(info->hitTarget)->position.y); //this->playerTemp->fMap->mapCellArray.at(cellNum)->position;
     Animate* gong = NULL;
-    if (this->playerName.compare("enemyPlayer") == 0) {
-        gong = CommonFunc::creatAnimation("panda_attack_r%d.png", 8, animationFactor*8, 1);
-    }else {
-        gong = CommonFunc::creatAnimation("panda_attack_l%d.png", 8, animationFactor*8, 1);
-    }
-    
-   // auto gong = CommonFunc::creatAnimation("panda_attack_%d.png", 8, 1.0f, 1);
+//    if (this->playerName.compare("enemyPlayer") == 0) {
+//        gong = CommonFunc::creatAnimation("panda_attack_r%d.png", 8, animationFactor*8, 1);
+//    }else {
+//        gong = CommonFunc::creatAnimation("panda_attack_l%d.png", 8, animationFactor*8, 1);
+//    }
+    gong = CommonFunc::creatAnimation("taotie_attackm_%d.png", 8, animationFactor*8, 1);
+   
     auto move = CallFunc::create(CC_CALLBACK_0(TaoTieCard::moveAnimation, this, target));
     auto moveWait = ActionWait::create(animationFactor*8);
     auto wait = ActionWait::create(1.0);
@@ -157,14 +157,12 @@ void TaoTieCard::daSkill(OneRecord *info) {
     Vec2 target = Vec2(tagetX, this->forEnemy->fMap->mapCellArray.at(info->hitTarget)->position.y); //this->playerTemp->fMap->mapCellArray.at(cellNum)->position;
     
     Animate* dazhao = NULL;
-    if (this->playerName.compare("enemyPlayer") == 0) {
-        dazhao = CommonFunc::creatAnimation("panda_conjure_r%d.png", 20, animationFactor*20, 1);
-    }else {
-        dazhao = CommonFunc::creatAnimation("panda_conjure_l%d.png", 20, animationFactor*20, 1);
-    }
-    
-   // auto dazhao = CommonFunc::creatAnimation("panda_conjure_%d.png", 20, 1.0f, 1);
-    
+//    if (this->playerName.compare("enemyPlayer") == 0) {
+//        dazhao = CommonFunc::creatAnimation("panda_conjure_r%d.png", 20, animationFactor*20, 1);
+//    }else {
+//        dazhao = CommonFunc::creatAnimation("panda_conjure_l%d.png", 20, animationFactor*20, 1);
+//    }
+    dazhao = CommonFunc::creatAnimation("taotie_attackb_%d.png", 20, animationFactor*20, 1);
     auto move = CallFunc::create(CC_CALLBACK_0(TaoTieCard::moveAnimation, this, target));
     auto moveWait = ActionWait::create(animationFactor*8);
     auto dazhaoWait = ActionWait::create(1.0);
@@ -194,7 +192,7 @@ void TaoTieCard::daHitBlock(Vector<OneRecord *> affectRecordArray) {
         }else {
             beHitCard->HP = affectRecordArray.at(i)->currentHP;
             beHitCard->MaxHP = affectRecordArray.at(i)->maxHP;
-            
+            this->createTeXiao(beHitCard);
             if (affectRecordArray.at(i)->isBaoJi == true) {
                 this->hpAppear(beHitCard, affectRecordArray.at(i)->hitValue, affectRecordArray.at(i)->currentHP,"暴击");
             }else if(affectRecordArray.at(i)->isGeDang == true) {
@@ -204,7 +202,7 @@ void TaoTieCard::daHitBlock(Vector<OneRecord *> affectRecordArray) {
             }
             
        //     this->hpAppear(beHitCard, affectRecordArray.at(i)->hitValue, affectRecordArray.at(i)->currentHP);
-            this->nuQiAppear(beHitCard, affectRecordArray.at(i)->nuQiChange);
+            this->nuQiAppear(beHitCard, affectRecordArray.at(i)->nuQiChange,affectRecordArray.at(i)->nuQiMax);
         }
     }
        // this->decreaseNuQi(this, 3,true);
@@ -224,33 +222,34 @@ void TaoTieCard::appearUI() {
 }
 void TaoTieCard::moveAnimation(Vec2 target) {
     Animate* animateActionWalk = NULL;
-    if (this->playerName.compare("enemyPlayer") == 0) {
-        animateActionWalk = CommonFunc::creatAnimation("panda_move_r%d.png", 8, animationFactor*8, 1);
-    }else {
-        animateActionWalk = CommonFunc::creatAnimation("panda_move_l%d.png", 8, animationFactor*8, 1);
-    }
+//    if (this->playerName.compare("enemyPlayer") == 0) {
+//        animateActionWalk = CommonFunc::creatAnimation("panda_move_r%d.png", 8, animationFactor*8, 1);
+//    }else {
+//        animateActionWalk = CommonFunc::creatAnimation("panda_move_l%d.png", 8, animationFactor*8, 1);
+//    }
+    animateActionWalk = CommonFunc::creatAnimation("taotie_move_%d.png", 8, animationFactor*8, 1);
     auto moveTo = MoveTo::create(animationFactor*8, target);
-  //  auto animateActionWalk = CommonFunc::creatAnimation("panda_move_%d.png", 8, 0.5f, 2);
     this->cardSprite->runAction(moveTo);
     this->cardSprite->runAction(animateActionWalk);
 }
 
 void TaoTieCard::nuQiManage(OneRecord *info) {
-    this->nuQiAppear(this, info->nuQiChange);
+    this->nuQiAppear(this, info->nuQiChange,info->nuQiMax);
 }
 
 
+void TaoTieCard::createTeXiao(Card *cardTexiao) {
+    ParticleSystem *cps = ParticleSmoke::create();
+    cps->setPosition(cardTexiao->cardSprite->getPosition());
+    cps->setLife(0.05f);
+    cps->setTotalParticles(100);
+    cps->setDuration(0.7);
+    //  cps->setGravity(Point(0,-480));
+    cps->setEmissionRate(50);
+    cps->setPosVar(Point(10,10));
+    cardTexiao->forPlayer->fMap->addChild(cps,3000);
+}
 
-//void TaoTieCard::recordHit() {
-//    if ((Card*)(this->forEnemy->fMap->mapCellArray.at(this->targetNum))->obj != NULL) {
-//        ((Card*)(this->forEnemy->fMap->mapCellArray.at(this->targetNum))->obj)->recordDidBeHit(this,"wuli");
-//        
-//        this->recordDecreaseNuqi((Card*)(this->forEnemy->fMap->mapCellArray.at(this->targetNum)->obj), 1,false);
-//        //this->addHP(this, this->xiXue*0.5);
-//        this->recordAddHP(this, this->xiXue*0.5);
-//        
-//    }
-//}
 void TaoTieCard::hitBlock(Vector<OneRecord *> affectRecordArray) {
 
     for (int i = 0 ; i < affectRecordArray.size(); i++) {
@@ -260,7 +259,7 @@ void TaoTieCard::hitBlock(Vector<OneRecord *> affectRecordArray) {
         }else {
             beHitCard->HP = affectRecordArray.at(i)->currentHP;
             beHitCard->MaxHP = affectRecordArray.at(i)->maxHP;
-            
+            this->createTeXiao(beHitCard);
             if (affectRecordArray.at(i)->isBaoJi == true) {
                 this->hpAppear(beHitCard, affectRecordArray.at(i)->hitValue, affectRecordArray.at(i)->currentHP,"暴击");
             }else if(affectRecordArray.at(i)->isGeDang == true) {
@@ -268,8 +267,9 @@ void TaoTieCard::hitBlock(Vector<OneRecord *> affectRecordArray) {
             }else {
                 this->hpAppear(beHitCard, affectRecordArray.at(i)->hitValue, affectRecordArray.at(i)->currentHP,"");
             }
+            
         //    this->hpAppear(beHitCard, affectRecordArray.at(i)->hitValue, affectRecordArray.at(i)->currentHP);
-            this->nuQiAppear(beHitCard, affectRecordArray.at(i)->nuQiChange);
+            this->nuQiAppear(beHitCard, affectRecordArray.at(i)->nuQiChange,affectRecordArray.at(i)->nuQiMax);
         }
     }
     
@@ -282,13 +282,12 @@ void TaoTieCard::hitBlock(Vector<OneRecord *> affectRecordArray) {
 
 void TaoTieCard::runZhanLiAnimation() {
     Animate* zhanli = NULL;
-    if (this->playerName.compare("enemyPlayer") == 0) {
-        zhanli = CommonFunc::creatAnimation("panda_stand_r%d.png", 4, animationFactor*4, 1);
-    }else {
-        zhanli = CommonFunc::creatAnimation("panda_stand_l%d.png", 4, animationFactor*4, 1);
-    }
-    
- //   auto zhanli = CommonFunc::creatAnimation("panda_stand_%d.png", 4, 0.5f, 1);
+//    if (this->playerName.compare("enemyPlayer") == 0) {
+//        zhanli = CommonFunc::creatAnimation("panda_stand_r%d.png", 4, animationFactor*4, 1);
+//    }else {
+//        zhanli = CommonFunc::creatAnimation("panda_stand_l%d.png", 4, animationFactor*4, 1);
+//    }
+    zhanli = CommonFunc::creatAnimation("taotie_idle_%d.png", 4, animationFactor*4, 1);
     this->standAction = RepeatForever::create(zhanli);
     this->standAction->retain();
     this->standAction->setTag(10);

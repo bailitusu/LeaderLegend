@@ -12,7 +12,9 @@
 #include "cocos2d.h"
 #include "ui/CocosGUI.h"
 #include "SetRoleFormatLayer.h"
+#include "PveGuaiWu.h"
 USING_NS_CC;
+//class PveGuaiWu;
 class FuBenLayer : public Layer {
     
 public:
@@ -34,6 +36,7 @@ public:
     virtual void onTouchEnded(Touch *touch, Event *unused_event);
     Sprite* background;
     //virtual void onExit();
+    Vector<PveGuaiWu*> guaiWuArray;
 };
 
 #endif /* FuBenLayer_h */

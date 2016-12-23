@@ -22,7 +22,8 @@ bool HouYiCard::init() {
     
     this->hitRuleNum = hitRuleType.gongJian;
     this->cardName = "houyi";
-    this->cardSpriteImageName = "xiaohei_stand";
+    this->cardZhongWenName = "后羿";
+    this->cardSpriteImageName = "houyi_idle";
     this->xiaoZhaoInfo = "远程物理攻击并50%几率触发连击";
     this->daZhaoInfo = "远程物理攻击9格范围敌军";
     this->wuLi = 92;
@@ -62,12 +63,12 @@ void HouYiCard::xiaoSkll(OneRecord *info) {
     this->stopStandAnimation();
     
     Animate* gong = NULL;
-    if (this->playerName.compare("enemyPlayer") == 0) {
-        gong = CommonFunc::creatAnimation("xiaohei_attack_r%d.png", 12, animationFactor*12, 0);
-    }else {
-        gong = CommonFunc::creatAnimation("xiaohei_attack_l%d.png", 12, animationFactor*12, 0);
-    }
-    
+//    if (this->playerName.compare("enemyPlayer") == 0) {
+//        gong = CommonFunc::creatAnimation("xiaohei_attack_r%d.png", 12, animationFactor*12, 0);
+//    }else {
+//        gong = CommonFunc::creatAnimation("xiaohei_attack_l%d.png", 12, animationFactor*12, 0);
+//    }
+    gong = CommonFunc::creatAnimation("houyi_attackm_%d.png", 12, animationFactor*12, 0);
     auto wait = ActionWait::create(1.0);
     
     auto addNuqi = CallFunc::create(CC_CALLBACK_0(HouYiCard::nuQiManage, this,info));
@@ -125,18 +126,20 @@ void HouYiCard::appearUI(Animate* tempAnimate) {
 void HouYiCard::daSkill(OneRecord *info) {
     this->stopStandAnimation();
     Animate* dazhao = NULL;
-    if (this->playerName.compare("enemyPlayer") == 0) {
-        dazhao = CommonFunc::creatAnimation("xiaohei_conjure_r%d.png", 16, animationFactor*16, 0);
-    }else {
-        dazhao = CommonFunc::creatAnimation("xiaohei_conjure_l%d.png", 16, animationFactor*16, 0);
-    }
+//    if (this->playerName.compare("enemyPlayer") == 0) {
+//        dazhao = CommonFunc::creatAnimation("xiaohei_conjure_r%d.png", 16, animationFactor*16, 0);
+//    }else {
+//        dazhao = CommonFunc::creatAnimation("xiaohei_conjure_l%d.png", 16, animationFactor*16, 0);
+//    }
   //  auto dazhao = CommonFunc::creatAnimation("xiaohei_conjure_%d.png", 22, 2.0f, 1);
+    dazhao = CommonFunc::creatAnimation("houyi_attackb_%d.png", 16, animationFactor*16, 0);
     auto wait = ActionWait::create(1.0);
     auto appear = CallFunc::create(CC_CALLBACK_0(HouYiCard::appearUI, this, dazhao));
     auto maxHit = CallFunc::create(CC_CALLBACK_0(HouYiCard::daHitBlock, this, info->affectRecordArray));
     auto nuqi = CallFunc::create(CC_CALLBACK_0(HouYiCard::nuQiManage, this,info));
     auto recordBlock = CallFunc::create(CC_CALLBACK_0(ReadRecordFight::readNextFightRecord, this->readRecordFight));
     auto afterAction = CallFunc::create(CC_CALLBACK_0(Card::afterAnimation,this,info,this));
+    
     
     this->cardSprite->runAction(Sequence::create(dazhao,maxHit,wait,nuqi,afterAction,wait,appear,recordBlock,NULL));
     CocosDenshion::SimpleAudioEngine::getInstance()->playEffect("xiaohei_conjure.mp3");
@@ -146,61 +149,21 @@ void HouYiCard::daSkill(OneRecord *info) {
     this->fPro->nuqiProBg->setVisible(false);
 }
 
-//void HouYiCard::recordRuning(FightPlayer *enemyTemp) {
-//    this->forEnemy = enemyTemp;
-//    this->targetNum = AttackRule::Rule(this->cellIndex, this->hitRuleNum, this->forEnemy->fMap);
-//    if (this->targetNum == 100) {
-//        return;
-//    }
-//    auto oneRecord = OneRecord::create();
-//    
-//    oneRecord->hitTarget = this->targetNum;
-//    oneRecord->cardName = this->cardName;
-//    oneRecord->playerName = this->playerName;
-//    oneRecord->standIndex = this->cellIndex;
-//  //  printf("%d-------%s\n", this->cellIndex, this->playerName.c_str());
-////
-////    auto hit = CallFunc::create(CC_CALLBACK_0(HouYiCard::recordHit,this));
-////    auto maxHit = CallFunc::create(CC_CALLBACK_0(HouYiCard::ultimateSkill, this));
-////    auto addNuqi = CallFunc::create(CC_CALLBACK_0(HouYiCard::nuQiManage, this));
-////    auto block = CallFunc::create(CC_CALLBACK_0(HouYiCard::actionBlock,this));
-//    if (this->nuQiNum < this->nuQiNumMax) {
-//        oneRecord->isXiaoZhao = true;
-//        oneRecord->isDaZhao = false;
-//        if (CommonFunc::isInPercent(0.5)) {
-//            oneRecord->isLianJi = true;
-//        }else {
-//            oneRecord->isLianJi = false;
-//        }
-//        RecordFight::GetInstance()->addItemToRecord(oneRecord);
-//        if (oneRecord->isLianJi == true) {
-//            this->recordHit();
-//            this->recordHit();
-//            //this->nuQiManage();
-//            this->recordAddNuqi(this, 1);
-//            this->recordActionBlock();
-//           // this->cardSprite->runAction(Sequence::create(hit,hit,addNuqi,block, NULL));
-//        }else {
-//            this->recordHit();
-//           // this->nuQiManage();
-//            this->recordAddNuqi(this, 1);
-//            this->recordActionBlock();
-//        }
-//    }else {
-//        oneRecord->isXiaoZhao = false;
-//        oneRecord->isDaZhao = true;
-//        RecordFight::GetInstance()->addItemToRecord(oneRecord);
-//        this->recordUltimateSkill();
-//        this->recordActionBlock();
-//       // this->cardSprite->runAction(Sequence::create(maxHit,block, NULL));
-//    }
-//    
-//    
-//}
+void HouYiCard::createTeXiao(Card* cardTexiao) {
+    ParticleSystem *cps = ParticleSun::create();
+    cps->setPosition(cardTexiao->cardSprite->getPosition());
+    cps->setLife(0.05f);
+    cps->setTotalParticles(100);
+    cps->setDuration(0.7);
+    //  cps->setGravity(Point(0,-480));
+    cps->setEmissionRate(200);
+    cps->setPosVar(Point(20,20));
+    cardTexiao->forPlayer->fMap->addChild(cps,3000);
+}
 
 void HouYiCard::nuQiManage(OneRecord *info) {
 
-    this->nuQiAppear(this, info->nuQiChange);
+    this->nuQiAppear(this, info->nuQiChange,info->nuQiMax);
 }
 
 void HouYiCard::hitBlock( Vector<OneRecord*> affectRecordArray) {
@@ -220,7 +183,7 @@ void HouYiCard::hitBlock( Vector<OneRecord*> affectRecordArray) {
         beHitCardRecord->card->animationShanBi();
     }else {
         if (beHitCardRecord->card->HP > 0) {
-            
+            this->createTeXiao(beHitCardRecord->card);
             if (beHitCardRecord->isBaoJi == true) {
                 this->hpAppear(beHitCardRecord->card, beHitCardRecord->hitValue, beHitCardRecord->currentHP,"暴击");
             }else if(beHitCardRecord->isGeDang == true) {
@@ -228,9 +191,9 @@ void HouYiCard::hitBlock( Vector<OneRecord*> affectRecordArray) {
             }else {
                 this->hpAppear(beHitCardRecord->card, beHitCardRecord->hitValue, beHitCardRecord->currentHP,"");
             }
-           
+            
 
-            this->nuQiAppear(beHitCardRecord->card, beHitCardRecord->nuQiChange);
+            this->nuQiAppear(beHitCardRecord->card, beHitCardRecord->nuQiChange,beHitCardRecord->nuQiMax);
             
             
         }
@@ -246,7 +209,7 @@ void HouYiCard::daHitBlock(Vector<OneRecord*> affectRecordArray) {
         if (affectRecordArray.at(i)->isShanBi == true) {
             beHitCard->animationShanBi();
         }else {
-            
+            this->createTeXiao(beHitCard);
             if (affectRecordArray.at(i)->isBaoJi == true) {
                 this->hpAppear(beHitCard, affectRecordArray.at(i)->hitValue, affectRecordArray.at(i)->currentHP,"暴击");
             }else if(affectRecordArray.at(i)->isGeDang == true) {
@@ -256,7 +219,7 @@ void HouYiCard::daHitBlock(Vector<OneRecord*> affectRecordArray) {
             }
             
          //   this->hpAppear(beHitCard, affectRecordArray.at(i)->hitValue, affectRecordArray.at(i)->currentHP);
-            this->nuQiAppear(beHitCard, affectRecordArray.at(i)->nuQiChange);
+            this->nuQiAppear(beHitCard, affectRecordArray.at(i)->nuQiChange,affectRecordArray.at(i)->nuQiMax);
         }
     }
    // this->decreaseNuQi(this, 3, true);
@@ -266,13 +229,14 @@ void HouYiCard::daHitBlock(Vector<OneRecord*> affectRecordArray) {
 
 void HouYiCard::runZhanLiAnimation() {
     Animate* zhanli = NULL;
-    if (this->playerName.compare("enemyPlayer") == 0) {
-        zhanli = CommonFunc::creatAnimation("xiaohei_stand_r%d.png", 5, animationFactor*5, 1);
-    }else {
-        zhanli = CommonFunc::creatAnimation("xiaohei_stand_l%d.png", 5, animationFactor*5, 1);
-    }
+//    if (this->playerName.compare("enemyPlayer") == 0) {
+//        zhanli = CommonFunc::creatAnimation("xiaohei_stand_r%d.png", 5, animationFactor*5, 1);
+//    }else {
+//        zhanli = CommonFunc::creatAnimation("xiaohei_stand_l%d.png", 5, animationFactor*5, 1);
+//    }
    // auto zhanli = CommonFunc::creatAnimation("xiaohei_stand_%d.png", 5, 0.5f, 1);
     //zhanli->setTag(10);
+    zhanli = CommonFunc::creatAnimation("houyi_idle_%d.png", 5, animationFactor*5, 1);
     this->standAction = RepeatForever::create(zhanli);
     this->standAction->retain();
     this->standAction->setTag(10);

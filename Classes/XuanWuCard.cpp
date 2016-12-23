@@ -25,7 +25,8 @@ bool XuanWuCard::init() {
 //    this->MaxHP = 20;
     this->hitRuleNum = hitRuleType.jinZhan;
     this->cardName = "xuanwu";
-    this->cardSpriteImageName = "niutou_stand";
+    this->cardZhongWenName = "玄武";
+    this->cardSpriteImageName = "xuanwu_idle";
     this->xiaoZhaoInfo = "每回合攻击前恢复一定气血";
     this->daZhaoInfo = "横排大量法术伤害";
     this->wuLi = 72;
@@ -111,7 +112,7 @@ void XuanWuCard::zaiShengAction(bool isRecord) {
 
 
 void XuanWuCard::nuQiManage(OneRecord *info) {
-    this->nuQiAppear(this, info->nuQiChange);
+    this->nuQiAppear(this, info->nuQiChange,info->nuQiMax);
 }
 
 
@@ -123,6 +124,7 @@ void XuanWuCard::daHitBlock(Vector<OneRecord*> affectRecordArray) {
         if (affectRecordArray.at(i)->isShanBi == true) {
             beHitCard->animationShanBi();
         }else {
+            this->createTeXiao(beHitCard);
             if (affectRecordArray.at(i)->isBaoJi == true) {
                 this->hpAppear(beHitCard, affectRecordArray.at(i)->hitValue, affectRecordArray.at(i)->currentHP,"暴击");
             }else if(affectRecordArray.at(i)->isGeDang == true) {
@@ -136,7 +138,7 @@ void XuanWuCard::daHitBlock(Vector<OneRecord*> affectRecordArray) {
 //                auto mingZhongBuff = MingZhongBuff::create();
 //                mingZhongBuff->decreaseBuff(beHitCard,0.1);
 //            }
-            this->nuQiAppear(beHitCard, affectRecordArray.at(i)->nuQiChange);
+            this->nuQiAppear(beHitCard, affectRecordArray.at(i)->nuQiChange,affectRecordArray.at(i)->nuQiMax);
         }
     }
    // this->decreaseNuQi(this, 3, true);
@@ -161,13 +163,12 @@ void XuanWuCard::xiaoSkll(OneRecord *info) {
 
     
     Animate* gong = NULL;
-    if (this->playerName.compare("enemyPlayer") == 0) {
-        gong = CommonFunc::creatAnimation("niutou_attack_r%d.png", 20, animationFactor*20, 1);
-    }else {
-        gong = CommonFunc::creatAnimation("niutou_attack_l%d.png", 20, animationFactor*20, 1);
-    }
-    
-   // auto gong = CommonFunc::creatAnimation("niutou_attack_%d.png", 20, 1.0f, 1);
+//    if (this->playerName.compare("enemyPlayer") == 0) {
+//        gong = CommonFunc::creatAnimation("niutou_attack_l%d.png", 20, animationFactor*20, 1);
+//    }else {
+//        gong = CommonFunc::creatAnimation("niutou_attack_l%d.png", 20, animationFactor*20, 1);
+//    }
+    gong = CommonFunc::creatAnimation("xuanwu_attackm_%d.png", 20, animationFactor*20, 1);
     auto move = CallFunc::create(CC_CALLBACK_0(XuanWuCard::moveAnimation, this, target));
     auto moveWait = ActionWait::create(animationFactor*8);
     auto wait = ActionWait::create(1.0);
@@ -196,7 +197,7 @@ void XuanWuCard::hitBlock(Vector<OneRecord *> affectRecordArray) {
         }else {
             beHitCard->HP = affectRecordArray.at(i)->currentHP;
             beHitCard->MaxHP = affectRecordArray.at(i)->maxHP;
-            
+            this->createTeXiao(beHitCard);
             if (affectRecordArray.at(i)->isBaoJi == true) {
                 this->hpAppear(beHitCard, affectRecordArray.at(i)->hitValue, affectRecordArray.at(i)->currentHP,"暴击");
             }else if(affectRecordArray.at(i)->isGeDang == true) {
@@ -210,12 +211,24 @@ void XuanWuCard::hitBlock(Vector<OneRecord *> affectRecordArray) {
             //                auto mingZhongBuff = MingZhongBuff::create();
             //                mingZhongBuff->decreaseBuff(beHitCard,0.1);
             //            }
-            this->nuQiAppear(beHitCard, affectRecordArray.at(i)->nuQiChange);
+            this->nuQiAppear(beHitCard, affectRecordArray.at(i)->nuQiChange,affectRecordArray.at(i)->nuQiMax);
         }
     }
     
     
 
+}
+
+void XuanWuCard::createTeXiao(Card *cardTexiao) {
+    ParticleSystem *cps = ParticleSmoke::create();
+    cps->setPosition(cardTexiao->cardSprite->getPosition());
+    cps->setLife(0.05f);
+    cps->setTotalParticles(100);
+    cps->setDuration(0.7);
+    //  cps->setGravity(Point(0,-480));
+    cps->setEmissionRate(50);
+    cps->setPosVar(Point(10,10));
+    cardTexiao->forPlayer->fMap->addChild(cps,3000);
 }
 
 void XuanWuCard::daHitMusic() {
@@ -236,14 +249,13 @@ void XuanWuCard::daSkill(OneRecord *info) {
     Vec2 target = Vec2(tagetX, this->forEnemy->fMap->mapCellArray.at(info->hitTarget)->position.y); //this->playerTemp->fMap->mapCellArray.at(cellNum)->position;
     
     Animate* dazhao = NULL;
-    if (this->playerName.compare("enemyPlayer") == 0) {
-        dazhao = CommonFunc::creatAnimation("niutou_conjure_r%d.png", 20, animationFactor*20, 1);
-    }else {
-        dazhao = CommonFunc::creatAnimation("niutou_conjure_l%d.png", 20, animationFactor*20, 1);
-    }
-    
- //   auto dazhao = CommonFunc::creatAnimation("niutou_conjure_%d.png", 20, 1.0f, 1);
-    
+//    if (this->playerName.compare("enemyPlayer") == 0) {
+//        dazhao = CommonFunc::creatAnimation("niutou_conjure_l%d.png", 20, animationFactor*20, 1);
+//    }else {
+//        dazhao = CommonFunc::creatAnimation("niutou_conjure_l%d.png", 20, animationFactor*20, 1);
+//    }
+
+    dazhao = CommonFunc::creatAnimation("xuanwu_attackb_%d.png", 20, animationFactor*20, 1);
     auto move = CallFunc::create(CC_CALLBACK_0(XuanWuCard::moveAnimation, this, target));
     auto moveWait = ActionWait::create(animationFactor*8);
     auto wait = ActionWait::create(1.0);
@@ -267,13 +279,12 @@ void XuanWuCard::daSkill(OneRecord *info) {
 
 void XuanWuCard::runZhanLiAnimation() {
     Animate* zhanli = NULL;
-    if (this->playerName.compare("enemyPlayer") == 0) {
-        zhanli = CommonFunc::creatAnimation("niutou_stand_r%d.png", 4, animationFactor*4*1.5, 1);
-    }else {
-        zhanli = CommonFunc::creatAnimation("niutou_stand_l%d.png", 4, animationFactor*4*1.5, 1);
-    }
-    
-   // auto zhanli = CommonFunc::creatAnimation("niutou_stand_%d.png", 4, 0.5f, 2);
+//    if (this->playerName.compare("enemyPlayer") == 0) {
+//        zhanli = CommonFunc::creatAnimation("niutou_stand_l%d.png", 4, animationFactor*4*1.5, 1);
+//    }else {
+//        zhanli = CommonFunc::creatAnimation("niutou_stand_l%d.png", 4, animationFactor*4*1.5, 1);
+//    }
+    zhanli = CommonFunc::creatAnimation("xuanwu_idle_%d.png", 4, animationFactor*4*1.5, 1);
     this->standAction = RepeatForever::create(zhanli);
     this->standAction->retain();
     this->standAction->setTag(10);
@@ -282,12 +293,12 @@ void XuanWuCard::runZhanLiAnimation() {
 
 void XuanWuCard::moveAnimation(Vec2 target) {
     Animate* animateActionWalk = NULL;
-    if (this->playerName.compare("enemyPlayer") == 0) {
-        animateActionWalk = CommonFunc::creatAnimation("niutou_move_r%d.png", 8, animationFactor*8, 1);
-    }else {
-        animateActionWalk = CommonFunc::creatAnimation("niutou_move_l%d.png", 8, animationFactor*8, 1);
-    }
-    
+//    if (this->playerName.compare("enemyPlayer") == 0) {
+//        animateActionWalk = CommonFunc::creatAnimation("niutou_move_l%d.png", 8, animationFactor*8, 1);
+//    }else {
+//        animateActionWalk = CommonFunc::creatAnimation("niutou_move_l%d.png", 8, animationFactor*8, 1);
+//    }
+    animateActionWalk = CommonFunc::creatAnimation("xuanwu_move_%d.png", 8, animationFactor*8, 1);
     auto moveTo = MoveTo::create(animationFactor*8, target);
  //   auto animateActionWalk = CommonFunc::creatAnimation("niutou_move_%d.png", 8, 0.5f, 2);
     this->cardSprite->runAction(moveTo);

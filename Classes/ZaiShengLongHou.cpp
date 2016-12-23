@@ -13,6 +13,7 @@ bool ZaiShengLongHou::init() {
     this->skillLevel = 9;
     this->dargonName = "zaishenglonghou";
     this->dargonInfoName = "再生龙吼";
+    this->zuheNum = 30;
     return true;
 }
 
